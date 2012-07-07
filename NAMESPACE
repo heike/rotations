@@ -1,3 +1,5 @@
+export(Phi)
 export(angle_axis)
+export(haar)
 exportClasses(rotation)
 exportMethods(is.rotation)

@@ -11,8 +11,7 @@ Description: This package implements tools for working with rotational data: it
     direction of a number of rotations, it provides (bootstrap) confidence
     regions for the estimates, and it allows to visualize rotational data.
 License: MIT
-Depends:
-    ggplot2
 Collate:
     'help.R'
     'class.R'
+    'simulate.R'

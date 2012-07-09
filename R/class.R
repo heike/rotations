@@ -40,6 +40,7 @@ setGeneric("is.rotation", function(object, tol=1e-6) {
 })
 
 
+
 #' Method for creating rotations using the angle axis representation
 #'
 #' Angle-axis representation based on the Rodrigues formula.
@@ -61,8 +62,8 @@ angle_axis <- function(U, theta) {
 
 #' Skew-symmetric matrix corresponding to rotation R
 #' 
-#' The space of skew-symmetric matrices, i.e. all square matrices A with \eqn{A^t = -A}
-#' is the tangent space of the special orthogonal group \eqn{SO(3)}, that describes all three-dimensional
+#' The space of skew-symmetric matrices, i.e. all square matrices A with \deqn{A^t = -A}
+#' is the tangent space of the special orthogonal group \deqn{SO(3)}, that describes all three-dimensional
 #' rotations.
 #' @export
 #' @param U three-dimensional vector of real numbers describing the fix axis of rotation R.

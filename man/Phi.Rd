@@ -10,8 +10,8 @@
 }
 \description{
   The space of skew-symmetric matrices, i.e. all square
-  matrices A with \eqn{A^t = -A} is the tangent space of
-  the special orthogonal group \eqn{SO(3)}, that describes
+  matrices A with \deqn{A^t = -A} is the tangent space of
+  the special orthogonal group \deqn{SO(3)}, that describes
   all three-dimensional rotations.
 }
 

@@ -1,18 +1,34 @@
-#' Angle distributions 
+arsample <- function(f,g,M, kappa, ...) {
+  found=FALSE
+  while(!found) {
+    x <- g(1, ...)
+    y <- runif(1, min=0, max=M)
+    if (y < f(x, kappa)) found=TRUE
+  }
+  return(x)
+}
+
+#' Random simulation from angle distributions 
 #'
-#' Densities of the most commonly used angle distributions: Haar, Fisher, Cayley, and von Mises Distributions
+#' acceptance-rejection random sampling from angle distributions
 #'
 #' @export
-#' @param x vector of angles (between -pi and pi)
-#' @param kappa concentration parameter
-haar <- function(x) return((1-cos(x))/(2*pi))
-haarkappa <- function(x, kappa=0) return(haar(x))
+#' @param n sample size
+#' @param f density to be sampled from
+#' @param g density, enveloping f, i.e. f < g 
+#' @param M real valued constant
+#' @param ... parameters for densities f and g
+#' @examples
+#' # sample from haar distribution
+#' x <- rar(10000, haar, runif, 1/pi, min=-pi, max=pi)
+#' 
+#' kappa=0.5
+#' M <- max(fisher(seq(-pi, pi, length=1000), kappa))
+#' x.fisher <- rar(10000, fisher, runif, M, min=-pi, max=pi, kappa=kappa)
+rar <- function(n, f,g, M, ...) {
+  res <- vector("numeric", length=n)
+  for (i in 1:n) res[i] <- arsample(f,g,M, ...)
+  return(res)
+}
 
 
-fisher <- function(x, kappa) {
-	exp(2*kappa*cos(x))*(1-cos(x))/(besselI(kappa,0)-besselI(kappa,1))/(2*pi)
-}
-cayley <- function(x, kappa) {
-	return(.5/sqrt(pi)*gamma(kappa+2)/gamma(kappa+0.5)*2^(-kappa)*(1+cos(x))^kappa*(1-cos(x)))
-}
-mises <- function(x, kappa) return(exp(kappa*cos(x))/(2*pi*besselI(kappa,0)))

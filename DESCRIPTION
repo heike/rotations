@@ -13,6 +13,4 @@ Description: This package implements tools for working with rotational data: it
 License: MIT
 Collate:
     'help.R'
-    'class.R'
-    'density.R'
-    'simulate.R'
+    'preliminary.R'

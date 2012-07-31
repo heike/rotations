@@ -1,30 +1,28 @@
 \name{rar}
 \alias{rar}
-\title{Random simulation from angle distributions}
+\title{Call arsample 'n' times to get a sample of size n from target density f}
 \usage{
   rar(n, f, g, M, ...)
 }
 \arguments{
-  \item{n}{sample size}
+  \item{n}{number of sample wanted}
 
-  \item{f}{density to be sampled from}
+  \item{f}{target density}
 
-  \item{g}{density, enveloping f, i.e. f < g}
+  \item{g}{sampling distribution}
 
-  \item{M}{real valued constant}
+  \item{M}{maximum number in uniform proposal density}
 
-  \item{...}{parameters for densities f and g}
+  \item{...}{additional arguments sent to arsample}
+}
+\value{
+  a vector of size n of observations from target density
 }
 \description{
-  acceptance-rejection random sampling from angle
-  distributions
+  Call arsample 'n' times to get a sample of size n from
+  target density f
 }
-\examples{
-# sample from haar distribution
-x <- rar(10000, haar, runif, 1/pi, min=-pi, max=pi)
-
-kappa=0.5
-M <- max(fisher(seq(-pi, pi, length=1000), kappa))
-x.fisher <- rar(10000, fisher, runif, M, min=-pi, max=pi, kappa=kappa)
+\author{
+  Heike Hofmann
 }
 

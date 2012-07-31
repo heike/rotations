@@ -1,16 +1,18 @@
 \name{angle_axis}
 \alias{angle_axis}
-\title{Method for creating rotations using the angle axis representation}
+\title{A function Dr. Hofmann wrote}
 \usage{
   angle_axis(U, theta)
 }
 \arguments{
-  \item{U}{three-dimensional vector describing the fix axis
-  of the rotation}
+  \item{U}{a vector}
 
-  \item{theta}{angle between -pi and pi}
+  \item{theta}{an angle}
+}
+\value{
+  Used in \code{\lin{eyeBall}} to orient the data properly
 }
 \description{
-  Angle-axis representation based on the Rodrigues formula.
+  A function Dr. Hofmann wrote
 }
 

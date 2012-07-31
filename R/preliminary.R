@@ -1,0 +1,913 @@
+#' A function Dr. Hofmann wrote
+#' 
+#' @param U a vector
+#' @param theta an angle
+#' @return Used in \code{\lin{eyeBall}} to orient the data properly
+
+angle_axis <- function(U, theta) {
+  # based on Rodrigues formula
+  U <- U/sqrt(sum(U^2))
+  P <- U %*% t(U)
+  
+  id <- matrix(0, length(U), length(U))
+  diag(id) <- 1
+  
+  
+  R <- P + (id - P) * cos(theta) + eskew(U) * sin(theta)
+  return(R)
+}
+
+
+#' Projected Arithmetic Mean \eqn{\hat{S}_P}
+#'
+#' This function takes a sample of \eqn{3\times 3} rotations (in the form of a \eqn{n\times 9} matrix where n is the sample size) and returns the projected arithmetic mean denoted \eqn{\widehat{\bm S}_P}.
+#' For a sample of $n$ random rotations \eqn{\bm{R}_i\in SO(3)$, $i=1,2,\dots,n}, this mean-type estimator is defined as \deqn{\[ \widehat{\bm{S}}_P=\argmin_{\bm{S}\in SO(3)}\sum_{i=1}^nd_E^2(\bm{R}_i,\bm{S})=\argmax_{\bm{S}\in SO(3)}\tr(\bm{S}^{\top}\bar{\bm{R}}) \]} where \eqn{\bar{\bm{R}}=\frac{1}{n}\sum_{i=1}^n\bm{R}_i}.
+#' First the mean of each element is calculated then that matrix is projected to SO(3) in accordance with the procedure presented in Moahker's 2003 paper
+#'
+#' @param Rs A sample of n \eqn{3\times 3} random rotations
+#' @return S3 \code{arith.mean} object; A \eqn{3\times 3} matrix in SO(3) called the Projected arithmetic mean
+#' @seealso \code{\link{MantonL2}}, \code{\link{HartleyL1}}, \code{\link{rmedian}}
+#' @export
+#' @examples
+#' r<-rvmises(20,0.01)
+#' Rs<-genR(r)
+#' arith.mean(Rs)
+
+arith.mean<-function(Rs){
+  
+  R<-projMatrix(matrix(colMeans(Rs),3,3))
+  
+  return(R)
+}
+
+
+#' Accept/reject algorithm written by Dr. Hofmann
+#' 
+#' @author Heike Hofmann
+#' @param f target density
+#' @param g sampling density
+#' @param M maximum in uniform density
+#' @param kappa second parameter in the target density
+#' @param ... additional arguments passed to samping density, g
+#' @return a random observation from target density
+
+arsample <- function(f,g,M, kappa, ...) {
+  found=FALSE
+  while(!found) {
+    x <- g(1, ...)
+    y <- runif(1, min=0, max=M)
+    if (y < f(x, kappa)) found=TRUE
+  }
+  return(x)
+  #  arsample(f, g, M, kappa, ...)
+}
+
+#' Accept reject ratio of uniforms?  Written by Dr. Hofmann
+#' 
+#' @author Heike Hofmann
+#' @param f target density
+#' @param M maximum value for one of the uniforms
+#' @param ... additional arguments sent to f
+#' @return x an observation from the target density
+
+arsample.unif <- function(f,M, ...) {
+  found=FALSE
+  while(!found) {
+    x <- runif(1, -pi, pi)
+    y <- runif(1, min=0, max=M)
+    if (y < f(x, ...)) found=TRUE
+  }
+  return(x)
+  #  arsample.unif(f, M, ...)
+}
+
+#' Cayley distribution for angular data
+#' 
+#' The symmetric Cayley distribution has a density of the form \deqn{C_\mathrm{C}(r |\kappa)=\frac{1}{\sqrt{\pi}} \frac{\Gamma(\kappa+2)}{\Gamma(\kappa+1/2)}2^{-(\kappa+1)}(1+\cos r)^\kappa(1-\cos r)}.
+#' It was orignally given in the material sciences literature by Schaben 1997 and called the de la Vall\'{e}e Poussin distribution but was more recently discussed and 
+#' introduced in a more general manner by Leon 06.
+#'
+#' @param r Where the density is being evaluated
+#' @param kappa The concentration paramter, taken to be zero
+#' @param Haar logical, if density is evaluated with respect to Haar measure or Lebesgue
+#' @return value of Cayley distribution with concentration \eqn{\kappa} evaluated at r
+#' @seealso \code{\link{rcayley}},\code{\link{dfisher}},\code{\link{dhaar}}
+
+dcayley <-function(r,kappa=1,Haar=F){
+  den<-.5*gamma(kappa+2)/(sqrt(pi)*2^kappa*gamma(kappa+.5))*(1+cos(r))^kappa*(1-cos(r))
+  
+  if(Haar)
+    return(den/(1-cos(r)))
+  else
+    return(den)
+}
+#' von Mises-Fisher distribution for angular data
+#' 
+#' The symmetric matrix fisher distribution has the density\deqn{C_\mathrm{{F}}(r|\kappa)=\frac{1}{2\pi[\mathrm{I_0}(2\kappa)-\mathrm{I_1}(2\kappa)]}e^{2\kappa\cos(r)}[1-\cos(r)]} 
+#' where \eqn{\mathrm{I_p}(\cdot)} denotes the Bessel function of order \eqn{p} defined as  \eqn{\mathrm{I_p}(\kappa)=\frac{1}{2\pi}\int_{-\pi}^{\pi}\cos(pr)e^{\kappa\cos r}dr}.
+#' This function allows the user to evaluate the function \eqn{C_\mathrm{{F}}(r|\kappa)} at \eqn{r} with \eqn{\kappa} provided by the user.
+#'
+#' @param r Where the density is being evaluated
+#' @param kappa The concentration paramter, taken to be zero
+#' @param Haar logical, if density is evaluated with respect to Haar measure or Lebesgue
+#' @return value of Fisher matrix distribution with concentration \eqn{\kappa} evaluated at r
+
+dfisher <-function(r,kappa=1,Haar=F){
+  den<-exp(2*kappa*cos(r))*(1-cos(r))/(2*pi*(besselI(2*kappa,0)-besselI(2*kappa,1)))
+  
+  if(Haar)
+    return(den/(1-cos(r)))
+  
+  else
+    return(den)
+}
+
+
+#' Evaluate the uniform distribution on the circle at \eqn{r}
+#' 
+#' The uniform distribution on the sphere is also know as the Haar measure and has the density function \deqn{C_U(r)=\frac{1-cos(r)}{2\pi}}
+#'
+#' @param r Where the density is being evaluated
+#' @return the probability density evaluated at r
+
+dhaar <- function(r) return((1-cos(r))/(2*pi))
+
+#'Density function for circular von Mises distribution
+#'
+#' The circular von Mises-based distribution has the density \deqn{C_\mathrm{M}(r|\kappa)=\frac{1}{2\pi \mathrm{I_0}(\kappa)}e^{\kappa\cos(r)}}.  This function allows the use to 
+#' evaluate \eqn{C_\mathrm{M}(r|\kappa)} at angle \eqn{r} given a concentration parameter \eqn{\kappa}.
+#'
+#' @param r value at which to evaluate the distribution function
+#' @param kappa concentration paramter
+#' @param Haar logical, if density is evaluated with respect to Haar measure or Lebesgue
+#' @return value of circular-von Mises distribution with concentration \eqn{\kappa} evaluated at r
+#' @seealso \code{\link{rvmises}}, \code{\link{dfisher}},\code{\link{dhaar}},\code{\link{dcayley}}
+
+dvmises<-function(r,kappa=1,Haar=F){
+  den<-1/(2*pi*besselI(kappa,0))*exp(kappa*cos(r))
+  
+  if(Haar)
+    return(den/(1-cos(r)))
+  
+  else
+    return(den)
+}
+
+#' A function that will take in a Euler angle and return a rotation matrix in vector format
+#' @param eur numeric Euler angle representation of an element in SO(3)
+#' @return numeric \eqn{9\times 1} vector of a matrix in SO(3)
+#' @seealso \code{\link{is.SOn}} can be used to check the output of this function
+#' @export
+#' @examples
+#' eaExample<-c(pi/2,3*pi/4,0)
+#' SO3Dat<-EAtoSO3(eaExample)
+#' is.SOn(SO3Dat)
+
+EAtoSO3<-function(eur){
+  
+  S<-matrix(NA,3,3)
+  S[1,1]<-cos(eur[1])*cos(eur[3])-sin(eur[1])*sin(eur[3])*cos(eur[2])
+  S[1,2]<-sin(eur[1])*cos(eur[3])+cos(eur[1])*sin(eur[3])*cos(eur[2])
+  S[1,3]<-sin(eur[3])*sin(eur[2])
+  
+  S[2,1]<- -cos(eur[1])*sin(eur[3])-sin(eur[1])*cos(eur[3])*cos(eur[2])
+  S[2,2]<- -sin(eur[1])*sin(eur[3])+cos(eur[1])*cos(eur[3])*cos(eur[2])
+  S[2,3]<-cos(eur[3])*sin(eur[2])
+  
+  S[3,1]<-sin(eur[1])*sin(eur[2])
+  S[3,2]<--cos(eur[1])*sin(eur[2])
+  S[3,3]<-cos(eur[2])
+  return(as.vector(S))
+}
+
+#' A function Dr. Hofmann wrote
+#' 
+#' @author Heike Hofmann
+#' @param U a vector of size 3 it looks like
+#' @return I have no idea
+
+eskew <- function(U) {
+  U <- U/sqrt(sum(U^2))
+  u <- U[1]
+  v <- U[2]
+  w <- U[3]
+  
+  res <- matrix((-1) *c(0,-w,v,w,0,-u,-v,u,0), ncol=3)
+  return(res)
+}
+
+#' A novel approach to visualizing random rotations.
+#' 
+#' This function produces a three-dimensional globe onto which the on column of the provided sample is drawn.  The data are centered around a provided
+#' matrix and the user can choose to display this center or not.
+#' 
+#' @param Rs the sample of n random rotations
+#' @param center point about which to center the observations
+#' @param column integer 1 to 3 indicating which column to display
+#' @param show.estimates rather to display the four estimates of the principal direction or not
+#' @param ... Additional arguments passed to ggplot2
+#' @return  a ggplot2 object with the data dispalyed on a blank sphere
+#' @export
+#' @examples
+#' r<-rvmises(20,1.0)
+#' Rs<-genR(r)
+#' eyeBall(Rs,center=arith.mean(Rs),show.estimates=TRUE,shape=4)
+
+eyeBall<-function(Rs,center=diag(1,3,3),column=1,show.estimates=FALSE,...){
+  
+  # construct helper grid lines for sphere
+  
+  theta <- seq(0,pi, by=pi/8)
+  phi <- seq(0,2*pi, by=0.005)
+  df <- data.frame(expand.grid(theta=theta, phi=phi))
+  
+  #qplot(theta,phi, geom="point", data=df) + coord_polar()
+  
+  x <- with(df, sin(theta)*cos(phi))
+  y <- with(df, sin(theta)*sin(phi))
+  z <- with(df, cos(theta))
+  circles <- data.frame(cbind(x,y,z))
+  circles$ID <- as.numeric(factor(df$theta))
+  
+  theta <- seq(0,pi, by=0.005)
+  phi <- seq(0,2*pi, by=pi/8)
+  df <- data.frame(expand.grid(theta=theta, phi=phi))
+  
+  x <- with(df, sin(theta)*cos(phi))
+  y <- with(df, sin(theta)*sin(phi))
+  z <- with(df, cos(theta))
+  circles.2 <- data.frame(cbind(x,y,z))
+  circles.2$ID <- as.numeric(factor(df$phi))+9
+  
+  circles <- rbind(circles, circles.2)
+  
+  rot <- angle_axis(c(1,-1,0), pi/8)
+  
+  pcircles <- data.frame(as.matrix(circles[,1:3]) %*% rot)
+  
+  # this is the coordinate system and should be fixed, no matter what column of the rotation matrices is shown
+  
+  base <- ggplot(aes(x=X1, y=X2), data=pcircles[order(pcircles$X3), ]) + coord_equal() +  opts(legend.position="none") +
+    geom_point(aes(colour=X3), size=0.6) + scale_colour_continuous(low=I("white"), high=I("grey50")) + opts(panel.background=theme_blank(),
+    panel.grid.minor=theme_blank(),
+    panel.grid.major=theme_blank(),
+    axis.title.x=theme_blank(),
+    axis.title.y=theme_blank(),
+    axis.text.x=theme_blank(),
+    axis.text.y=theme_blank(),
+    axis.ticks=theme_blank())
+  
+  if(column==1){
+    cols<-1:3
+    rot<-angle_axis(c(0,1,0), pi/2) %*% rot
+    
+  }else if (column==2){
+    cols<-4:6
+    rot<-angle_axis(c(1,0,0), -pi/2) %*% rot
+    
+  }else{
+    cols<-7:9
+  }
+  
+  obs<-data.frame(as.matrix(Rs[,cols]) %*% center %*% rot)
+  
+  if(show.estimates){
+    
+    GMean<-as.vector(MantonL2(Rs)$S)
+    GMed<-as.vector(HartleyL1(Rs)$S)
+    PMed<-as.vector(rmedian(Rs)$S)
+    PMean<-as.vector(arith.mean(Rs))
+    ests<-rbind(PMean,GMean,GMed,PMed)
+    
+    EstsDot<-data.frame(as.matrix(ests[,cols]) %*% center %*% rot)
+    EstsDot$Shape<-as.factor(2:5)
+    EstsDot$names<-labels(EstsDot)[[1]]
+    
+    out<-base+geom_point(aes(x=X1, y=X2,colour=X3),data=obs,...)+geom_point(aes(x=X1, y=X2,shape=Shape),data=EstsDot,size=2,...)
+    
+    out<-out+geom_text(aes(x=X1,y=X2,label=names),data=EstsDot,hjust=0,vjust=0)  }
+  else{
+    out<-base+geom_point(aes(x=X1, y=X2,colour=X3),data=obs,...)
+  }
+  return(out)
+}
+
+
+
+#' Generate rotation matrix given misorientation angle, r
+#'
+#' A function that generates a random rotation in \eqn{SO(3)} following a Uniform-Axis random roation distribution with central direction S
+#' The exact form of the UARS distribution depends upon the distribution of the roation r
+#'
+#' @param r The angle through which all three dimensions are rotated after the axis was picked uniformly on the unit sphere
+#' @param S the principle direction
+#' @return a \eqn{n\times 9} matrix in SO(3) with misorientation angle r and principal direction S
+#' @export
+#' @examples
+#' r<-rvmises(20,0.01)
+#' genR(r)
+
+genR<-function(r, S=diag(1,3,3)){
+  
+  if(!is.SOn(S)){
+    stop("The principal direction must be in SO(3).")
+  }
+  
+  o<-matrix(NA,length(r),9)
+  I<-diag(1,3,3)
+  
+  #Generate angles theta from a uniform distribution from 0 to pi
+  theta<-acos(runif(length(r),-1,1))
+  
+  #Generate angles phi from a uniform distribution from 0 to 2*pi
+  phi<-runif(length(r),-pi,pi)
+  
+  for(i in 1:length(r)){
+    
+    #Using theta and phi generate a point uniformly on the unit sphere
+    u<-matrix(c(sin(theta[i])*cos(phi[i]),  						sin(theta[i])*sin(phi[i]),
+                cos(theta[i])),nrow=3,ncol=1,byrow=T)
+    
+    
+    #Make the skew symmetric matrix of u denoted [u]
+    ssu<-matrix(c(0,-u[3],u[2],
+                  u[3],0,-u[1],
+                  -u[2],u[1],0),nrow=3,ncol=3,byrow=T)
+    
+    #Put it all together to make a rotation matrix O		
+    o[i,]<-as.vector(S%*%(u%*%t(u)+(I-u%*%t(u))*cos(r[i])+ssu*sin(r[i])))
+    
+  }
+  return(o)
+}
+
+
+#' \eqn{d_R^p} based estimators of the Central Direction
+#'
+#' This functions is slow but it computes the element of SO(3) that minimizes the sum of the pth  order Riemannian distances.
+#' It returns the the random roatation Shat.  It calls the function SumDistR which calculates the sum of the pth order Riemannian
+#' distances between the sample Rs and S.  This needs to be trashed, most likely.
+#'
+#' @param Rs The sample of random rotations in the form of an nx9 matrix
+#' @param maxe The stopping rule of the optimization process
+#' @param p The order of the riemannian distance to minimize
+#' @return S3 \item{Shatp}{The estimated random rotation \eqn{\widehat{\bm S}_P}}
+
+GuessLs<-function(Rs,maxe=.001,p){
+  
+  shatp<-matrix(c(as.vector(Rs[1,]),rep(0,9)),2,byrow=T)
+  angle<-c(riedist(matrix(shatp[1,],3,3)),0)
+  sumd<-rep(0,2)
+  diff<-1;count<-0;window<-pi/2
+  
+  while(diff>=maxe){
+    
+    rs<-seq(max(angle[1]-window,-pi),min(angle[1]+window,pi),length=30)
+    dist<-rep(0,length(rs))
+    
+    for(i in 1:length(rs)){
+      temp<-genR(rs[i])
+      dist[i]<-SumDist(Rs,temp,p)$Rieman
+      if(dist[i]==min(dist[1:i])){
+        shatp[2,]<-as.vector(temp)
+      }
+    }
+    sumd[1]<-SumDist(Rs,shatp[1,],p)$Rieman
+    sumd[2]<-SumDist(Rs,shatp[2,],p)$Rieman
+    diff<-abs(diff(sumd))
+    if(which.min(sumd)==2){
+      shatp[1,]<-shatp[2,]
+      angle[1]<-angle[2]
+    }
+    count<-count+1;window<-window*.5
+    if(count>=100){
+      return(matrix(shatp[1,],3,3))
+    }
+  }
+  return(matrix(shatp[1,],3,3))
+}
+
+
+#' Compute the geometric median of a sample of random rotations
+#' 
+#' This function uses the algorithm published by Hartley to estimate the principle direction of a sample
+#' of random rotaions with the point in \eqn{SO(3)} that minimizes the sum of first order Riemannian distances, aka 
+#' the geometric median and denoted \eqn{\widetilde{\bm S}_G}.  More explicitly \deqn{\widetilde{\bm S}_G=\widetilde{\bm{S}}_{G}=\argmin_{\bm{S}\in SO(3)}\sum_{i=1}^nd_G(\bm{R}_i,\bm{S})}.
+#' 
+#' @param Rs the sample \eqn{n \times 9} matrix with rows corresponding to observations
+#' @param epsilon the stopping rule for the iterative algorithm 
+#' @param maxIter integer, the maximum number of iterations allowed
+#' @return list
+#'  \item{S}{the element in SO(3) minimizing  the sum of first order Riemannian distances for sample Rs}
+#'  \item{iter}{the number of iterations needed to converge or not}
+#' @seealso \code{\link{MantonL2}}, \code{\link{arith.mean}}, \code{\link{rmedian}}
+#' @export
+#' @examples
+#' r<-rvmises(20,0.1)
+#' Rs<-genR(r)
+#' HartleyL1(Rs) 
+
+HartleyL1<-function(Rs,epsilon=1e-5,maxIter=1000){
+  S<-arith.mean(Rs)
+  d<-1
+  iter<-0
+  delta<-matrix(0,3,3)
+
+  while(d>=epsilon){
+    
+    S<-matrixExp(delta)%*%S
+    
+    v<-t(apply(Rs,1,tLogMat,S=S))
+    vn<-apply(v,1,vecNorm,S=diag(0,3,3),type='F')
+    
+    delta<-matrix(colSums(v/vn)/sum(1/vn),3,3)
+    d<-norm(delta,type="F")
+    
+    iter<-iter+1
+    
+    
+    if(iter>=maxIter){
+      warning(paste("A unique solution wasn't found after",iter,"iterations."))
+      return(list(S=S,iter=iter))
+    }
+    
+  }
+  return(list(S=S,iter=iter))
+}
+
+#' A function to determine if a given matrix is in SO(n) or not.
+#' 
+#' @param x numeric \eqn{n \times n} matrix or vector of length \eqn{n^2}
+#' @return logical T if the matrix is in SO(n) and false otherwise
+#' @export
+#' @examples
+#' is.SOn(diag(1,3,3))
+#' is.SOn(1:9)
+is.SOn<-function(x){
+  
+  #Is the matrix square?
+  if(is.matrix(x)){
+    n<-ncol(x)
+    if(n!=nrow(x)){
+      
+      return(FALSE)
+    }
+  }else{
+    n<-sqrt(length(x))
+    
+    if(n%%1!=0){
+      return(FALSE)
+    }
+    
+    x<-matrix(x,n,n)
+  }
+  
+  #Does it have determinant 1?
+  if(round(det(x),digits=7)!=1){
+    return(FALSE)
+  }
+  
+  #Is its transpose (approximately) its inverse?
+  if(round(sum(t(x)%*%x-diag(1,n)),digits=10)!=0){
+      return(FALSE)
+  }
+  
+  return(TRUE)
+  
+}
+
+
+#' This is the same as MantonL2 except it starts at the S_p rather than an arbitrary sample element
+#' 
+#' The intrisic approach to the arithmetic mean is given by the estimatot \deqn{\widehat{\bm{S}}_{G}=\argmin_{\bm{S}\in SO(3)}\sum_{i=1}^nd_G^2(\bm{R}_i,\bm{S})}.
+#' That is, the matrix \eqn{\widehat{\bm S}_G} minimizes the sum of squared distances in the intrensic sense, or Riemannian distances.
+#' 
+#' @param Rs the sample \eqn{n \times 9} matrix with rows corresponding to observations
+#' @param epsilon the stopping rule for the iterative algorithm 
+#' @param maxIter integer, the maximum number of iterations allowed
+#' @param startSp logical 'TRUE' if first guess is \eqn{\widehat{\bm S}_P}, a random sample observation otherwise
+#' @param si which sample point to start at
+#' @return a list
+#'  \item{S}{the element in SO(3) minimizing  the sum of squared Riemannian distances for sample Rs}
+#'  \item{iter}{the number of iterations needed to converge or not}
+#' @seealso \code{\link{arith.mean}}, \code{\link{HartleyL1}}, \code{\link{rmedian}}
+#' @export
+#' @examples
+#' r<-rcayley(20,1)
+#' Rs<-genR(r)
+#' MantonL2(Rs)
+
+MantonL2<-function(Rs,epsilon=1e-5,maxIter=2000,startSp=T,si=1){
+  
+  if(startSp){
+    S<-arith.mean(Rs)
+  }else{
+    S<-matrix(Rs[si,],3,3)
+  }
+  
+  n<-nrow(Rs)
+  d<-1
+  iter<-0
+  s<-matrix(0,3,3)
+  
+  while(d>=epsilon){
+    
+    S<-S%*%matrixExp(s)
+    
+    s<-matrix(colMeans(t(apply(Rs,1,tLogMat,S=S))),3,3)
+    
+    d<-norm(s,type="F")
+    
+    iter<-iter+1
+    
+    if(iter>=maxIter){
+      warning(paste("A unique solution wasn't found after",iter,"iterations."))
+      return(list(S=S,iter=iter))
+    }
+  }
+  
+  return(list(S=S,iter=iter))
+}
+
+#' This fuction will compute the natural exponential of skew-symmetric matrix.  It uses the special case of the Taylor expansion for SO(n) matrices.
+#' 
+#' @param A 3-dimensional skew-symmetric matrix, i.e., \eqn{\bm A=-\bm A^\top}
+#' @return numeric matrix \eqn{e^{\bm A}}
+
+matrixExp<-function(A){
+  
+  if(round(sum(A-t(A)),digits=7)!=0){
+    stop("The input matrix must be skew symmetric.")
+  }
+  
+  I<-diag(1,3,3)
+  AtA<-t(A)%*%A
+  a2<-.5*sum(diag(AtA))
+  a<-sqrt(a2)
+  
+  if(a==0){
+    return(I)
+  }else{
+    p1<-(sin(a)/a)*A
+    p2<-((1-cos(a))/a^2)*A%*%A
+    return(I+p1+p2)
+  }
+  
+}
+
+
+#' This fuction will compute the natural logarithm of a matrix in SO(n).  It uses the special case of the Taylor expansion for SO(n) matrices.
+#' 
+#' @param R numeric matrix in \eqn{SO(n)}
+#' @return mlog numeric matrix \eqn{\log(R)}
+
+matrixLog<-function(R){
+  
+  if(!is.SOn(R)){
+    stop("This the input matrix must be in SO(n).")
+  }
+  
+  tR<-sum(diag(R))
+  cost<-.5*(tR-1)
+  if(abs(cost)>=1){
+    return(diag(0,3,3))
+  }else{
+    theta<-acos(cost)
+    c<-theta/(2*sin(theta))
+    mlog<-c*(R-t(R))
+    return(mlog)
+  }
+}
+
+#' The projection of an arbitrary \eqn{3\times 3} matrix into \eqn{SO(3)}
+#' 
+#' This function uses the process given in Moakher 2002  to project an arbitrary \eqn{3\times 3} matrix into \eqn{SO(3)}.
+#' @param M \eqn{3\times 3} matrix to project
+#' @return projection of \eqn{\bm M} into \eqn{SO(3)}
+#' @seealso \code{\link{arith.mean}}, \code{\link{rmedian}}
+#' @export
+#' @examples
+#' M<-matrix(rnorm(9),3,3)
+#' projMatrix(M)
+
+projMatrix<-function(M){
+  
+  d<-svd(t(M)%*%M)
+  u<-d$u
+  
+  d1<-1/sqrt(d$d[1])
+  d2<-1/sqrt(d$d[2])
+  d3<-sign(det(M))/sqrt(d$d[3])
+  
+  R<-M%*%u%*%diag(x=c(d1,d2,d3),3,3)%*%t(u)
+  return(R)
+}
+
+#' A function to translate from unit quaternion representation to SO(3) representation
+#' of a rotation matrix
+#' 
+#' @param q numeric unit vector, i.e. \eqn{q^\top q=1}, representing an element in SO(3)
+#' @return vector representation of a rotation matrix in SO(3)
+#' @seealso \code{\link{is.SOn}} can be used to check the return vector
+#' @export
+#' @examples
+#' is.SOn(QtoSO3(c(1/sqrt(2),0,0,1/sqrt(2))))
+
+QtoSO3<-function(q){
+  
+  if(round(t(q)%*%q,digits=10)!=1){
+    stop("Input must have unit length.")
+  }
+  
+  a<-q[1]
+  b<-q[2]
+  c<-q[3]
+  d<-q[4]
+  S<-matrix(NA,3,3)
+  S[1,1]<-a^2+b^2-c^2-d^2
+  S[1,2]<-2*b*c-2*a*d
+  S[1,3]<-2*b*d+2*a*c
+  S[2,1]<-2*b*c+2*a*d
+  S[2,2]<-a^2-b^2+c^2-d^2
+  S[2,3]<-2*c*d-2*a*b
+  S[3,1]<-2*b*d-2*a*c
+  S[3,2]<-2*c*d+2*a*b
+  S[3,3]<-a^2-b^2-c^2+d^2
+  
+  return(as.vector(S))
+}
+
+
+#' Call arsample 'n' times to get a sample of size n from target density f
+#' 
+#' @author Heike Hofmann
+#' @param n number of sample wanted
+#' @param f target density
+#' @param g sampling distribution
+#' @param M maximum number in uniform proposal density
+#' @param ... additional arguments sent to arsample
+#' @return a vector of size n of observations from target density
+
+rar <- function(n, f,g, M, ...) {
+  res <- vector("numeric", length=n)
+  for (i in 1:n) res[i] <- arsample(f,g,M, ...)
+  return(res)
+}
+
+#' Simulate misorientation angles from Cayley distribtuion
+#' 
+#' This function allows the user to simulate \eqn{n} misorientation angles from the Cayley distribution symmetric about 0 on interval \eqn{(-\pi,\pi]}.  The relationship between Cayley and Beta distribution is used.
+#' The symmetric Cayley distribution has a density of the form \deqn{C_\mathrm{C}(r |\kappa)=\frac{1}{\sqrt{\pi}} \frac{\Gamma(\kappa+2)}{\Gamma(\kappa+1/2)}2^{-(\kappa+1)}(1+\cos r)^\kappa(1-\cos r)}.
+#' It was orignally given in the material sciences literature by Schaben 1997 and called the de la Vall\'{e}e Poussin distribution but was more recently discussed and 
+#' introduced in a more general manner by Leon 06.
+#' 
+#' @param n sample size
+#' @param kappa The concentration paramter
+#' @return vector of n observations from Cayley(kappa) distribution
+#' @export
+#' @examples
+#' r<-rcayley(20,0.01)
+
+rcayley<-function(n,kappa=1){
+  bet<-rbeta(n,kappa+0.5,3/2)
+  theta<-acos(2*bet-1)*(1-2*rbinom(n,1,.5))
+  return(theta)
+}
+
+#' Simulate a data set of size \eqn{n} from the matrix Fisher angular distribution
+#' 
+#' The symmetric matrix fisher distribution has the density\deqn{C_\mathrm{{F}}(r|\kappa)=\frac{1}{2\pi[\mathrm{I_0}(2\kappa)-\mathrm{I_1}(2\kappa)]}e^{2\kappa\cos(r)}[1-\cos(r)]} 
+#' where \eqn{\mathrm{I_p}(\cdot)} denotes the Bessel function of order \eqn{p} defined as  \eqn{\mathrm{I_p}(\kappa)=\frac{1}{2\pi}\int_{-\pi}^{\pi}\cos(pr)e^{\kappa\cos r}dr}.
+#' This function allows for simulation of \eqn{n} random deviates with density \eqn{C_\mathrm{{F}}(r|\kappa)} and \eqn{\kappa} provided by the user.
+#' 
+#' @param n sample size
+#' @param kappa the concentration parameter
+#' @return a sample of size \eqn{n} from the matrix Fisher distribution with concentration \eqn{\kappa}
+#' @seealso \code{\link{dfisher}},\code{\link{rvmises}},\code{\link{rcayley}}
+
+
+rfisher<-function(n,kappa=1){
+  M<-max(dfisher(seq(-pi, pi, length=1000), kappa))
+  return(rar(n,dfisher, runif, M, min=-pi, max=pi, kappa=kappa))
+}
+
+#' Riemannian Distance Between Two Random Rotations
+#' 
+#' This function will calculate the riemannian distance between an estimate of the central direction (in matrix or vector form) and the central direction.  By default the central direction
+#' is taken to be the identity matrix, but any matrix in SO(3) will work.  It calls the matrix log and matrix exponential functions also given here.
+#'
+#' @param R The estimate of the central direction
+#' @param S The true central direction
+#' @return S3 \code{riedist} object; a number between 0 and pi that is the shortest geodesic curve connecting two matrices, i.e., the Riemannian distance
+#' @export
+#' @examples
+#' r<-rvmises(20,0.01)
+#' Rs<-genR(r)
+#' Sp<-arith.mean(Rs)
+#' riedist(Sp,diag(1,3,3))
+
+riedist<-function(R,S=diag(1,3,3)){
+  R<-matrix(R,3,3)
+  lRtS<-matrixLog(R%*%t(S))
+  no<-norm(lRtS,type='F')
+  return(no/sqrt(2))
+}
+
+#' Compute the minimizer of the first order Euclidean distances.
+#'
+#' The embeded median type estimator we call the projected median and is given by \deqn{\widetilde{\bm{S}}_P=\argmin_{\bm{S}\in SO(3)}\sum_{i=1}^nd_E(\bm{R}_i,\bm{S})}.
+#' The algorithm used is a modified Weiszfeld algorithm and is similar to the algorithm proposed by Hartley to compute the geometric median \eqn{\widetilde{\bm S}_G}.
+#' 
+#' @param Rs the sample \eqn{n \times 9} matrix with rows corresponding to observations
+#' @param epsilon the stopping rule for the iterative algorithm 
+#' @param maxIter integer, the maximum number of iterations allowed
+#' @return a list
+#'  \item{S}{the element in SO(3) minimizing  the sum of first order Euclidean distances for sample Rs}
+#'  \item{iter}{the number of iterations needed to converge or not}
+#'  @seealso \code{\link{MantonL2}}, \code{\link{HartleyL1}}, \code{\link{arith.mean}}
+#'  @export
+#'  @examples
+#'  r<-rcayley(50,1)
+#'  Rs<-genR(r)
+#'  rmedian(Rs)
+
+rmedian<-function(Rs,epsilon=1e-5,maxIter=2000){
+  S<-arith.mean(Rs)
+  d<-1
+  iter<-1
+  while(d>=epsilon){
+    
+    #use the L_1 algorithm with euclidean dist instead of riemannian, i.e.
+    #"center" the sample points
+    
+    vn<-apply(Rs,1,vecNorm,type="F",S=S)
+    
+    delta<-matrix(colSums(Rs/vn)/sum(1/vn),3,3)
+    
+    Snew<-projMatrix(delta)
+    
+    d<-norm(Snew-S,type="F")
+    S<-Snew
+    
+    iter<-iter+1
+    if(iter>=maxIter){
+      warning(paste("Unique solution wasn't found after ", iter, " iterations."))  
+      return(list(S=S,iter=iter))
+    }
+  }
+  return(list(S=S,iter=iter))
+}
+
+#' Generate a vector of angles(r) from the von Mises Circular distribution
+#'
+#' The circular von Mises-based distribution has the density \deqn{C_\mathrm{M}(r|\kappa)=\frac{1}{2\pi \mathrm{I_0}(\kappa)}e^{\kappa\cos(r)}}.  This function allows the use to 
+#' simulate \eqn{n} random deviates from \eqn{C_\mathrm{M}(r|\kappa)} given a concentration parameter \eqn{\kappa}.
+#'
+#' @param kappa The concentration parameter of the distribution
+#' @param n The number of angles desired
+#' @return S3 \code{rvmises} object; a vector of n angles following the von Mises Circular distribution with concentration kappa and mean/mode 0
+#' @export
+#' @examples
+#' r<-rvmises(20,0.01)
+
+rvmises<-function(n,kappa=1){
+  u<-runif(3,0,1)
+  a<-1+sqrt(1+4*kappa^2)
+  b<-(a-sqrt(2*a))/(2*kappa)
+  r<-(1+b^2)/(2*b)
+  theta<-rep(10,n)
+  
+  for(i in 1:n){
+    
+    while(theta[i]==10){
+      #Step  1
+      u<-runif(3,0,1)
+      z<-cos(pi*u[1])
+      f<-(1+r*z)/(r+z)
+      c<-kappa*(r-f)
+      
+      #Step 2
+      u<-runif(3,0,1)
+      if((c*(2-c)-u[2])>0){
+        theta[i]=sign(u[3]-.5)*acos(f)
+      }
+      
+      #Step 3
+      else{
+        if(log(c/u[2])+1-c<0){
+          u<-runif(3,0,1)
+        }
+        
+        else{
+          u<-runif(3,0,1)
+          theta[i]=sign(u[3]-.5)*acos(f)
+        }
+      }
+    }
+  }
+  return(theta)
+}
+
+
+#' Compute the sum of the \eqn{p^{\text{th}}} order distances between Rs and S
+#' 
+#' @param Rs numeric matrix with sample size n rows and m columns
+#' @param S the matrix to compute the sum of distances between each row of Rs with
+#' @param p the order of the distances to compute
+#' @return list of size two
+#'  \item{Rieman}{the sum of \eqn{p^{\text{th}}} order Riemannian distances}
+#'  \item{Euclid}{the sum of \eqn{p^{\text{th}}} order Euclidean distances}
+#' @export
+#' @examples
+#' r<-rvmises(20,0.01)
+#' Rs<-genR(r)
+#' Sp<-arith.mean(Rs)
+#' SumDist(Rs,S=Sp,2)
+
+SumDist<-function(Rs,S=diag(1,3,3),p){
+  
+  dist<-0
+  dist2<-0
+  n<-nrow(Rs)
+  
+  dR<-sum(apply(Rs,1,riedist,S=S)^p)
+  
+  dE<-sum(apply(Rs,1,vecNorm,type="F",S=S)^p)
+  
+  return(list(Rieman=dR,Euclid=dE))
+}
+
+#' Log of a matrix times some center S
+#' 
+#' Used to speed up the Riemannian based estimators
+#' @param x vector of length 9
+#' @param S \eqn{3\times 3} matrix
+#' @return skew-symmetic matrix \eqn{\log(\bm{S}^\top\bm{x})}
+#' @seealso \code{\link{MantonL2}}, \code{\link{HartleyL1}}
+#' @export
+#' @examples
+#' rs<-rvmises(20,1)
+#' Rs<-genR(rs)
+#' apply(Rs,1,tLogMat,S=diag(1,3,3))
+
+tLogMat<-function(x,S){
+  tra<-matrixLog(t(S)%*%matrix(x,3,3))
+  return(as.vector(tra))
+}
+
+#' Function to Trim the Sample
+#'
+#' This function will take a sample of size n random rotations, find the observations beyond the alpha/2 percentile and delete them from the sample.
+#' To determine which observations to remove, the average distance of each sample point from the estimated central direction is used.
+#'
+#' @param Rs The sample of random rotations
+#' @param alpha The percent of observations to be trimeed
+#' @return S3 \code{trim} object; a sample of size n-(n*alpha) of random roatations
+
+trim<-function(Rs,alpha){
+  
+  #Get the number of observations in the sample
+  n<-nrow(Rs)
+  
+  #Calculate how many observations to trim
+  howmany<-round(alpha*n,0)
+  if(howmany==0){return(Rs)}
+  
+  #Create a vector that will hold the average distances of each matrix from the others
+  avgdist<-rep(0,n)  
+  
+  #Calculate the averaged distance each observations is from all the others
+  for(i in 1:n){
+    
+    for(j in 1:n){avgdist[i]<-avgdist[i]+riedist(matrix(Rs[j,],3,3),matrix(Rs[i,],3,3))/n}
+    
+  }
+  
+  #Find the observations with the highest average distance from the other observations
+  totrim<-which(rank(avgdist)>n-howmany)
+  
+  #Create a matrix to put the trimmed sample in
+  tos<-Rs
+  
+  #Delete the observations according to their average distance from the other observations
+  for(k in 1:howmany){
+    tos<-tos[-max(totrim),]
+    totrim<-totrim[-which.max(totrim)]
+  }
+  
+  #Return the trimmed sample
+  return(tos)	
+}
+
+#' Turn a vector into a matrix and compute the the norm between x and S
+#' 
+#' @param x numeric vector
+#' @param S numeric vector or matrix
+#' @param ... additional arguments passed to \code{\link{norm}} function
+#' @return the norm of x-S
+
+vecNorm<-function(x,S,...){
+  n<-sqrt(length(x))
+  cenX<-x-as.vector(S)
+  return(norm(matrix(cenX,n,n),...))
+}

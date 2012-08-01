@@ -10,7 +10,7 @@
   \item{theta}{an angle}
 }
 \value{
-  Used in \code{\lin{eyeBall}} to orient the data properly
+  Used in \code{\link{eyeBall}} to orient the data properly
 }
 \description{
   A function Dr. Hofmann wrote

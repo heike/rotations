@@ -2,7 +2,7 @@
 #' 
 #' @param U a vector
 #' @param theta an angle
-#' @return Used in \code{\lin{eyeBall}} to orient the data properly
+#' @return Used in \code{\link{eyeBall}} to orient the data properly
 
 angle_axis <- function(U, theta) {
   # based on Rodrigues formula

@@ -1,6 +1,6 @@
 \name{matrixExp}
 \alias{matrixExp}
-\title{This fuction will compute the natural exponential of skew-symmetric matrix.  It uses the special case of the Taylor expansion for SO(n) matrices.}
+\title{This fuction will compute the natural exponential of skew-symmetric matrix.}
 \usage{
   matrixExp(A)
 }
@@ -12,8 +12,11 @@
   numeric matrix \eqn{e^{\bm A}}
 }
 \description{
-  This fuction will compute the natural exponential of
-  skew-symmetric matrix.  It uses the special case of the
-  Taylor expansion for SO(n) matrices.
+  See \cite{Moakher (2002)}
+}
+\references{
+  Moakher M (2002). "Means and averaging in the group of
+  rotations." _SIAM Journal on Matrix Analysis and
+  Applications_, *24*(1), pp. 1-16.
 }
 

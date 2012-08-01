@@ -31,6 +31,11 @@ r<-rvmises(20,0.01)
 Rs<-genR(r)
 arith.mean(Rs)
 }
+\references{
+  Moakher M (2002). "Means and averaging in the group of
+  rotations." _SIAM Journal on Matrix Analysis and
+  Applications_, *24*(1), pp. 1-16.
+}
 \seealso{
   \code{\link{MantonL2}}, \code{\link{HartleyL1}},
   \code{\link{rmedian}}

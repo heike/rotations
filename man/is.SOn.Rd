@@ -1,6 +1,6 @@
 \name{is.SOn}
 \alias{is.SOn}
-\title{A function to determine if a given matrix is in SO(n) or not.}
+\title{A function to determine if a given matrix is in \eqn{SO(n)} or not.}
 \usage{
   is.SOn(x)
 }
@@ -12,8 +12,8 @@
   logical T if the matrix is in SO(n) and false otherwise
 }
 \description{
-  A function to determine if a given matrix is in SO(n) or
-  not.
+  A function to determine if a given matrix is in
+  \eqn{SO(n)} or not.
 }
 \examples{
 is.SOn(diag(1,3,3))

@@ -21,12 +21,13 @@
   or not}
 }
 \description{
-  This function uses the algorithm published by Hartley to
-  estimate the principle direction of a sample of random
-  rotaions with the point in \eqn{SO(3)} that minimizes the
-  sum of first order Riemannian distances, aka the
-  geometric median and denoted \eqn{\widetilde{\bm S}_G}.
-  More explicitly \deqn{\widetilde{\bm
+  This function uses the algorithm developed in
+  \cite{Hartley et al. (2011)} to estimate the principle
+  direction of a sample of random rotaions with the point
+  in \eqn{SO(3)} that minimizes the sum of first order
+  Riemannian distances, aka the geometric median and
+  denoted \eqn{\widetilde{\bm S}_G}.  More explicitly
+  \deqn{\widetilde{\bm
   S}_G=\widetilde{\bm{S}}_{G}=\argmin_{\bm{S}\in
   SO(3)}\sum_{i=1}^nd_G(\bm{R}_i,\bm{S})}.
 }
@@ -34,6 +35,12 @@
 r<-rvmises(20,0.1)
 Rs<-genR(r)
 HartleyL1(Rs)
+}
+\references{
+  Hartley R, Aftab K and Trumpf J (2011). "L1 rotation
+  averaging using the Weiszfeld algorithm." In _2011 IEEE
+  Conference on Computer Vision and Pattern Recognition
+  (CVPR)_, pp. 3041-3048. IEEE.
 }
 \seealso{
   \code{\link{MantonL2}}, \code{\link{arith.mean}},

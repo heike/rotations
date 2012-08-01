@@ -27,6 +27,7 @@ angle_axis <- function(U, theta) {
 #' @param Rs A sample of n \eqn{3\times 3} random rotations
 #' @return S3 \code{arith.mean} object; A \eqn{3\times 3} matrix in SO(3) called the Projected arithmetic mean
 #' @seealso \code{\link{MantonL2}}, \code{\link{HartleyL1}}, \code{\link{rmedian}}
+#' @cite moakher02
 #' @export
 #' @examples
 #' r<-rvmises(20,0.01)
@@ -92,6 +93,7 @@ arsample.unif <- function(f,M, ...) {
 #' @param Haar logical, if density is evaluated with respect to Haar measure or Lebesgue
 #' @return value of Cayley distribution with concentration \eqn{\kappa} evaluated at r
 #' @seealso \code{\link{rcayley}},\code{\link{dfisher}},\code{\link{dhaar}}
+#' @cite Schaeben97 leon06
 
 dcayley <-function(r,kappa=1,Haar=F){
   den<-.5*gamma(kappa+2)/(sqrt(pi)*2^kappa*gamma(kappa+.5))*(1+cos(r))^kappa*(1-cos(r))
@@ -199,7 +201,7 @@ eskew <- function(U) {
 #' A novel approach to visualizing random rotations.
 #' 
 #' This function produces a three-dimensional globe onto which the on column of the provided sample is drawn.  The data are centered around a provided
-#' matrix and the user can choose to display this center or not.
+#' matrix and the user can choose to display this center or not.  Based on \code{ggplot2} package by \cite{wickham09}.
 #' 
 #' @param Rs the sample of n random rotations
 #' @param center point about which to center the observations
@@ -207,6 +209,7 @@ eskew <- function(U) {
 #' @param show.estimates rather to display the four estimates of the principal direction or not
 #' @param ... Additional arguments passed to ggplot2
 #' @return  a ggplot2 object with the data dispalyed on a blank sphere
+#' @cite wickham09
 #' @export
 #' @examples
 #' r<-rvmises(20,1.0)
@@ -390,7 +393,7 @@ GuessLs<-function(Rs,maxe=.001,p){
 
 #' Compute the geometric median of a sample of random rotations
 #' 
-#' This function uses the algorithm published by Hartley to estimate the principle direction of a sample
+#' This function uses the algorithm developed in \cite{hartley11} to estimate the principle direction of a sample
 #' of random rotaions with the point in \eqn{SO(3)} that minimizes the sum of first order Riemannian distances, aka 
 #' the geometric median and denoted \eqn{\widetilde{\bm S}_G}.  More explicitly \deqn{\widetilde{\bm S}_G=\widetilde{\bm{S}}_{G}=\argmin_{\bm{S}\in SO(3)}\sum_{i=1}^nd_G(\bm{R}_i,\bm{S})}.
 #' 
@@ -401,6 +404,7 @@ GuessLs<-function(Rs,maxe=.001,p){
 #'  \item{S}{the element in SO(3) minimizing  the sum of first order Riemannian distances for sample Rs}
 #'  \item{iter}{the number of iterations needed to converge or not}
 #' @seealso \code{\link{MantonL2}}, \code{\link{arith.mean}}, \code{\link{rmedian}}
+#' @cite hartley11
 #' @export
 #' @examples
 #' r<-rvmises(20,0.1)
@@ -435,7 +439,7 @@ HartleyL1<-function(Rs,epsilon=1e-5,maxIter=1000){
   return(list(S=S,iter=iter))
 }
 
-#' A function to determine if a given matrix is in SO(n) or not.
+#' A function to determine if a given matrix is in \eqn{SO(n)} or not.
 #' 
 #' @param x numeric \eqn{n \times n} matrix or vector of length \eqn{n^2}
 #' @return logical T if the matrix is in SO(n) and false otherwise
@@ -477,10 +481,10 @@ is.SOn<-function(x){
 }
 
 
-#' This is the same as MantonL2 except it starts at the S_p rather than an arbitrary sample element
+#' Estimate the geometric mean of a sample of random rotations in \eqn{SO(3)}
 #' 
 #' The intrisic approach to the arithmetic mean is given by the estimatot \deqn{\widehat{\bm{S}}_{G}=\argmin_{\bm{S}\in SO(3)}\sum_{i=1}^nd_G^2(\bm{R}_i,\bm{S})}.
-#' That is, the matrix \eqn{\widehat{\bm S}_G} minimizes the sum of squared distances in the intrensic sense, or Riemannian distances.
+#' That is, the matrix \eqn{\widehat{\bm S}_G} minimizes the sum of squared distances in the intrensic sense, or Riemannian distances.  Algorithm was adapted from \cite{manton04}.
 #' 
 #' @param Rs the sample \eqn{n \times 9} matrix with rows corresponding to observations
 #' @param epsilon the stopping rule for the iterative algorithm 
@@ -491,6 +495,7 @@ is.SOn<-function(x){
 #'  \item{S}{the element in SO(3) minimizing  the sum of squared Riemannian distances for sample Rs}
 #'  \item{iter}{the number of iterations needed to converge or not}
 #' @seealso \code{\link{arith.mean}}, \code{\link{HartleyL1}}, \code{\link{rmedian}}
+#' @cite manton04
 #' @export
 #' @examples
 #' r<-rcayley(20,1)
@@ -529,10 +534,13 @@ MantonL2<-function(Rs,epsilon=1e-5,maxIter=2000,startSp=T,si=1){
   return(list(S=S,iter=iter))
 }
 
-#' This fuction will compute the natural exponential of skew-symmetric matrix.  It uses the special case of the Taylor expansion for SO(n) matrices.
+#' This fuction will compute the natural exponential of skew-symmetric matrix.
+#' 
+#' See \cite{moakher02}
 #' 
 #' @param A 3-dimensional skew-symmetric matrix, i.e., \eqn{\bm A=-\bm A^\top}
 #' @return numeric matrix \eqn{e^{\bm A}}
+#' @cite moakher02
 
 matrixExp<-function(A){
   
@@ -558,8 +566,11 @@ matrixExp<-function(A){
 
 #' This fuction will compute the natural logarithm of a matrix in SO(n).  It uses the special case of the Taylor expansion for SO(n) matrices.
 #' 
+#' For details see \cite{moakher02}
+#' 
 #' @param R numeric matrix in \eqn{SO(n)}
 #' @return mlog numeric matrix \eqn{\log(R)}
+#' @cite moakher02
 
 matrixLog<-function(R){
   
@@ -603,7 +614,7 @@ projMatrix<-function(M){
   return(R)
 }
 
-#' A function to translate from unit quaternion representation to SO(3) representation
+#' A function to translate from unit quaternion representation to \eqn{SO(3)} representation
 #' of a rotation matrix
 #' 
 #' @param q numeric unit vector, i.e. \eqn{q^\top q=1}, representing an element in SO(3)
@@ -664,6 +675,7 @@ rar <- function(n, f,g, M, ...) {
 #' @param n sample size
 #' @param kappa The concentration paramter
 #' @return vector of n observations from Cayley(kappa) distribution
+#' @cite Schaeben97 leon06
 #' @export
 #' @examples
 #' r<-rcayley(20,0.01)

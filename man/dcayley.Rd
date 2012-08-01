@@ -1,6 +1,6 @@
 \name{dcayley}
 \alias{dcayley}
-\title{Cayley distribution for angular data}
+\title{Symmetric Cayley distribution for angular data}
 \usage{
   dcayley(r, kappa = 1, Haar = F)
 }
@@ -26,6 +26,15 @@
   the de la Vall\'{e}e Poussin distribution but was more
   recently discussed and introduced in a more general
   manner by Leon 06.
+}
+\references{
+  Schaeben H (1997). "A Simple Standard Orientation Density
+  Function: The Hyperspherical de la Vallée Poussin
+  Kernel." _Phys. Stat. Sol. (B)_, *200*, pp. 367-376.
+
+  Le\'on C, é JM and Rivest L (2006). "A statistical model
+  for random rotations." _Journal of Multivariate
+  Analysis_, *97*(2), pp. 412-430.
 }
 \seealso{
   \code{\link{rcayley}},\code{\link{dfisher}},\code{\link{dhaar}}

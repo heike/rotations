@@ -36,6 +36,8 @@ angle_axis <- function(U, theta) {
 
 arith.mean<-function(Rs){
   
+  if(!all(apply(Rs,1,is.SOn)))
+    warning("Atleast one of the given observations is not in SO(3).  Use result with caution.")
   R<-projMatrix(matrix(colMeans(Rs),3,3))
   
   return(R)
@@ -412,6 +414,10 @@ GuessLs<-function(Rs,maxe=.001,p){
 #' HartleyL1(Rs) 
 
 HartleyL1<-function(Rs,epsilon=1e-5,maxIter=1000){
+  
+  if(!all(apply(Rs,1,is.SOn)))
+    warning("Atleast one of the given observations is not in SO(3).  Use result with caution.")
+  
   S<-arith.mean(Rs)
   d<-1
   iter<-0
@@ -503,6 +509,9 @@ is.SOn<-function(x){
 #' MantonL2(Rs)
 
 MantonL2<-function(Rs,epsilon=1e-5,maxIter=2000,startSp=T,si=1){
+  
+  if(!all(apply(Rs,1,is.SOn)))
+    warning("Atleast one of the given observations is not in SO(3).  Use result with caution.")
   
   if(startSp){
     S<-arith.mean(Rs)
@@ -744,6 +753,10 @@ riedist<-function(R,S=diag(1,3,3)){
 #'  rmedian(Rs)
 
 rmedian<-function(Rs,epsilon=1e-5,maxIter=2000){
+  
+  if(!all(apply(Rs,1,is.SOn)))
+    warning("Atleast one of the given observations is not in SO(3).  Use result with caution.")
+  
   S<-arith.mean(Rs)
   d<-1
   iter<-1

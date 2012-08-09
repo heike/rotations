@@ -34,20 +34,12 @@
   SO(3)}\sum_{i=1}^nd_G^2(\bm{R}_i,\bm{S})}. That is, the
   matrix \eqn{\widehat{\bm S}_G} minimizes the sum of
   squared distances in the intrensic sense, or Riemannian
-  distances.  Algorithm was adapted from \cite{Manton
-  (2004)}.
+  distances.  Algorithm was adapted from \cite{manton04}.
 }
 \examples{
 r<-rcayley(20,1)
 Rs<-genR(r)
 MantonL2(Rs)
-}
-\references{
-  Manton J (2004). "A globally convergent numerical
-  algorithm for computing the centre of mass on compact Lie
-  groups." In _8th Conference on Control, Automation,
-  Robotics and Vision, (ICARCV) _, volume 3, pp. 2211-2216.
-  IEEE.
 }
 \seealso{
   \code{\link{arith.mean}}, \code{\link{HartleyL1}},

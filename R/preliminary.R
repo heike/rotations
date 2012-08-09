@@ -1,7 +1,10 @@
-#' A function Dr. Hofmann wrote
-#' 
-#' @param U a vector
-#' @param theta an angle
+#' Method for creating rotations using the angle axis representation
+#'
+#' Angle-axis representation based on the Rodrigues formula.
+#'
+#' @export
+#' @param U three-dimensional vector describing the fix axis of the rotation
+#' @param theta angle between -pi and pi
 #' @return Used in \code{\link{eyeBall}} to orient the data properly
 
 angle_axis <- function(U, theta) {
@@ -44,12 +47,12 @@ arith.mean<-function(Rs){
 }
 
 
-#' Accept/reject algorithm written by Dr. Hofmann
+#' Accept/reject algorithm random sampling from angle distributions
 #' 
 #' @author Heike Hofmann
 #' @param f target density
 #' @param g sampling density
-#' @param M maximum in uniform density
+#' @param M real valued constant, maximum of g
 #' @param kappa second parameter in the target density
 #' @param ... additional arguments passed to samping density, g
 #' @return a random observation from target density
@@ -65,11 +68,11 @@ arsample <- function(f,g,M, kappa, ...) {
   #  arsample(f, g, M, kappa, ...)
 }
 
-#' Accept reject ratio of uniforms?  Written by Dr. Hofmann
+#' Accept/reject algorithm random sampling from angle distributions using uniform envelop  
 #' 
 #' @author Heike Hofmann
 #' @param f target density
-#' @param M maximum value for one of the uniforms
+#' @param M maximum value for enveloping uniform density
 #' @param ... additional arguments sent to f
 #' @return x an observation from the target density
 
@@ -105,6 +108,7 @@ dcayley <-function(r,kappa=1,Haar=F){
   else
     return(den)
 }
+
 #' von Mises-Fisher distribution for angular data
 #' 
 #' The symmetric matrix fisher distribution has the density\deqn{C_\mathrm{{F}}(r|\kappa)=\frac{1}{2\pi[\mathrm{I_0}(2\kappa)-\mathrm{I_1}(2\kappa)]}e^{2\kappa\cos(r)}[1-\cos(r)]} 
@@ -158,6 +162,7 @@ dvmises<-function(r,kappa=1,Haar=F){
 }
 
 #' A function that will take in a Euler angle and return a rotation matrix in vector format
+#' 
 #' @param eur numeric Euler angle representation of an element in SO(3)
 #' @return numeric \eqn{9\times 1} vector of a matrix in SO(3)
 #' @seealso \code{\link{is.SOn}} can be used to check the output of this function
@@ -184,11 +189,11 @@ EAtoSO3<-function(eur){
   return(as.vector(S))
 }
 
-#' A function Dr. Hofmann wrote
+#' Directional vector to skew-symmetric Matrix
 #' 
 #' @author Heike Hofmann
-#' @param U a vector of size 3 it looks like
-#' @return I have no idea
+#' @param U three dimensional vector indicating rotational fix-axis
+#' @return skew-symmetric matrix 
 
 eskew <- function(U) {
   U <- U/sqrt(sum(U^2))
@@ -658,7 +663,7 @@ QtoSO3<-function(q){
 }
 
 
-#' Call arsample 'n' times to get a sample of size n from target density f
+#' Sample of size n from target density f
 #' 
 #' @author Heike Hofmann
 #' @param n number of sample wanted
@@ -667,6 +672,13 @@ QtoSO3<-function(q){
 #' @param M maximum number in uniform proposal density
 #' @param ... additional arguments sent to arsample
 #' @return a vector of size n of observations from target density
+#' @examples
+#' # sample from haar distribution
+#' x <- rar(10000, haar, runif, 1/pi, min=-pi, max=pi)
+#' 
+#' kappa=0.5
+#' M <- max(fisher(seq(-pi, pi, length=1000), kappa))
+#' x.fisher <- rar(10000, fisher, runif, M, min=-pi, max=pi, kappa=kappa)
 
 rar <- function(n, f,g, M, ...) {
   res <- vector("numeric", length=n)

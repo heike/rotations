@@ -1,13 +1,13 @@
 \name{arsample.unif}
 \alias{arsample.unif}
-\title{Accept reject ratio of uniforms?  Written by Dr. Hofmann}
+\title{Accept/reject algorithm random sampling from angle distributions using uniform envelop}
 \usage{
   arsample.unif(f, M, ...)
 }
 \arguments{
   \item{f}{target density}
 
-  \item{M}{maximum value for one of the uniforms}
+  \item{M}{maximum value for enveloping uniform density}
 
   \item{...}{additional arguments sent to f}
 }
@@ -15,7 +15,8 @@
   x an observation from the target density
 }
 \description{
-  Accept reject ratio of uniforms?  Written by Dr. Hofmann
+  Accept/reject algorithm random sampling from angle
+  distributions using uniform envelop
 }
 \author{
   Heike Hofmann

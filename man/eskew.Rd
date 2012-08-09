@@ -1,17 +1,18 @@
 \name{eskew}
 \alias{eskew}
-\title{A function Dr. Hofmann wrote}
+\title{Directional vector to skew-symmetric Matrix}
 \usage{
   eskew(U)
 }
 \arguments{
-  \item{U}{a vector of size 3 it looks like}
+  \item{U}{three dimensional vector indicating rotational
+  fix-axis}
 }
 \value{
-  I have no idea
+  skew-symmetric matrix
 }
 \description{
-  A function Dr. Hofmann wrote
+  Directional vector to skew-symmetric Matrix
 }
 \author{
   Heike Hofmann

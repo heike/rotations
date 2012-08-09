@@ -1,6 +1,6 @@
 \name{arsample}
 \alias{arsample}
-\title{Accept/reject algorithm written by Dr. Hofmann}
+\title{Accept/reject algorithm random sampling from angle distributions}
 \usage{
   arsample(f, g, M, kappa, ...)
 }
@@ -9,7 +9,7 @@
 
   \item{g}{sampling density}
 
-  \item{M}{maximum in uniform density}
+  \item{M}{real valued constant, maximum of g}
 
   \item{kappa}{second parameter in the target density}
 
@@ -20,7 +20,8 @@
   a random observation from target density
 }
 \description{
-  Accept/reject algorithm written by Dr. Hofmann
+  Accept/reject algorithm random sampling from angle
+  distributions
 }
 \author{
   Heike Hofmann

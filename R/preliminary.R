@@ -1,4 +1,4 @@
-#' Method for creating rotations using the angle axis representation
+#' Method for creating a rotation using the angle axis representation
 #'
 #' Angle-axis representation based on the Rodrigues formula.
 #'
@@ -151,7 +151,7 @@ dhaar <- function(r) return((1-cos(r))/(2*pi))
 #' @return value of circular-von Mises distribution with concentration \eqn{\kappa} evaluated at r
 #' @seealso \code{\link{rvmises}}, \code{\link{dfisher}},\code{\link{dhaar}},\code{\link{dcayley}}
 
-dvmises<-function(r,kappa=1,Haar=F){
+dvmises<-function(r, kappa=1, Haar=F){
   den<-1/(2*pi*besselI(kappa,0))*exp(kappa*cos(r))
   
   if(Haar)
@@ -947,4 +947,24 @@ vecNorm<-function(x,S,...){
   n<-sqrt(length(x))
   cenX<-x-as.vector(S)
   return(norm(matrix(cenX,n,n),...))
+}
+
+
+
+qu <- function(Rs) {
+  # represent rotation as quaternion
+  theta <- eangle(Rs)
+  u <- eaxis(Rs)
+  x <- c(cos(theta/2), sin(theta/2)*u)
+  names(x) <- c("s","i","j","k")
+  x
+}
+
+euler <- function(rot) {
+  # rotations to Euler angles
+  if (is.matrix(rot)) rot <- as.vector(rot)
+  alpha <- acos(-rot[8]/sqrt(1-rot[9]^2))
+  beta <- acos(rot[9])
+  gamma <- acos(rot[6]/sqrt(1-rot[9]^2))
+  return(cbind(alpha, beta, gamma))
 }

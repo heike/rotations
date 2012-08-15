@@ -23,7 +23,7 @@ angle_axis <- function(U, theta) {
 
 #' Projected Arithmetic Mean \eqn{\hat{S}_P}
 #'
-#' This function takes a sample of \eqn{3\times 3} rotations (in the form of a \eqn{n\times 9} matrix where n is the sample size) and returns the projected arithmetic mean denoted \eqn{\widehat{\bm S}_P}.
+#' THIS HAS BEEN REPLACED WITH 'SO3.mean'!!  This function takes a sample of \eqn{3\times 3} rotations (in the form of a \eqn{n\times 9} matrix where n is the sample size) and returns the projected arithmetic mean denoted \eqn{\widehat{\bm S}_P}.
 #' For a sample of $n$ random rotations \eqn{\bm{R}_i\in SO(3)$, $i=1,2,\dots,n}, this mean-type estimator is defined as \deqn{\[ \widehat{\bm{S}}_P=\argmin_{\bm{S}\in SO(3)}\sum_{i=1}^nd_E^2(\bm{R}_i,\bm{S})=\argmax_{\bm{S}\in SO(3)}\tr(\bm{S}^{\top}\bar{\bm{R}}) \]} where \eqn{\bar{\bm{R}}=\frac{1}{n}\sum_{i=1}^n\bm{R}_i}.
 #' First the mean of each element is calculated then that matrix is projected to SO(3) in accordance with the procedure presented in Moahker's 2003 paper
 #'
@@ -400,7 +400,7 @@ GuessLs<-function(Rs,maxe=.001,p){
 
 #' Compute the geometric median of a sample of random rotations
 #' 
-#' This function uses the algorithm developed in \cite{hartley11} to estimate the principle direction of a sample
+#' THIS HAS BEEN REPLACED WITH 'SO3.median'!!  This function uses the algorithm developed in \cite{hartley11} to estimate the principle direction of a sample
 #' of random rotaions with the point in \eqn{SO(3)} that minimizes the sum of first order Riemannian distances, aka 
 #' the geometric median and denoted \eqn{\widetilde{\bm S}_G}.  More explicitly \deqn{\widetilde{\bm S}_G=\widetilde{\bm{S}}_{G}=\argmin_{\bm{S}\in SO(3)}\sum_{i=1}^nd_G(\bm{R}_i,\bm{S})}.
 #' 
@@ -494,7 +494,7 @@ is.SOn<-function(x){
 
 #' Estimate the geometric mean of a sample of random rotations in \eqn{SO(3)}
 #' 
-#' The intrisic approach to the arithmetic mean is given by the estimatot \deqn{\widehat{\bm{S}}_{G}=\argmin_{\bm{S}\in SO(3)}\sum_{i=1}^nd_G^2(\bm{R}_i,\bm{S})}.
+#' THIS HAS BEEN REPLACED WITH 'SO3.mean'!!  The intrisic approach to the arithmetic mean is given by the estimatot \deqn{\widehat{\bm{S}}_{G}=\argmin_{\bm{S}\in SO(3)}\sum_{i=1}^nd_G^2(\bm{R}_i,\bm{S})}.
 #' That is, the matrix \eqn{\widehat{\bm S}_G} minimizes the sum of squared distances in the intrensic sense, or Riemannian distances.  Algorithm was adapted from \cite{manton04}.
 #' 
 #' @param Rs the sample \eqn{n \times 9} matrix with rows corresponding to observations
@@ -748,7 +748,7 @@ riedist<-function(R,S=diag(1,3,3)){
 
 #' Compute the minimizer of the first order Euclidean distances.
 #'
-#' The embeded median type estimator we call the projected median and is given by \deqn{\widetilde{\bm{S}}_P=\argmin_{\bm{S}\in SO(3)}\sum_{i=1}^nd_E(\bm{R}_i,\bm{S})}.
+#' THIS HAS BEEN REPLACED WITH 'SO3.median'!! The embeded median type estimator we call the projected median and is given by \deqn{\widetilde{\bm{S}}_P=\argmin_{\bm{S}\in SO(3)}\sum_{i=1}^nd_E(\bm{R}_i,\bm{S})}.
 #' The algorithm used is a modified Weiszfeld algorithm and is similar to the algorithm proposed by Hartley to compute the geometric median \eqn{\widetilde{\bm S}_G}.
 #' 
 #' @param Rs the sample \eqn{n \times 9} matrix with rows corresponding to observations
@@ -845,6 +845,136 @@ rvmises<-function(n,kappa=1){
   return(theta)
 }
 
+#' Compute the mean in a class of random rotations
+#'
+#' This function takes a sample of \eqn{3\times 3} rotations (in the form of a \eqn{n\times 9} matrix where n is the sample size) and returns the projected arithmetic mean denoted \eqn{\widehat{\bm S}_P}.
+#' For a sample of $n$ random rotations \eqn{\bm{R}_i\in SO(3)$, $i=1,2,\dots,n}, this mean-type estimator is defined as \deqn{\[ \widehat{\bm{S}}_P=\argmin_{\bm{S}\in SO(3)}\sum_{i=1}^nd_E^2(\bm{R}_i,\bm{S})=\argmax_{\bm{S}\in SO(3)}\tr(\bm{S}^{\top}\bar{\bm{R}}) \]} where \eqn{\bar{\bm{R}}=\frac{1}{n}\sum_{i=1}^n\bm{R}_i}.
+#' First the mean of each element is calculated then that matrix is projected to SO(3) in accordance with the procedure presented in Moahker's 2003 paper
+#'
+#' @param Rs A sample of n \eqn{3\times 3} random rotations
+#' @param type String indicating 'projeted' or 'intrinsic' type mean estimator
+#' @param startSP whether to begin at the projected mean or not
+#' @param si which observation to start at if not the projected mean
+#' @param epsilon Stopping rule for the intrinsic method
+#' @param maxIter The maximum number of iterations allowed before returning most recent estimate
+#' @return projected or intrinsic mean of the sample
+#' @seealso \code{\link{SO3.median}}
+#' @cite moakher02
+#' @export
+#' @examples
+#' r<-rvmises(20,0.01)
+#' Rs<-genR(r)
+#' mean(Rs)
+
+SO3.mean<-function(Rs, type='projected',startSp=T,si=1,epsilon=10e-5,maxIter=1000){
+  
+  if(!all(apply(Rs,1,is.SOn)))
+    warning("Atleast one of the given observations is not in SO(3).  Use result with caution.")
+  
+  if(type=='projected'){
+    
+    R<-projMatrix(matrix(colMeans(Rs),3,3))
+  
+  }else if(type=='intrinsic'){
+    
+    if(startSp){
+      R<-projMatrix(matrix(colMeans(Rs),3,3))
+    }else{
+      R<-matrix(Rs[si,],3,3)
+    }
+    
+    n<-nrow(Rs)
+    d<-1
+    iter<-0
+    s<-matrix(0,3,3)
+    
+    while(d>=epsilon){
+      
+      R<-R%*%matrixExp(s)
+      
+      s<-matrix(colMeans(t(apply(Rs,1,tLogMat,S=R))),3,3)
+      
+      d<-norm(s,type="F")
+      
+      iter<-iter+1
+      
+      if(iter>=maxIter){
+        warning(paste("A unique solution wasn't found after",iter,"iterations."))
+        return(R)
+      }
+    }
+    
+  }else{
+    stop("Incorred usage of type option.  Select from 'projected' or 'intrinsic'.")
+  }
+  
+  return(R)
+}
+
+
+#' Estimate the median matrix in SO(3) given a sample of random rotations in SO(3).
+#'
+#' The embeded median type estimator we call the projected median and is given by \deqn{\widetilde{\bm{S}}_P=\argmin_{\bm{S}\in SO(3)}\sum_{i=1}^nd_E(\bm{R}_i,\bm{S})}.
+#' The algorithm used is a modified Weiszfeld algorithm and is similar to the algorithm proposed by Hartley to compute the geometric median \eqn{\widetilde{\bm S}_G}.
+#' 
+#' @param Rs the sample \eqn{n \times 9} matrix with rows corresponding to observations
+#' @param type String indicating 'projeted' or 'intrinsic' type mean estimator
+#' @param epsilon the stopping rule for the iterative algorithm 
+#' @param maxIter integer, the maximum number of iterations allowed
+#' @return S the element in SO(3) minimizing  the sum of first order Euclidean distances for sample Rs}
+#' @seealso \code{\link{MantonL2}}, \code{\link{HartleyL1}}, \code{\link{arith.mean}}
+#' @export
+#' @examples
+#' r<-rcayley(50,1)
+#' Rs<-genR(r)
+#' median(Rs)
+
+SO3.median<-function(Rs, type='projected',epsilon=1e-5,maxIter=2000){
+  
+  if(!all(apply(Rs,1,is.SOn)))
+    warning("Atleast one of the given observations is not in SO(3).  Use result with caution.")
+  
+  if(type != 'projected' & type!='intrinsic')
+    stop("Incorred usage of type option.  Select from 'projected' or 'intrinsic'.")
+  
+  S<-arith.mean(Rs)
+  d<-1
+  iter<-1
+  delta<-matrix(0,3,3)
+  
+  while(d>=epsilon){
+    
+    if(type=='projected'){
+      vn<-apply(Rs,1,vecNorm,type="F",S=S)
+    
+      delta<-matrix(colSums(Rs/vn)/sum(1/vn),3,3)
+    
+      Snew<-projMatrix(delta)
+    
+      d<-norm(Snew-S,type="F")
+      S<-Snew
+      
+    }else if(type=='intrinsic'){
+      
+      S<-matrixExp(delta)%*%S
+      
+      v<-t(apply(Rs,1,tLogMat,S=S))
+      vn<-apply(v,1,vecNorm,S=diag(0,3,3),type='F')
+      
+      delta<-matrix(colSums(v/vn)/sum(1/vn),3,3)
+      d<-norm(delta,type="F")
+      
+    }
+    
+    iter<-iter+1
+    
+    if(iter>=maxIter){
+      warning(paste("Unique solution wasn't found after ", iter, " iterations."))  
+      return(S)
+    }
+  }
+  return(S)
+}
 
 #' Compute the sum of the \eqn{p^{\text{th}}} order distances between Rs and S
 #' 

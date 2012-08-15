@@ -354,7 +354,7 @@ genR<-function(r, S=diag(1,3,3)){
 
 #' \eqn{d_R^p} based estimators of the Central Direction
 #'
-#' This functions is slow but it computes the element of SO(3) that minimizes the sum of the pth  order Riemannian distances.
+#' THIS NEEDS TO BE REMOVED.  This functions is slow but it computes the element of SO(3) that minimizes the sum of the pth  order Riemannian distances.
 #' It returns the the random roatation Shat.  It calls the function SumDistR which calculates the sum of the pth order Riemannian
 #' distances between the sample Rs and S.  This needs to be trashed, most likely.
 #'
@@ -845,43 +845,37 @@ rvmises<-function(n,kappa=1){
   return(theta)
 }
 
-#' Compute the mean in a class of random rotations
+#' Compute the projected or intrinsic mean estimate of the central direction
 #'
-#' This function takes a sample of \eqn{3\times 3} rotations (in the form of a \eqn{n\times 9} matrix where n is the sample size) and returns the projected arithmetic mean denoted \eqn{\widehat{\bm S}_P}.
-#' For a sample of $n$ random rotations \eqn{\bm{R}_i\in SO(3)$, $i=1,2,\dots,n}, this mean-type estimator is defined as \deqn{\[ \widehat{\bm{S}}_P=\argmin_{\bm{S}\in SO(3)}\sum_{i=1}^nd_E^2(\bm{R}_i,\bm{S})=\argmax_{\bm{S}\in SO(3)}\tr(\bm{S}^{\top}\bar{\bm{R}}) \]} where \eqn{\bar{\bm{R}}=\frac{1}{n}\sum_{i=1}^n\bm{R}_i}.
-#' First the mean of each element is calculated then that matrix is projected to SO(3) in accordance with the procedure presented in Moahker's 2003 paper
+#' This function takes a sample of \eqn{3\times 3} rotations (in the form of a \eqn{n\times 9} matrix where n is the sample size) and returns the projected arithmetic mean denoted \eqn{\widehat{\bm S}_P} or
+#' intrinsic mean \eqn{\widehat{\bm S}_G} according to the \code{type} option.
+#' For a sample of \eqn{n} random rotations \eqn{\bm{R}_i\in SO(3)$, $i=1,2,\dots,n}, the mean-type estimator is defined as \deqn{\widehat{\bm{S}}=\argmin_{\bm{S}\in SO(3)}\sum_{i=1}^nd_D^2(\bm{R}_i,\bm{S})} where \eqn{\bar{\bm{R}}=\frac{1}{n}\sum_{i=1}^n\bm{R}_i} and the distance metric \edq{d_D}
+#' is the Riemannian or Euclidean.  For more on the projected mean see \cite{moakher02} and for the intrinsic mean see \cite{manton04}.
 #'
 #' @param Rs A sample of n \eqn{3\times 3} random rotations
 #' @param type String indicating 'projeted' or 'intrinsic' type mean estimator
-#' @param startSP whether to begin at the projected mean or not
-#' @param si which observation to start at if not the projected mean
 #' @param epsilon Stopping rule for the intrinsic method
 #' @param maxIter The maximum number of iterations allowed before returning most recent estimate
 #' @return projected or intrinsic mean of the sample
 #' @seealso \code{\link{SO3.median}}
-#' @cite moakher02
+#' @cite moakher02, manton04
 #' @export
 #' @examples
 #' r<-rvmises(20,0.01)
 #' Rs<-genR(r)
 #' mean(Rs)
 
-SO3.mean<-function(Rs, type='projected',startSp=T,si=1,epsilon=10e-5,maxIter=1000){
+SO3.mean<-function(Rs, type='projected',epsilon=1e-5,maxIter=2000){
   
   if(!all(apply(Rs,1,is.SOn)))
     warning("Atleast one of the given observations is not in SO(3).  Use result with caution.")
   
-  if(type=='projected'){
-    
-    R<-projMatrix(matrix(colMeans(Rs),3,3))
+  if(type != 'projected' & type!='intrinsic')
+    stop("Incorrect usage of type option.  Select from 'projected' or 'intrinsic'.")
   
-  }else if(type=='intrinsic'){
-    
-    if(startSp){
-      R<-projMatrix(matrix(colMeans(Rs),3,3))
-    }else{
-      R<-matrix(Rs[si,],3,3)
-    }
+  R<-projMatrix(matrix(colMeans(Rs),3,3))
+  
+  if(type=='intrinsic'){
     
     n<-nrow(Rs)
     d<-1
@@ -904,25 +898,24 @@ SO3.mean<-function(Rs, type='projected',startSp=T,si=1,epsilon=10e-5,maxIter=100
       }
     }
     
-  }else{
-    stop("Incorred usage of type option.  Select from 'projected' or 'intrinsic'.")
   }
   
   return(R)
 }
 
 
-#' Estimate the median matrix in SO(3) given a sample of random rotations in SO(3).
+#' Compute the projected or intrinsic median estimate of the central direction
 #'
-#' The embeded median type estimator we call the projected median and is given by \deqn{\widetilde{\bm{S}}_P=\argmin_{\bm{S}\in SO(3)}\sum_{i=1}^nd_E(\bm{R}_i,\bm{S})}.
-#' The algorithm used is a modified Weiszfeld algorithm and is similar to the algorithm proposed by Hartley to compute the geometric median \eqn{\widetilde{\bm S}_G}.
+#' The median-type estimators are defined as \deqn{\widetilde{\bm{S}}=\argmin_{\bm{S}\in SO(3)}\sum_{i=1}^nd_D(\bm{R}_i,\bm{S})}.  If the choice of distance metrid, \eqn{d_D}, is Riemannian then the estimator is called the intrinsic, and if the distance metric in Euclidean then it projected.
+#' The algorithm used in the intrinsic case is discussed in \cite{hartleyl1} and the projected case was written by the authors.
 #' 
 #' @param Rs the sample \eqn{n \times 9} matrix with rows corresponding to observations
 #' @param type String indicating 'projeted' or 'intrinsic' type mean estimator
 #' @param epsilon the stopping rule for the iterative algorithm 
 #' @param maxIter integer, the maximum number of iterations allowed
-#' @return S the element in SO(3) minimizing  the sum of first order Euclidean distances for sample Rs}
-#' @seealso \code{\link{MantonL2}}, \code{\link{HartleyL1}}, \code{\link{arith.mean}}
+#' @return S the element in SO(3) minimizing  the sum of first order Euclidean or Riemannian distances for sample Rs
+#' @seealso \code{\link{SO3.mean}}
+#' @cite hartley11
 #' @export
 #' @examples
 #' r<-rcayley(50,1)
@@ -935,7 +928,7 @@ SO3.median<-function(Rs, type='projected',epsilon=1e-5,maxIter=2000){
     warning("Atleast one of the given observations is not in SO(3).  Use result with caution.")
   
   if(type != 'projected' & type!='intrinsic')
-    stop("Incorred usage of type option.  Select from 'projected' or 'intrinsic'.")
+    stop("Incorrect usage of type option.  Select from 'projected' or 'intrinsic'.")
   
   S<-arith.mean(Rs)
   d<-1

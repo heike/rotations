@@ -1,6 +1,6 @@
 \name{MantonL2}
 \alias{MantonL2}
-\title{Estimate the geometric mean of a sample of random rotations in \eqn{SO(3)}}
+\title{Estimate the geometric mean of a sample of random rotations in \eqn{SO(3)}.  Should be deleted}
 \usage{
   MantonL2(Rs, epsilon = 1e-05, maxIter = 2000,
     startSp = T, si = 1)
@@ -28,7 +28,7 @@
   or not}
 }
 \description{
-  THIS HAS BEEN REPLACED WITH 'SO3.mean'!!  The intrisic
+  THIS HAS BEEN REPLACED WITH 'mean.SO3'!!  The intrisic
   approach to the arithmetic mean is given by the estimatot
   \deqn{\widehat{\bm{S}}_{G}=\argmin_{\bm{S}\in
   SO(3)}\sum_{i=1}^nd_G^2(\bm{R}_i,\bm{S})}. That is, the

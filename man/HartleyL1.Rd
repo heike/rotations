@@ -1,6 +1,6 @@
 \name{HartleyL1}
 \alias{HartleyL1}
-\title{Compute the geometric median of a sample of random rotations}
+\title{Compute the geometric median of a sample of random rotations.  To be deleted}
 \usage{
   HartleyL1(Rs, epsilon = 1e-05, maxIter = 1000)
 }
@@ -21,7 +21,7 @@
   or not}
 }
 \description{
-  THIS HAS BEEN REPLACED WITH 'SO3.median'!!  This function
+  THIS HAS BEEN REPLACED WITH 'median.SO3'!!  This function
   uses the algorithm developed in \cite{Hartley et al.
   (2011)} to estimate the principle direction of a sample
   of random rotaions with the point in \eqn{SO(3)} that

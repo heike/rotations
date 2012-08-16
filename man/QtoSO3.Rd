@@ -18,10 +18,10 @@ of a rotation matrix}
   rotation matrix
 }
 \examples{
-is.SOn(QtoSO3(c(1/sqrt(2),0,0,1/sqrt(2))))
+is.SO3(QtoSO3(c(1/sqrt(2),0,0,1/sqrt(2))))
 }
 \seealso{
-  \code{\link{is.SOn}} can be used to check the return
+  \code{\link{is.SO3}} can be used to check the return
   vector
 }
 

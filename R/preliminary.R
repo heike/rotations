@@ -21,32 +21,6 @@ angle_axis <- function(U, theta) {
 }
 
 
-#' Projected Arithmetic Mean \eqn{\hat{S}_P}
-#'
-#' THIS HAS BEEN REPLACED WITH 'SO3.mean'!!  This function takes a sample of \eqn{3\times 3} rotations (in the form of a \eqn{n\times 9} matrix where n is the sample size) and returns the projected arithmetic mean denoted \eqn{\widehat{\bm S}_P}.
-#' For a sample of $n$ random rotations \eqn{\bm{R}_i\in SO(3)$, $i=1,2,\dots,n}, this mean-type estimator is defined as \deqn{\[ \widehat{\bm{S}}_P=\argmin_{\bm{S}\in SO(3)}\sum_{i=1}^nd_E^2(\bm{R}_i,\bm{S})=\argmax_{\bm{S}\in SO(3)}\tr(\bm{S}^{\top}\bar{\bm{R}}) \]} where \eqn{\bar{\bm{R}}=\frac{1}{n}\sum_{i=1}^n\bm{R}_i}.
-#' First the mean of each element is calculated then that matrix is projected to SO(3) in accordance with the procedure presented in Moahker's 2003 paper
-#'
-#' @param Rs A sample of n \eqn{3\times 3} random rotations
-#' @return A \eqn{3\times 3} matrix in SO(3) called the Projected arithmetic mean
-#' @seealso \code{\link{MantonL2}}, \code{\link{HartleyL1}}, \code{\link{rmedian}}
-#' @cite moakher02
-#' @export
-#' @examples
-#' r<-rvmises(20,0.01)
-#' Rs<-genR(r)
-#' arith_mean(Rs)
-
-arith_mean<-function(Rs){
-  
-  if(!all(apply(Rs,1,is.SOn)))
-    warning("Atleast one of the given observations is not in SO(3).  Use result with caution.")
-  R<-projMatrix(matrix(colMeans(Rs),3,3))
-  
-  return(R)
-}
-
-
 #' Accept/reject algorithm random sampling from angle distributions
 #' 
 #' @author Heike Hofmann
@@ -165,12 +139,12 @@ dvmises<-function(r, kappa=1, Haar=F){
 #' 
 #' @param eur numeric Euler angle representation of an element in SO(3)
 #' @return numeric \eqn{9\times 1} vector of a matrix in SO(3)
-#' @seealso \code{\link{is.SOn}} can be used to check the output of this function
+#' @seealso \code{\link{is.SO3}} can be used to check the output of this function
 #' @export
 #' @examples
 #' eaExample<-c(pi/2,3*pi/4,0)
 #' SO3Dat<-EAtoSO3(eaExample)
-#' is.SOn(SO3Dat)
+#' is.SO3(SO3Dat)
 
 EAtoSO3<-function(eur){
   
@@ -283,10 +257,10 @@ eyeBall<-function(Rs,center=diag(1,3,3),column=1,show.estimates=FALSE,...){
   
   if(show.estimates){
     
-    GMean<-as.vector(SO3.mean(Rs,type='intrinsic'))
-    GMed<-as.vector(SO3.median(Rs,type='intrinsic'))
-    PMed<-as.vector(SO3.median(Rs))
-    PMean<-as.vector(SO3.mean(Rs))
+    GMean<-as.vector(mean(Rs,type='intrinsic'))
+    GMed<-as.vector(median.SO3(Rs,type='intrinsic'))
+    PMed<-as.vector(median(Rs))
+    PMean<-as.vector(mean(Rs))
     ests<-rbind(PMean,GMean,GMed,PMed)
     
     EstsDot<-data.frame(as.matrix(ests[,cols]) %*% center %*% rot)
@@ -319,7 +293,7 @@ eyeBall<-function(Rs,center=diag(1,3,3),column=1,show.estimates=FALSE,...){
 
 genR<-function(r, S=diag(1,3,3)){
   
-  if(!is.SOn(S)){
+  if(!is.SO3(S)){
     stop("The principal direction must be in SO(3).")
   }
   
@@ -348,134 +322,22 @@ genR<-function(r, S=diag(1,3,3)){
     o[i,]<-as.vector(S%*%(u%*%t(u)+(I-u%*%t(u))*cos(r[i])+ssu*sin(r[i])))
     
   }
+  class(o)<-"SO3"
   return(o)
 }
 
 
-#' \eqn{d_R^p} based estimators of the Central Direction
-#'
-#' THIS NEEDS TO BE REMOVED.  This functions is slow but it computes the element of SO(3) that minimizes the sum of the pth  order Riemannian distances.
-#' It returns the the random roatation Shat.  It calls the function SumDistR which calculates the sum of the pth order Riemannian
-#' distances between the sample Rs and S.  This needs to be trashed, most likely.
-#'
-#' @param Rs The sample of random rotations in the form of an nx9 matrix
-#' @param maxe The stopping rule of the optimization process
-#' @param p The order of the riemannian distance to minimize
-#' @return S3 \item{Shatp}{The estimated random rotation \eqn{\widehat{\bm S}_P}}
-
-GuessLs<-function(Rs,maxe=.001,p){
-  
-  shatp<-matrix(c(as.vector(Rs[1,]),rep(0,9)),2,byrow=T)
-  angle<-c(riedist(matrix(shatp[1,],3,3)),0)
-  sumd<-rep(0,2)
-  diff<-1;count<-0;window<-pi/2
-  
-  while(diff>=maxe){
-    
-    rs<-seq(max(angle[1]-window,-pi),min(angle[1]+window,pi),length=30)
-    dist<-rep(0,length(rs))
-    
-    for(i in 1:length(rs)){
-      temp<-genR(rs[i])
-      dist[i]<-SumDist(Rs,temp,p)$Rieman
-      if(dist[i]==min(dist[1:i])){
-        shatp[2,]<-as.vector(temp)
-      }
-    }
-    sumd[1]<-SumDist(Rs,shatp[1,],p)$Rieman
-    sumd[2]<-SumDist(Rs,shatp[2,],p)$Rieman
-    diff<-abs(diff(sumd))
-    if(which.min(sumd)==2){
-      shatp[1,]<-shatp[2,]
-      angle[1]<-angle[2]
-    }
-    count<-count+1;window<-window*.5
-    if(count>=100){
-      return(matrix(shatp[1,],3,3))
-    }
-  }
-  return(matrix(shatp[1,],3,3))
-}
-
-
-#' Compute the geometric median of a sample of random rotations
-#' 
-#' THIS HAS BEEN REPLACED WITH 'SO3.median'!!  This function uses the algorithm developed in \cite{hartley11} to estimate the principle direction of a sample
-#' of random rotaions with the point in \eqn{SO(3)} that minimizes the sum of first order Riemannian distances, aka 
-#' the geometric median and denoted \eqn{\widetilde{\bm S}_G}.  More explicitly \deqn{\widetilde{\bm S}_G=\widetilde{\bm{S}}_{G}=\argmin_{\bm{S}\in SO(3)}\sum_{i=1}^nd_G(\bm{R}_i,\bm{S})}.
-#' 
-#' @param Rs the sample \eqn{n \times 9} matrix with rows corresponding to observations
-#' @param epsilon the stopping rule for the iterative algorithm 
-#' @param maxIter integer, the maximum number of iterations allowed
-#' @return list
-#'  \item{S}{the element in SO(3) minimizing  the sum of first order Riemannian distances for sample Rs}
-#'  \item{iter}{the number of iterations needed to converge or not}
-#' @seealso \code{\link{MantonL2}}, \code{\link{arith_mean}}, \code{\link{rmedian}}
-#' @cite hartley11
-#' @export
-#' @examples
-#' r<-rvmises(20,0.1)
-#' Rs<-genR(r)
-#' HartleyL1(Rs) 
-
-HartleyL1<-function(Rs,epsilon=1e-5,maxIter=1000){
-  
-  if(!all(apply(Rs,1,is.SOn)))
-    warning("Atleast one of the given observations is not in SO(3).  Use result with caution.")
-  
-  S<-arith_mean(Rs)
-  d<-1
-  iter<-0
-  delta<-matrix(0,3,3)
-
-  while(d>=epsilon){
-    
-    S<-matrixExp(delta)%*%S
-    
-    v<-t(apply(Rs,1,tLogMat,S=S))
-    vn<-apply(v,1,vecNorm,S=diag(0,3,3),type='F')
-    
-    delta<-matrix(colSums(v/vn)/sum(1/vn),3,3)
-    d<-norm(delta,type="F")
-    
-    iter<-iter+1
-    
-    
-    if(iter>=maxIter){
-      warning(paste("A unique solution wasn't found after",iter,"iterations."))
-      return(list(S=S,iter=iter))
-    }
-    
-  }
-  return(list(S=S,iter=iter))
-}
-
-#' A function to determine if a given matrix is in \eqn{SO(n)} or not.
+#' A function to determine if a given matrix is in \eqn{SO(3)} or not.
 #' 
 #' @param x numeric \eqn{n \times n} matrix or vector of length \eqn{n^2}
-#' @return logical T if the matrix is in SO(n) and false otherwise
+#' @return logical T if the matrix is in SO(3) and false otherwise
 #' @export
 #' @examples
-#' is.SOn(diag(1,3,3))
-#' is.SOn(1:9)
-is.SOn<-function(x){
+#' is.SO3(diag(1,3,3))
+#' is.SO3(1:9)
+is.SO3<-function(x){
   
-  #Is the matrix square?
-  if(is.matrix(x)){
-    n<-ncol(x)
-    if(n!=nrow(x)){
-      
-      return(FALSE)
-    }
-  }else{
-    n<-sqrt(length(x))
-    
-    if(n%%1!=0){
-      return(FALSE)
-    }
-    
-    x<-matrix(x,n,n)
-  }
+  x<-matrix(x,3,3)
   
   #Does it have determinant 1?
   if(round(det(x),digits=7)!=1){
@@ -483,70 +345,14 @@ is.SOn<-function(x){
   }
   
   #Is its transpose (approximately) its inverse?
-  if(round(sum(t(x)%*%x-diag(1,n)),digits=10)!=0){
-      return(FALSE)
+  if(round(sum(t(x)%*%x-diag(1,3)),digits=10)!=0){
+    return(FALSE)
   }
   
   return(TRUE)
   
 }
 
-
-#' Estimate the geometric mean of a sample of random rotations in \eqn{SO(3)}
-#' 
-#' THIS HAS BEEN REPLACED WITH 'SO3.mean'!!  The intrisic approach to the arithmetic mean is given by the estimatot \deqn{\widehat{\bm{S}}_{G}=\argmin_{\bm{S}\in SO(3)}\sum_{i=1}^nd_G^2(\bm{R}_i,\bm{S})}.
-#' That is, the matrix \eqn{\widehat{\bm S}_G} minimizes the sum of squared distances in the intrensic sense, or Riemannian distances.  Algorithm was adapted from \cite{manton04}.
-#' 
-#' @param Rs the sample \eqn{n \times 9} matrix with rows corresponding to observations
-#' @param epsilon the stopping rule for the iterative algorithm 
-#' @param maxIter integer, the maximum number of iterations allowed
-#' @param startSp logical 'TRUE' if first guess is \eqn{\widehat{\bm S}_P}, a random sample observation otherwise
-#' @param si which sample point to start at
-#' @return a list
-#'  \item{S}{the element in SO(3) minimizing  the sum of squared Riemannian distances for sample Rs}
-#'  \item{iter}{the number of iterations needed to converge or not}
-#' @seealso \code{\link{arith_mean}}, \code{\link{HartleyL1}}, \code{\link{rmedian}}
-#' @cite manton04
-#' @export
-#' @examples
-#' r<-rcayley(20,1)
-#' Rs<-genR(r)
-#' MantonL2(Rs)
-
-MantonL2<-function(Rs,epsilon=1e-5,maxIter=2000,startSp=T,si=1){
-  
-  if(!all(apply(Rs,1,is.SOn)))
-    warning("Atleast one of the given observations is not in SO(3).  Use result with caution.")
-  
-  if(startSp){
-    S<-arith_mean(Rs)
-  }else{
-    S<-matrix(Rs[si,],3,3)
-  }
-  
-  n<-nrow(Rs)
-  d<-1
-  iter<-0
-  s<-matrix(0,3,3)
-  
-  while(d>=epsilon){
-    
-    S<-S%*%matrixExp(s)
-    
-    s<-matrix(colMeans(t(apply(Rs,1,tLogMat,S=S))),3,3)
-    
-    d<-norm(s,type="F")
-    
-    iter<-iter+1
-    
-    if(iter>=maxIter){
-      warning(paste("A unique solution wasn't found after",iter,"iterations."))
-      return(list(S=S,iter=iter))
-    }
-  }
-  
-  return(list(S=S,iter=iter))
-}
 
 #' This fuction will compute the natural exponential of skew-symmetric matrix.
 #' 
@@ -588,7 +394,7 @@ matrixExp<-function(A){
 
 matrixLog<-function(R){
   
-  if(!is.SOn(R)){
+  if(!is.SO3(R)){
     stop("This the input matrix must be in SO(n).")
   }
   
@@ -602,6 +408,130 @@ matrixLog<-function(R){
     mlog<-c*(R-t(R))
     return(mlog)
   }
+}
+
+#' Compute the projected or intrinsic mean estimate of the central direction
+#'
+#' This function takes a sample of \eqn{3\times 3} rotations (in the form of a \eqn{n\times 9} matrix where n is the sample size) and returns the projected arithmetic mean denoted \eqn{\widehat{\bm S}_P} or
+#' intrinsic mean \eqn{\widehat{\bm S}_G} according to the \code{type} option.
+#' For a sample of \eqn{n} random rotations \eqn{\bm{R}_i\in SO(3)$, $i=1,2,\dots,n}, the mean-type estimator is defined as \deqn{\widehat{\bm{S}}=\argmin_{\bm{S}\in SO(3)}\sum_{i=1}^nd_D^2(\bm{R}_i,\bm{S})} where \eqn{\bar{\bm{R}}=\frac{1}{n}\sum_{i=1}^n\bm{R}_i} and the distance metric \edq{d_D}
+#' is the Riemannian or Euclidean.  For more on the projected mean see \cite{moakher02} and for the intrinsic mean see \cite{manton04}.
+#'
+#' @param Rs A sample of n \eqn{3\times 3} random rotations
+#' @param type String indicating 'projeted' or 'intrinsic' type mean estimator
+#' @param epsilon Stopping rule for the intrinsic method
+#' @param maxIter The maximum number of iterations allowed before returning most recent estimate
+#' @return projected or intrinsic mean of the sample
+#' @seealso \code{\link{median.SO3}}
+#' @cite moakher02, manton04
+#' @export
+#' @examples
+#' r<-rvmises(20,0.01)
+#' Rs<-genR(r)
+#' mean(Rs)
+
+mean.SO3<-function(Rs, type='projected',epsilon=1e-5,maxIter=2000){
+  
+  if(!all(apply(Rs,1,is.SO3)))
+    warning("Atleast one of the given observations is not in SO(3).  Use result with caution.")
+  
+  if(type != 'projected' & type!='intrinsic')
+    stop("Incorrect usage of type option.  Select from 'projected' or 'intrinsic'.")
+  
+  R<-projMatrix(matrix(colMeans(Rs),3,3))
+  
+  if(type=='intrinsic'){
+    
+    n<-nrow(Rs)
+    d<-1
+    iter<-0
+    s<-matrix(0,3,3)
+    
+    while(d>=epsilon){
+      
+      R<-R%*%matrixExp(s)
+      
+      s<-matrix(colMeans(t(apply(Rs,1,tLogMat,S=R))),3,3)
+      
+      d<-norm(s,type="F")
+      
+      iter<-iter+1
+      
+      if(iter>=maxIter){
+        warning(paste("A unique solution wasn't found after",iter,"iterations."))
+        return(R)
+      }
+    }
+    
+  }
+  
+  return(R)
+}
+
+
+#' Compute the projected or intrinsic median estimate of the central direction
+#'
+#' The median-type estimators are defined as \deqn{\widetilde{\bm{S}}=\argmin_{\bm{S}\in SO(3)}\sum_{i=1}^nd_D(\bm{R}_i,\bm{S})}.  If the choice of distance metrid, \eqn{d_D}, is Riemannian then the estimator is called the intrinsic, and if the distance metric in Euclidean then it projected.
+#' The algorithm used in the intrinsic case is discussed in \cite{hartley11} and the projected case was written by the authors.
+#' 
+#' @param Rs the sample \eqn{n \times 9} matrix with rows corresponding to observations
+#' @param type String indicating 'projeted' or 'intrinsic' type mean estimator
+#' @param epsilon the stopping rule for the iterative algorithm 
+#' @param maxIter integer, the maximum number of iterations allowed
+#' @return S the element in SO(3) minimizing  the sum of first order Euclidean or Riemannian distances for sample Rs
+#' @seealso \code{\link{mean.SO3}}
+#' @cite hartley11
+#' @export
+#' @examples
+#' r<-rcayley(50,1)
+#' Rs<-genR(r)
+#' median(Rs)
+
+median.SO3<-function(Rs, type='projected',epsilon=1e-5,maxIter=2000){
+  
+  if(!all(apply(Rs,1,is.SO3)))
+    warning("Atleast one of the given observations is not in SO(3).  Use result with caution.")
+  
+  if(type != 'projected' & type!='intrinsic')
+    stop("Incorrect usage of type option.  Select from 'projected' or 'intrinsic'.")
+  
+  S<-mean(Rs)
+  d<-1
+  iter<-1
+  delta<-matrix(0,3,3)
+  
+  while(d>=epsilon){
+    
+    if(type=='projected'){
+      vn<-apply(Rs,1,vecNorm,type="F",S=S)
+      
+      delta<-matrix(colSums(Rs/vn)/sum(1/vn),3,3)
+      
+      Snew<-projMatrix(delta)
+      
+      d<-norm(Snew-S,type="F")
+      S<-Snew
+      
+    }else if(type=='intrinsic'){
+      
+      S<-matrixExp(delta)%*%S
+      
+      v<-t(apply(Rs,1,tLogMat,S=S))
+      vn<-apply(v,1,vecNorm,S=diag(0,3,3),type='F')
+      
+      delta<-matrix(colSums(v/vn)/sum(1/vn),3,3)
+      d<-norm(delta,type="F")
+      
+    }
+    
+    iter<-iter+1
+    
+    if(iter>=maxIter){
+      warning(paste("Unique solution wasn't found after ", iter, " iterations."))  
+      return(S)
+    }
+  }
+  return(S)
 }
 
 #' The projection of an arbitrary \eqn{3\times 3} matrix into \eqn{SO(3)}
@@ -633,10 +563,10 @@ projMatrix<-function(M){
 #' 
 #' @param q numeric unit vector, i.e. \eqn{q^\top q=1}, representing an element in SO(3)
 #' @return vector representation of a rotation matrix in SO(3)
-#' @seealso \code{\link{is.SOn}} can be used to check the return vector
+#' @seealso \code{\link{is.SO3}} can be used to check the return vector
 #' @export
 #' @examples
-#' is.SOn(QtoSO3(c(1/sqrt(2),0,0,1/sqrt(2))))
+#' is.SO3(QtoSO3(c(1/sqrt(2),0,0,1/sqrt(2))))
 
 QtoSO3<-function(q){
   
@@ -746,55 +676,6 @@ riedist<-function(R,S=diag(1,3,3)){
   return(no/sqrt(2))
 }
 
-#' Compute the minimizer of the first order Euclidean distances.
-#'
-#' THIS HAS BEEN REPLACED WITH 'SO3.median'!! The embeded median type estimator we call the projected median and is given by \deqn{\widetilde{\bm{S}}_P=\argmin_{\bm{S}\in SO(3)}\sum_{i=1}^nd_E(\bm{R}_i,\bm{S})}.
-#' The algorithm used is a modified Weiszfeld algorithm and is similar to the algorithm proposed by Hartley to compute the geometric median \eqn{\widetilde{\bm S}_G}.
-#' 
-#' @param Rs the sample \eqn{n \times 9} matrix with rows corresponding to observations
-#' @param epsilon the stopping rule for the iterative algorithm 
-#' @param maxIter integer, the maximum number of iterations allowed
-#' @return a list
-#'  \item{S}{the element in SO(3) minimizing  the sum of first order Euclidean distances for sample Rs}
-#'  \item{iter}{the number of iterations needed to converge or not}
-#'  @seealso \code{\link{MantonL2}}, \code{\link{HartleyL1}}, \code{\link{arith_mean}}
-#'  @export
-#'  @examples
-#'  r<-rcayley(50,1)
-#'  Rs<-genR(r)
-#'  rmedian(Rs)
-
-rmedian<-function(Rs,epsilon=1e-5,maxIter=2000){
-  
-  if(!all(apply(Rs,1,is.SOn)))
-    warning("Atleast one of the given observations is not in SO(3).  Use result with caution.")
-  
-  S<-arith_mean(Rs)
-  d<-1
-  iter<-1
-  while(d>=epsilon){
-    
-    #use the L_1 algorithm with euclidean dist instead of riemannian, i.e.
-    #"center" the sample points
-    
-    vn<-apply(Rs,1,vecNorm,type="F",S=S)
-    
-    delta<-matrix(colSums(Rs/vn)/sum(1/vn),3,3)
-    
-    Snew<-projMatrix(delta)
-    
-    d<-norm(Snew-S,type="F")
-    S<-Snew
-    
-    iter<-iter+1
-    if(iter>=maxIter){
-      warning(paste("Unique solution wasn't found after ", iter, " iterations."))  
-      return(list(S=S,iter=iter))
-    }
-  }
-  return(list(S=S,iter=iter))
-}
-
 #' Generate a vector of angles(r) from the von Mises Circular distribution
 #'
 #' The circular von Mises-based distribution has the density \deqn{C_\mathrm{M}(r|\kappa)=\frac{1}{2\pi \mathrm{I_0}(\kappa)}e^{\kappa\cos(r)}}.  This function allows the use to 
@@ -845,129 +726,6 @@ rvmises<-function(n,kappa=1){
   return(theta)
 }
 
-#' Compute the projected or intrinsic mean estimate of the central direction
-#'
-#' This function takes a sample of \eqn{3\times 3} rotations (in the form of a \eqn{n\times 9} matrix where n is the sample size) and returns the projected arithmetic mean denoted \eqn{\widehat{\bm S}_P} or
-#' intrinsic mean \eqn{\widehat{\bm S}_G} according to the \code{type} option.
-#' For a sample of \eqn{n} random rotations \eqn{\bm{R}_i\in SO(3)$, $i=1,2,\dots,n}, the mean-type estimator is defined as \deqn{\widehat{\bm{S}}=\argmin_{\bm{S}\in SO(3)}\sum_{i=1}^nd_D^2(\bm{R}_i,\bm{S})} where \eqn{\bar{\bm{R}}=\frac{1}{n}\sum_{i=1}^n\bm{R}_i} and the distance metric \edq{d_D}
-#' is the Riemannian or Euclidean.  For more on the projected mean see \cite{moakher02} and for the intrinsic mean see \cite{manton04}.
-#'
-#' @param Rs A sample of n \eqn{3\times 3} random rotations
-#' @param type String indicating 'projeted' or 'intrinsic' type mean estimator
-#' @param epsilon Stopping rule for the intrinsic method
-#' @param maxIter The maximum number of iterations allowed before returning most recent estimate
-#' @return projected or intrinsic mean of the sample
-#' @seealso \code{\link{SO3.median}}
-#' @cite moakher02, manton04
-#' @export
-#' @examples
-#' r<-rvmises(20,0.01)
-#' Rs<-genR(r)
-#' mean(Rs)
-
-SO3.mean<-function(Rs, type='projected',epsilon=1e-5,maxIter=2000){
-  
-  if(!all(apply(Rs,1,is.SOn)))
-    warning("Atleast one of the given observations is not in SO(3).  Use result with caution.")
-  
-  if(type != 'projected' & type!='intrinsic')
-    stop("Incorrect usage of type option.  Select from 'projected' or 'intrinsic'.")
-  
-  R<-projMatrix(matrix(colMeans(Rs),3,3))
-  
-  if(type=='intrinsic'){
-    
-    n<-nrow(Rs)
-    d<-1
-    iter<-0
-    s<-matrix(0,3,3)
-    
-    while(d>=epsilon){
-      
-      R<-R%*%matrixExp(s)
-      
-      s<-matrix(colMeans(t(apply(Rs,1,tLogMat,S=R))),3,3)
-      
-      d<-norm(s,type="F")
-      
-      iter<-iter+1
-      
-      if(iter>=maxIter){
-        warning(paste("A unique solution wasn't found after",iter,"iterations."))
-        return(R)
-      }
-    }
-    
-  }
-  
-  return(R)
-}
-
-
-#' Compute the projected or intrinsic median estimate of the central direction
-#'
-#' The median-type estimators are defined as \deqn{\widetilde{\bm{S}}=\argmin_{\bm{S}\in SO(3)}\sum_{i=1}^nd_D(\bm{R}_i,\bm{S})}.  If the choice of distance metrid, \eqn{d_D}, is Riemannian then the estimator is called the intrinsic, and if the distance metric in Euclidean then it projected.
-#' The algorithm used in the intrinsic case is discussed in \cite{hartley11} and the projected case was written by the authors.
-#' 
-#' @param Rs the sample \eqn{n \times 9} matrix with rows corresponding to observations
-#' @param type String indicating 'projeted' or 'intrinsic' type mean estimator
-#' @param epsilon the stopping rule for the iterative algorithm 
-#' @param maxIter integer, the maximum number of iterations allowed
-#' @return S the element in SO(3) minimizing  the sum of first order Euclidean or Riemannian distances for sample Rs
-#' @seealso \code{\link{SO3.mean}}
-#' @cite hartley11
-#' @export
-#' @examples
-#' r<-rcayley(50,1)
-#' Rs<-genR(r)
-#' median(Rs)
-
-SO3.median<-function(Rs, type='projected',epsilon=1e-5,maxIter=2000){
-  
-  if(!all(apply(Rs,1,is.SOn)))
-    warning("Atleast one of the given observations is not in SO(3).  Use result with caution.")
-  
-  if(type != 'projected' & type!='intrinsic')
-    stop("Incorrect usage of type option.  Select from 'projected' or 'intrinsic'.")
-  
-  S<-SO3.mean(Rs)
-  d<-1
-  iter<-1
-  delta<-matrix(0,3,3)
-  
-  while(d>=epsilon){
-    
-    if(type=='projected'){
-      vn<-apply(Rs,1,vecNorm,type="F",S=S)
-    
-      delta<-matrix(colSums(Rs/vn)/sum(1/vn),3,3)
-    
-      Snew<-projMatrix(delta)
-    
-      d<-norm(Snew-S,type="F")
-      S<-Snew
-      
-    }else if(type=='intrinsic'){
-      
-      S<-matrixExp(delta)%*%S
-      
-      v<-t(apply(Rs,1,tLogMat,S=S))
-      vn<-apply(v,1,vecNorm,S=diag(0,3,3),type='F')
-      
-      delta<-matrix(colSums(v/vn)/sum(1/vn),3,3)
-      d<-norm(delta,type="F")
-      
-    }
-    
-    iter<-iter+1
-    
-    if(iter>=maxIter){
-      warning(paste("Unique solution wasn't found after ", iter, " iterations."))  
-      return(S)
-    }
-  }
-  return(S)
-}
 
 #' Compute the sum of the \eqn{p^{\text{th}}} order distances between Rs and S
 #' 
@@ -1015,6 +773,308 @@ tLogMat<-function(x,S){
   return(as.vector(tra))
 }
 
+#' Turn a vector into a matrix and compute the the norm between x and S
+#' 
+#' @param x numeric vector
+#' @param S numeric vector or matrix
+#' @param ... additional arguments passed to \code{\link{norm}} function
+#' @return the norm of x-S
+
+vecNorm<-function(x,S,...){
+  n<-sqrt(length(x))
+  cenX<-x-as.vector(S)
+  return(norm(matrix(cenX,n,n),...))
+}
+
+
+
+qu <- function(Rs) {
+  # represent rotation as quaternion
+  theta <- eangle(Rs)
+  u <- eaxis(Rs)
+  x <- c(cos(theta/2), sin(theta/2)*u)
+  names(x) <- c("s","i","j","k")
+  x
+}
+
+euler <- function(rot) {
+  # rotations to Euler angles
+  if (is.matrix(rot)) rot <- as.vector(rot)
+  alpha <- acos(-rot[8]/sqrt(1-rot[9]^2))
+  beta <- acos(rot[9])
+  gamma <- acos(rot[6]/sqrt(1-rot[9]^2))
+  return(cbind(alpha, beta, gamma))
+}
+
+
+#' Projected Arithmetic Mean \eqn{\hat{S}_P}
+#'
+#' THIS HAS BEEN REPLACED WITH 'mean.SO3'!!  This function takes a sample of \eqn{3\times 3} rotations (in the form of a \eqn{n\times 9} matrix where n is the sample size) and returns the projected arithmetic mean denoted \eqn{\widehat{\bm S}_P}.
+#' For a sample of $n$ random rotations \eqn{\bm{R}_i\in SO(3)$, $i=1,2,\dots,n}, this mean-type estimator is defined as \deqn{\[ \widehat{\bm{S}}_P=\argmin_{\bm{S}\in SO(3)}\sum_{i=1}^nd_E^2(\bm{R}_i,\bm{S})=\argmax_{\bm{S}\in SO(3)}\tr(\bm{S}^{\top}\bar{\bm{R}}) \]} where \eqn{\bar{\bm{R}}=\frac{1}{n}\sum_{i=1}^n\bm{R}_i}.
+#' First the mean of each element is calculated then that matrix is projected to SO(3) in accordance with the procedure presented in Moahker's 2003 paper
+#'
+#' @param Rs A sample of n \eqn{3\times 3} random rotations
+#' @return A \eqn{3\times 3} matrix in SO(3) called the Projected arithmetic mean
+#' @seealso \code{\link{MantonL2}}, \code{\link{HartleyL1}}, \code{\link{rmedian}}
+#' @cite moakher02
+#' @export
+#' @examples
+#' r<-rvmises(20,0.01)
+#' Rs<-genR(r)
+#' arith_mean(Rs)
+
+arith_mean<-function(Rs){
+  
+  if(!all(apply(Rs,1,is.SO3)))
+    warning("Atleast one of the given observations is not in SO(3).  Use result with caution.")
+  R<-projMatrix(matrix(colMeans(Rs),3,3))
+  
+  return(R)
+}
+
+#' A function to determine if a given matrix is in \eqn{SO(n)} or not.  Should be deleted
+#' 
+#' @param x numeric \eqn{n \times n} matrix or vector of length \eqn{n^2}
+#' @return logical T if the matrix is in SO(n) and false otherwise
+#' @export
+#' @examples
+#' is.SOn(diag(1,3,3))
+#' is.SOn(1:9)
+is.SOn<-function(x){
+  
+  #Is the matrix square?
+  if(is.matrix(x)){
+    n<-ncol(x)
+    if(n!=nrow(x)){
+      
+      return(FALSE)
+    }
+  }else{
+    n<-sqrt(length(x))
+    
+    if(n%%1!=0){
+      return(FALSE)
+    }
+    
+    x<-matrix(x,n,n)
+  }
+  
+  #Does it have determinant 1?
+  if(round(det(x),digits=7)!=1){
+    return(FALSE)
+  }
+  
+  #Is its transpose (approximately) its inverse?
+  if(round(sum(t(x)%*%x-diag(1,n)),digits=10)!=0){
+    return(FALSE)
+  }
+  
+  return(TRUE)
+  
+}
+
+#' \eqn{d_R^p} based estimators of the Central Direction
+#'
+#' THIS NEEDS TO BE REMOVED.  This functions is slow but it computes the element of SO(3) that minimizes the sum of the pth  order Riemannian distances.
+#' It returns the the random roatation Shat.  It calls the function SumDistR which calculates the sum of the pth order Riemannian
+#' distances between the sample Rs and S.  This needs to be trashed, most likely.
+#'
+#' @param Rs The sample of random rotations in the form of an nx9 matrix
+#' @param maxe The stopping rule of the optimization process
+#' @param p The order of the riemannian distance to minimize
+#' @return S3 \item{Shatp}{The estimated random rotation \eqn{\widehat{\bm S}_P}}
+
+GuessLs<-function(Rs,maxe=.001,p){
+  
+  shatp<-matrix(c(as.vector(Rs[1,]),rep(0,9)),2,byrow=T)
+  angle<-c(riedist(matrix(shatp[1,],3,3)),0)
+  sumd<-rep(0,2)
+  diff<-1;count<-0;window<-pi/2
+  
+  while(diff>=maxe){
+    
+    rs<-seq(max(angle[1]-window,-pi),min(angle[1]+window,pi),length=30)
+    dist<-rep(0,length(rs))
+    
+    for(i in 1:length(rs)){
+      temp<-genR(rs[i])
+      dist[i]<-SumDist(Rs,temp,p)$Rieman
+      if(dist[i]==min(dist[1:i])){
+        shatp[2,]<-as.vector(temp)
+      }
+    }
+    sumd[1]<-SumDist(Rs,shatp[1,],p)$Rieman
+    sumd[2]<-SumDist(Rs,shatp[2,],p)$Rieman
+    diff<-abs(diff(sumd))
+    if(which.min(sumd)==2){
+      shatp[1,]<-shatp[2,]
+      angle[1]<-angle[2]
+    }
+    count<-count+1;window<-window*.5
+    if(count>=100){
+      return(matrix(shatp[1,],3,3))
+    }
+  }
+  return(matrix(shatp[1,],3,3))
+}
+
+#' Compute the geometric median of a sample of random rotations.  To be deleted
+#' 
+#' THIS HAS BEEN REPLACED WITH 'median.SO3'!!  This function uses the algorithm developed in \cite{hartley11} to estimate the principle direction of a sample
+#' of random rotaions with the point in \eqn{SO(3)} that minimizes the sum of first order Riemannian distances, aka 
+#' the geometric median and denoted \eqn{\widetilde{\bm S}_G}.  More explicitly \deqn{\widetilde{\bm S}_G=\widetilde{\bm{S}}_{G}=\argmin_{\bm{S}\in SO(3)}\sum_{i=1}^nd_G(\bm{R}_i,\bm{S})}.
+#' 
+#' @param Rs the sample \eqn{n \times 9} matrix with rows corresponding to observations
+#' @param epsilon the stopping rule for the iterative algorithm 
+#' @param maxIter integer, the maximum number of iterations allowed
+#' @return list
+#'  \item{S}{the element in SO(3) minimizing  the sum of first order Riemannian distances for sample Rs}
+#'  \item{iter}{the number of iterations needed to converge or not}
+#' @seealso \code{\link{MantonL2}}, \code{\link{arith_mean}}, \code{\link{rmedian}}
+#' @cite hartley11
+#' @export
+#' @examples
+#' r<-rvmises(20,0.1)
+#' Rs<-genR(r)
+#' HartleyL1(Rs) 
+
+HartleyL1<-function(Rs,epsilon=1e-5,maxIter=1000){
+  
+  if(!all(apply(Rs,1,is.SO3)))
+    warning("Atleast one of the given observations is not in SO(3).  Use result with caution.")
+  
+  S<-arith_mean(Rs)
+  d<-1
+  iter<-0
+  delta<-matrix(0,3,3)
+  
+  while(d>=epsilon){
+    
+    S<-matrixExp(delta)%*%S
+    
+    v<-t(apply(Rs,1,tLogMat,S=S))
+    vn<-apply(v,1,vecNorm,S=diag(0,3,3),type='F')
+    
+    delta<-matrix(colSums(v/vn)/sum(1/vn),3,3)
+    d<-norm(delta,type="F")
+    
+    iter<-iter+1
+    
+    
+    if(iter>=maxIter){
+      warning(paste("A unique solution wasn't found after",iter,"iterations."))
+      return(list(S=S,iter=iter))
+    }
+    
+  }
+  return(list(S=S,iter=iter))
+}
+
+#' Estimate the geometric mean of a sample of random rotations in \eqn{SO(3)}.  Should be deleted
+#' 
+#' THIS HAS BEEN REPLACED WITH 'mean.SO3'!!  The intrisic approach to the arithmetic mean is given by the estimatot \deqn{\widehat{\bm{S}}_{G}=\argmin_{\bm{S}\in SO(3)}\sum_{i=1}^nd_G^2(\bm{R}_i,\bm{S})}.
+#' That is, the matrix \eqn{\widehat{\bm S}_G} minimizes the sum of squared distances in the intrensic sense, or Riemannian distances.  Algorithm was adapted from \cite{manton04}.
+#' 
+#' @param Rs the sample \eqn{n \times 9} matrix with rows corresponding to observations
+#' @param epsilon the stopping rule for the iterative algorithm 
+#' @param maxIter integer, the maximum number of iterations allowed
+#' @param startSp logical 'TRUE' if first guess is \eqn{\widehat{\bm S}_P}, a random sample observation otherwise
+#' @param si which sample point to start at
+#' @return a list
+#'  \item{S}{the element in SO(3) minimizing  the sum of squared Riemannian distances for sample Rs}
+#'  \item{iter}{the number of iterations needed to converge or not}
+#' @seealso \code{\link{arith_mean}}, \code{\link{HartleyL1}}, \code{\link{rmedian}}
+#' @cite manton04
+#' @export
+#' @examples
+#' r<-rcayley(20,1)
+#' Rs<-genR(r)
+#' MantonL2(Rs)
+
+MantonL2<-function(Rs,epsilon=1e-5,maxIter=2000,startSp=T,si=1){
+  
+  if(!all(apply(Rs,1,is.SO3)))
+    warning("Atleast one of the given observations is not in SO(3).  Use result with caution.")
+  
+  if(startSp){
+    S<-arith_mean(Rs)
+  }else{
+    S<-matrix(Rs[si,],3,3)
+  }
+  
+  n<-nrow(Rs)
+  d<-1
+  iter<-0
+  s<-matrix(0,3,3)
+  
+  while(d>=epsilon){
+    
+    S<-S%*%matrixExp(s)
+    
+    s<-matrix(colMeans(t(apply(Rs,1,tLogMat,S=S))),3,3)
+    
+    d<-norm(s,type="F")
+    
+    iter<-iter+1
+    
+    if(iter>=maxIter){
+      warning(paste("A unique solution wasn't found after",iter,"iterations."))
+      return(list(S=S,iter=iter))
+    }
+  }
+  
+  return(list(S=S,iter=iter))
+}
+
+#' Compute the minimizer of the first order Euclidean distances.  Should be deleted
+#'
+#' THIS HAS BEEN REPLACED WITH 'median.SO3'!! The embeded median type estimator we call the projected median and is given by \deqn{\widetilde{\bm{S}}_P=\argmin_{\bm{S}\in SO(3)}\sum_{i=1}^nd_E(\bm{R}_i,\bm{S})}.
+#' The algorithm used is a modified Weiszfeld algorithm and is similar to the algorithm proposed by Hartley to compute the geometric median \eqn{\widetilde{\bm S}_G}.
+#' 
+#' @param Rs the sample \eqn{n \times 9} matrix with rows corresponding to observations
+#' @param epsilon the stopping rule for the iterative algorithm 
+#' @param maxIter integer, the maximum number of iterations allowed
+#' @return a list
+#'  \item{S}{the element in SO(3) minimizing  the sum of first order Euclidean distances for sample Rs}
+#'  \item{iter}{the number of iterations needed to converge or not}
+#'  @seealso \code{\link{MantonL2}}, \code{\link{HartleyL1}}, \code{\link{arith_mean}}
+#'  @export
+#'  @examples
+#'  r<-rcayley(50,1)
+#'  Rs<-genR(r)
+#'  rmedian(Rs)
+
+rmedian<-function(Rs,epsilon=1e-5,maxIter=2000){
+  
+  if(!all(apply(Rs,1,is.SO3)))
+    warning("Atleast one of the given observations is not in SO(3).  Use result with caution.")
+  
+  S<-arith_mean(Rs)
+  d<-1
+  iter<-1
+  while(d>=epsilon){
+    
+    #use the L_1 algorithm with euclidean dist instead of riemannian, i.e.
+    #"center" the sample points
+    
+    vn<-apply(Rs,1,vecNorm,type="F",S=S)
+    
+    delta<-matrix(colSums(Rs/vn)/sum(1/vn),3,3)
+    
+    Snew<-projMatrix(delta)
+    
+    d<-norm(Snew-S,type="F")
+    S<-Snew
+    
+    iter<-iter+1
+    if(iter>=maxIter){
+      warning(paste("Unique solution wasn't found after ", iter, " iterations."))  
+      return(list(S=S,iter=iter))
+    }
+  }
+  return(list(S=S,iter=iter))
+}
+
 #' Function to Trim the Sample
 #'
 #' This function will take a sample of size n random rotations, find the observations beyond the alpha/2 percentile and delete them from the sample.
@@ -1056,38 +1116,5 @@ trim<-function(Rs,alpha){
   }
   
   #Return the trimmed sample
-  return(tos)	
-}
-
-#' Turn a vector into a matrix and compute the the norm between x and S
-#' 
-#' @param x numeric vector
-#' @param S numeric vector or matrix
-#' @param ... additional arguments passed to \code{\link{norm}} function
-#' @return the norm of x-S
-
-vecNorm<-function(x,S,...){
-  n<-sqrt(length(x))
-  cenX<-x-as.vector(S)
-  return(norm(matrix(cenX,n,n),...))
-}
-
-
-
-qu <- function(Rs) {
-  # represent rotation as quaternion
-  theta <- eangle(Rs)
-  u <- eaxis(Rs)
-  x <- c(cos(theta/2), sin(theta/2)*u)
-  names(x) <- c("s","i","j","k")
-  x
-}
-
-euler <- function(rot) {
-  # rotations to Euler angles
-  if (is.matrix(rot)) rot <- as.vector(rot)
-  alpha <- acos(-rot[8]/sqrt(1-rot[9]^2))
-  beta <- acos(rot[9])
-  gamma <- acos(rot[6]/sqrt(1-rot[9]^2))
-  return(cbind(alpha, beta, gamma))
+  return(tos)  
 }

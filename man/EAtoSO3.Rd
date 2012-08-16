@@ -18,10 +18,10 @@
 \examples{
 eaExample<-c(pi/2,3*pi/4,0)
 SO3Dat<-EAtoSO3(eaExample)
-is.SOn(SO3Dat)
+is.SO3(SO3Dat)
 }
 \seealso{
-  \code{\link{is.SOn}} can be used to check the output of
+  \code{\link{is.SO3}} can be used to check the output of
   this function
 }
 

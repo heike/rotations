@@ -12,7 +12,7 @@
   arithmetic mean
 }
 \description{
-  THIS HAS BEEN REPLACED WITH 'SO3.mean'!!  This function
+  THIS HAS BEEN REPLACED WITH 'mean.SO3'!!  This function
   takes a sample of \eqn{3\times 3} rotations (in the form
   of a \eqn{n\times 9} matrix where n is the sample size)
   and returns the projected arithmetic mean denoted

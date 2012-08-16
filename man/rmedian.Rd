@@ -1,6 +1,6 @@
 \name{rmedian}
 \alias{rmedian}
-\title{Compute the minimizer of the first order Euclidean distances.}
+\title{Compute the minimizer of the first order Euclidean distances.  Should be deleted}
 \usage{
   rmedian(Rs, epsilon = 1e-05, maxIter = 2000)
 }
@@ -21,7 +21,7 @@
   or not}
 }
 \description{
-  THIS HAS BEEN REPLACED WITH 'SO3.median'!! The embeded
+  THIS HAS BEEN REPLACED WITH 'median.SO3'!! The embeded
   median type estimator we call the projected median and is
   given by \deqn{\widetilde{\bm{S}}_P=\argmin_{\bm{S}\in
   SO(3)}\sum_{i=1}^nd_E(\bm{R}_i,\bm{S})}. The algorithm

@@ -20,6 +20,6 @@ M<-matrix(rnorm(9),3,3)
 projMatrix(M)
 }
 \seealso{
-  \code{\link{arith.mean}}, \code{\link{rmedian}}
+  \code{\link{arith_mean}}, \code{\link{rmedian}}
 }
 

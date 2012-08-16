@@ -21,9 +21,9 @@
   or not}
 }
 \description{
-  The embeded median type estimator we call the projected
-  median and is given by
-  \deqn{\widetilde{\bm{S}}_P=\argmin_{\bm{S}\in
+  THIS HAS BEEN REPLACED WITH 'SO3.median'!! The embeded
+  median type estimator we call the projected median and is
+  given by \deqn{\widetilde{\bm{S}}_P=\argmin_{\bm{S}\in
   SO(3)}\sum_{i=1}^nd_E(\bm{R}_i,\bm{S})}. The algorithm
   used is a modified Weiszfeld algorithm and is similar to
   the algorithm proposed by Hartley to compute the
@@ -36,6 +36,6 @@ r<-rcayley(50,1)
 }
 \seealso{
   \code{\link{MantonL2}}, \code{\link{HartleyL1}},
-  \code{\link{arith.mean}}
+  \code{\link{arith_mean}}
 }
 

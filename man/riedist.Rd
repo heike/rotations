@@ -25,7 +25,7 @@
 \examples{
 r<-rvmises(20,0.01)
 Rs<-genR(r)
-Sp<-arith.mean(Rs)
+Sp<-arith_mean(Rs)
 riedist(Sp,diag(1,3,3))
 }
 

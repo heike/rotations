@@ -19,11 +19,12 @@
   \eqn{\widehat{\bm S}_P}}
 }
 \description{
-  This functions is slow but it computes the element of
-  SO(3) that minimizes the sum of the pth order Riemannian
-  distances. It returns the the random roatation Shat.  It
-  calls the function SumDistR which calculates the sum of
-  the pth order Riemannian distances between the sample Rs
-  and S.  This needs to be trashed, most likely.
+  THIS NEEDS TO BE REMOVED.  This functions is slow but it
+  computes the element of SO(3) that minimizes the sum of
+  the pth order Riemannian distances. It returns the the
+  random roatation Shat.  It calls the function SumDistR
+  which calculates the sum of the pth order Riemannian
+  distances between the sample Rs and S.  This needs to be
+  trashed, most likely.
 }
 

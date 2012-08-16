@@ -1,6 +1,6 @@
 \name{angle_axis}
 \alias{angle_axis}
-\title{Method for creating rotations using the angle axis representation}
+\title{Method for creating a rotation using the angle axis representation}
 \usage{
   angle_axis(U, theta)
 }

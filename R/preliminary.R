@@ -28,16 +28,16 @@ angle_axis <- function(U, theta) {
 #' First the mean of each element is calculated then that matrix is projected to SO(3) in accordance with the procedure presented in Moahker's 2003 paper
 #'
 #' @param Rs A sample of n \eqn{3\times 3} random rotations
-#' @return S3 \code{arith.mean} object; A \eqn{3\times 3} matrix in SO(3) called the Projected arithmetic mean
+#' @return A \eqn{3\times 3} matrix in SO(3) called the Projected arithmetic mean
 #' @seealso \code{\link{MantonL2}}, \code{\link{HartleyL1}}, \code{\link{rmedian}}
 #' @cite moakher02
 #' @export
 #' @examples
 #' r<-rvmises(20,0.01)
 #' Rs<-genR(r)
-#' arith.mean(Rs)
+#' arith_mean(Rs)
 
-arith.mean<-function(Rs){
+arith_mean<-function(Rs){
   
   if(!all(apply(Rs,1,is.SOn)))
     warning("Atleast one of the given observations is not in SO(3).  Use result with caution.")
@@ -221,7 +221,7 @@ eskew <- function(U) {
 #' @examples
 #' r<-rvmises(20,1.0)
 #' Rs<-genR(r)
-#' eyeBall(Rs,center=arith.mean(Rs),show.estimates=TRUE,shape=4)
+#' eyeBall(Rs,center=arith_mean(Rs),show.estimates=TRUE,shape=4)
 
 eyeBall<-function(Rs,center=diag(1,3,3),column=1,show.estimates=FALSE,...){
   
@@ -283,10 +283,10 @@ eyeBall<-function(Rs,center=diag(1,3,3),column=1,show.estimates=FALSE,...){
   
   if(show.estimates){
     
-    GMean<-as.vector(MantonL2(Rs)$S)
-    GMed<-as.vector(HartleyL1(Rs)$S)
-    PMed<-as.vector(rmedian(Rs)$S)
-    PMean<-as.vector(arith.mean(Rs))
+    GMean<-as.vector(SO3.mean(Rs,type='intrinsic'))
+    GMed<-as.vector(SO3.median(Rs,type='intrinsic'))
+    PMed<-as.vector(SO3.median(Rs))
+    PMean<-as.vector(SO3.mean(Rs))
     ests<-rbind(PMean,GMean,GMed,PMed)
     
     EstsDot<-data.frame(as.matrix(ests[,cols]) %*% center %*% rot)
@@ -410,7 +410,7 @@ GuessLs<-function(Rs,maxe=.001,p){
 #' @return list
 #'  \item{S}{the element in SO(3) minimizing  the sum of first order Riemannian distances for sample Rs}
 #'  \item{iter}{the number of iterations needed to converge or not}
-#' @seealso \code{\link{MantonL2}}, \code{\link{arith.mean}}, \code{\link{rmedian}}
+#' @seealso \code{\link{MantonL2}}, \code{\link{arith_mean}}, \code{\link{rmedian}}
 #' @cite hartley11
 #' @export
 #' @examples
@@ -423,7 +423,7 @@ HartleyL1<-function(Rs,epsilon=1e-5,maxIter=1000){
   if(!all(apply(Rs,1,is.SOn)))
     warning("Atleast one of the given observations is not in SO(3).  Use result with caution.")
   
-  S<-arith.mean(Rs)
+  S<-arith_mean(Rs)
   d<-1
   iter<-0
   delta<-matrix(0,3,3)
@@ -505,7 +505,7 @@ is.SOn<-function(x){
 #' @return a list
 #'  \item{S}{the element in SO(3) minimizing  the sum of squared Riemannian distances for sample Rs}
 #'  \item{iter}{the number of iterations needed to converge or not}
-#' @seealso \code{\link{arith.mean}}, \code{\link{HartleyL1}}, \code{\link{rmedian}}
+#' @seealso \code{\link{arith_mean}}, \code{\link{HartleyL1}}, \code{\link{rmedian}}
 #' @cite manton04
 #' @export
 #' @examples
@@ -519,7 +519,7 @@ MantonL2<-function(Rs,epsilon=1e-5,maxIter=2000,startSp=T,si=1){
     warning("Atleast one of the given observations is not in SO(3).  Use result with caution.")
   
   if(startSp){
-    S<-arith.mean(Rs)
+    S<-arith_mean(Rs)
   }else{
     S<-matrix(Rs[si,],3,3)
   }
@@ -609,7 +609,7 @@ matrixLog<-function(R){
 #' This function uses the process given in Moakher 2002  to project an arbitrary \eqn{3\times 3} matrix into \eqn{SO(3)}.
 #' @param M \eqn{3\times 3} matrix to project
 #' @return projection of \eqn{\bm M} into \eqn{SO(3)}
-#' @seealso \code{\link{arith.mean}}, \code{\link{rmedian}}
+#' @seealso \code{\link{arith_mean}}, \code{\link{rmedian}}
 #' @export
 #' @examples
 #' M<-matrix(rnorm(9),3,3)
@@ -736,7 +736,7 @@ rfisher<-function(n,kappa=1){
 #' @examples
 #' r<-rvmises(20,0.01)
 #' Rs<-genR(r)
-#' Sp<-arith.mean(Rs)
+#' Sp<-arith_mean(Rs)
 #' riedist(Sp,diag(1,3,3))
 
 riedist<-function(R,S=diag(1,3,3)){
@@ -757,7 +757,7 @@ riedist<-function(R,S=diag(1,3,3)){
 #' @return a list
 #'  \item{S}{the element in SO(3) minimizing  the sum of first order Euclidean distances for sample Rs}
 #'  \item{iter}{the number of iterations needed to converge or not}
-#'  @seealso \code{\link{MantonL2}}, \code{\link{HartleyL1}}, \code{\link{arith.mean}}
+#'  @seealso \code{\link{MantonL2}}, \code{\link{HartleyL1}}, \code{\link{arith_mean}}
 #'  @export
 #'  @examples
 #'  r<-rcayley(50,1)
@@ -769,7 +769,7 @@ rmedian<-function(Rs,epsilon=1e-5,maxIter=2000){
   if(!all(apply(Rs,1,is.SOn)))
     warning("Atleast one of the given observations is not in SO(3).  Use result with caution.")
   
-  S<-arith.mean(Rs)
+  S<-arith_mean(Rs)
   d<-1
   iter<-1
   while(d>=epsilon){
@@ -907,7 +907,7 @@ SO3.mean<-function(Rs, type='projected',epsilon=1e-5,maxIter=2000){
 #' Compute the projected or intrinsic median estimate of the central direction
 #'
 #' The median-type estimators are defined as \deqn{\widetilde{\bm{S}}=\argmin_{\bm{S}\in SO(3)}\sum_{i=1}^nd_D(\bm{R}_i,\bm{S})}.  If the choice of distance metrid, \eqn{d_D}, is Riemannian then the estimator is called the intrinsic, and if the distance metric in Euclidean then it projected.
-#' The algorithm used in the intrinsic case is discussed in \cite{hartleyl1} and the projected case was written by the authors.
+#' The algorithm used in the intrinsic case is discussed in \cite{hartley11} and the projected case was written by the authors.
 #' 
 #' @param Rs the sample \eqn{n \times 9} matrix with rows corresponding to observations
 #' @param type String indicating 'projeted' or 'intrinsic' type mean estimator
@@ -930,7 +930,7 @@ SO3.median<-function(Rs, type='projected',epsilon=1e-5,maxIter=2000){
   if(type != 'projected' & type!='intrinsic')
     stop("Incorrect usage of type option.  Select from 'projected' or 'intrinsic'.")
   
-  S<-arith.mean(Rs)
+  S<-SO3.mean(Rs)
   d<-1
   iter<-1
   delta<-matrix(0,3,3)
@@ -981,7 +981,7 @@ SO3.median<-function(Rs, type='projected',epsilon=1e-5,maxIter=2000){
 #' @examples
 #' r<-rvmises(20,0.01)
 #' Rs<-genR(r)
-#' Sp<-arith.mean(Rs)
+#' Sp<-arith_mean(Rs)
 #' SumDist(Rs,S=Sp,2)
 
 SumDist<-function(Rs,S=diag(1,3,3),p){

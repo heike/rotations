@@ -1,15 +1,15 @@
-\name{arith.mean}
-\alias{arith.mean}
+\name{arith_mean}
+\alias{arith_mean}
 \title{Projected Arithmetic Mean \eqn{\hat{S}_P}}
 \usage{
-  arith.mean(Rs)
+  arith_mean(Rs)
 }
 \arguments{
   \item{Rs}{A sample of n \eqn{3\times 3} random rotations}
 }
 \value{
-  S3 \code{arith.mean} object; A \eqn{3\times 3} matrix in
-  SO(3) called the Projected arithmetic mean
+  A \eqn{3\times 3} matrix in SO(3) called the Projected
+  arithmetic mean
 }
 \description{
   THIS HAS BEEN REPLACED WITH 'SO3.mean'!!  This function
@@ -30,7 +30,7 @@
 \examples{
 r<-rvmises(20,0.01)
 Rs<-genR(r)
-arith.mean(Rs)
+arith_mean(Rs)
 }
 \references{
   Moakher M (2002). "Means and averaging in the group of

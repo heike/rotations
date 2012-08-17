@@ -31,7 +31,7 @@
   \deqn{\widehat{\bm{S}}=\argmin_{\bm{S}\in
   SO(3)}\sum_{i=1}^nd_D^2(\bm{R}_i,\bm{S})} where
   \eqn{\bar{\bm{R}}=\frac{1}{n}\sum_{i=1}^n\bm{R}_i} and
-  the distance metric \edq{d_D} is the Riemannian or
+  the distance metric \eqn{d_D} is the Riemannian or
   Euclidean.  For more on the projected mean see
   \cite{Moakher (2002)} and for the intrinsic mean see
   \cite{Manton (2004)}.

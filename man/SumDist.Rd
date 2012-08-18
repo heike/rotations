@@ -26,7 +26,7 @@
 \examples{
 r<-rvmises(20,0.01)
 Rs<-genR(r)
-Sp<-arith_mean(Rs)
+Sp<-mean(Rs)
 SumDist(Rs,S=Sp,2)
 }
 

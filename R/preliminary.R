@@ -93,6 +93,7 @@ dcayley <-function(r,kappa=1,Haar=F){
 #' @param kappa The concentration paramter, taken to be zero
 #' @param Haar logical, if density is evaluated with respect to Haar measure or Lebesgue
 #' @return value of Fisher matrix distribution with concentration \eqn{\kappa} evaluated at r
+#' @export
 
 dfisher <-function(r,kappa=1,Haar=F){
   den<-exp(2*kappa*cos(r))*(1-cos(r))/(2*pi*(besselI(2*kappa,0)-besselI(2*kappa,1)))
@@ -596,13 +597,11 @@ QtoSO3<-function(q){
 #' @param M maximum number in uniform proposal density
 #' @param ... additional arguments sent to arsample
 #' @return a vector of size n of observations from target density
+#' @export
 #' @examples
-#' # sample from haar distribution
-#' x <- rar(10000, haar, runif, 1/pi, min=-pi, max=pi)
-#' 
 #' kappa=0.5
-#' M <- max(fisher(seq(-pi, pi, length=1000), kappa))
-#' x.fisher <- rar(10000, fisher, runif, M, min=-pi, max=pi, kappa=kappa)
+#' M <- max(dfisher(seq(-pi, pi, length=1000), kappa))
+#' x.fisher <- rar(10000, dfisher, runif, M, min=-pi, max=pi, kappa=kappa)
 
 rar <- function(n, f,g, M, ...) {
   res <- vector("numeric", length=n)

@@ -5,5 +5,4 @@
 #' @docType package
 #' @bibliography rotations/inst/StanfillHofmannGenschel.bib
 #' @name package-rotations
-#' @include ggplot2
 NULL

@@ -22,12 +22,9 @@
   Sample of size n from target density f
 }
 \examples{
-# sample from haar distribution
-x <- rar(10000, haar, runif, 1/pi, min=-pi, max=pi)
-
 kappa=0.5
-M <- max(fisher(seq(-pi, pi, length=1000), kappa))
-x.fisher <- rar(10000, fisher, runif, M, min=-pi, max=pi, kappa=kappa)
+M <- max(dfisher(seq(-pi, pi, length=1000), kappa))
+x.fisher <- rar(10000, dfisher, runif, M, min=-pi, max=pi, kappa=kappa)
 }
 \author{
   Heike Hofmann

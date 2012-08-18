@@ -20,6 +20,6 @@ M<-matrix(rnorm(9),3,3)
 project.SO3(M)
 }
 \seealso{
-  \code{\link{arith_mean}}, \code{\link{rmedian}}
+  \code{\link{mean.SO3}}, \code{\link{median.SO3}}
 }
 

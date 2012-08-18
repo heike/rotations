@@ -195,7 +195,7 @@ eskew <- function(U) {
 #' @examples
 #' r<-rvmises(20,1.0)
 #' Rs<-genR(r)
-#' eyeBall(Rs,center=arith_mean(Rs),show.estimates=TRUE,shape=4)
+#' eyeBall(Rs,center=mean(Rs),show.estimates=TRUE,shape=4)
 
 eyeBall<-function(Rs,center=diag(1,3,3),column=1,show.estimates=FALSE,...){
   
@@ -432,7 +432,7 @@ mean.SO3<-function(Rs, type='projected',epsilon=1e-5,maxIter=2000){
   if(type != 'projected' & type!='intrinsic')
     stop("Incorrect usage of type option.  Select from 'projected' or 'intrinsic'.")
   
-  R<-projMatrix(matrix(colMeans(Rs),3,3))
+  R<-project.SO3(matrix(colMeans(Rs),3,3))
   
   if(type=='intrinsic'){
     
@@ -533,7 +533,7 @@ median.SO3<-function(Rs, type='projected',epsilon=1e-5,maxIter=2000){
 #' This function uses the process given in Moakher 2002  to project an arbitrary \eqn{3\times 3} matrix into \eqn{SO(3)}.
 #' @param M \eqn{3\times 3} matrix to project
 #' @return projection of \eqn{\bm M} into \eqn{SO(3)}
-#' @seealso \code{\link{arith_mean}}, \code{\link{rmedian}}
+#' @seealso \code{\link{mean.SO3}}, \code{\link{median.SO3}}
 #' @export
 #' @examples
 #' M<-matrix(rnorm(9),3,3)
@@ -660,7 +660,7 @@ rfisher<-function(n,kappa=1){
 #' @examples
 #' r<-rvmises(20,0.01)
 #' Rs<-genR(r)
-#' Sp<-arith_mean(Rs)
+#' Sp<-mean(Rs)
 #' riedist(Sp,diag(1,3,3))
 
 riedist<-function(R,S=diag(1,3,3)){

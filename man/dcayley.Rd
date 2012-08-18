@@ -23,7 +23,7 @@
   \frac{\Gamma(\kappa+2)}{\Gamma(\kappa+1/2)}2^{-(\kappa+1)}(1+\cos
   r)^\kappa(1-\cos r)}. It was orignally given in the
   material sciences literature by Schaben 1997 and called
-  the de la Vall\'{e}e Poussin distribution but was more
+  the de la Vallee Poussin distribution but was more
   recently discussed and introduced in a more general
   manner by Leon 06.
 }

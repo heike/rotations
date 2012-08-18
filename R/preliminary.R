@@ -64,7 +64,7 @@ arsample.unif <- function(f,M, ...) {
 #' Symmetric Cayley distribution for angular data
 #' 
 #' The symmetric Cayley distribution has a density of the form \deqn{C_\mathrm{C}(r |\kappa)=\frac{1}{\sqrt{\pi}} \frac{\Gamma(\kappa+2)}{\Gamma(\kappa+1/2)}2^{-(\kappa+1)}(1+\cos r)^\kappa(1-\cos r)}.
-#' It was orignally given in the material sciences literature by Schaben 1997 and called the de la Vall\'{e}e Poussin distribution but was more recently discussed and 
+#' It was orignally given in the material sciences literature by Schaben 1997 and called the de la Vallee Poussin distribution but was more recently discussed and 
 #' introduced in a more general manner by Leon 06.
 #'
 #' @param r Where the density is being evaluated
@@ -614,7 +614,7 @@ rar <- function(n, f,g, M, ...) {
 #' 
 #' This function allows the user to simulate \eqn{n} misorientation angles from the Cayley distribution symmetric about 0 on interval \eqn{(-\pi,\pi]}.  The relationship between Cayley and Beta distribution is used.
 #' The symmetric Cayley distribution has a density of the form \deqn{C_\mathrm{C}(r |\kappa)=\frac{1}{\sqrt{\pi}} \frac{\Gamma(\kappa+2)}{\Gamma(\kappa+1/2)}2^{-(\kappa+1)}(1+\cos r)^\kappa(1-\cos r)}.
-#' It was orignally given in the material sciences literature by Schaben 1997 and called the de la Vall\'{e}e Poussin distribution but was more recently discussed and 
+#' It was orignally given in the material sciences literature by Schaben 1997 and called the de la Vallee Poussin distribution but was more recently discussed and 
 #' introduced in a more general manner by Leon 06.
 #' 
 #' @param n sample size

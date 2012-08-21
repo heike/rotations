@@ -2,18 +2,21 @@
 \alias{genR}
 \title{Generate rotation matrix given misorientation angle, r}
 \usage{
-  genR(r, S = diag(1, 3, 3))
+  genR(r, S = diag(1, 3, 3), space = "SO3")
 }
 \arguments{
   \item{r}{The angle through which all three dimensions are
   rotated after the axis was picked uniformly on the unit
   sphere}
 
-  \item{S}{the principle direction}
+  \item{S}{The principle direction}
+
+  \item{space}{Indicates the desired representation: matrix
+  in SO3, quaternion, or Euler angles}
 }
 \value{
-  a \eqn{n\times 9} matrix in SO(3) with misorientation
-  angle r and principal direction S
+  a matrix where each row is a sample point in the desired
+  space
 }
 \description{
   A function that generates a random rotation in

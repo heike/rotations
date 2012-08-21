@@ -323,8 +323,7 @@ genR <- function(r, S = diag(1, 3, 3), space='SO3') {
       o[i,] <- as.vector(S %*% angle_axis(u, r[i]))
       
     }else if(space=="Q4"){
-      
-      u <- 
+
       q[i,] <- c(cos(r[i]/2),sin(r[i]/2)*S%*%u)
       
     }else{
@@ -541,7 +540,8 @@ mean.R3 <- function(EAs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
   
   R<-mean.SO3(Rs)
   
-  return(euler(Rs))
+  return(R)
+  #return(euler(R))
 }
 
 
@@ -910,8 +910,9 @@ euler <- function(rot) {
   # rotations to Euler angles
   if (is.matrix(rot)) 
     rot <- as.vector(rot)
-  alpha <- acos(-rot[8]/sqrt(1 - rot[9]^2))
+  
+  alpha <- acos(-rot[6]/sqrt(1 - rot[9]^2))
   beta <- acos(rot[9])
-  gamma <- acos(rot[6]/sqrt(1 - rot[9]^2))
+  gamma <- acos(rot[8]/sqrt(1 - rot[9]^2))
   return(cbind(alpha, beta, gamma))
 }

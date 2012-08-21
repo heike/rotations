@@ -283,21 +283,29 @@ eyeBall <- function(Rs, center = diag(1, 3, 3), column = 1, show.estimates = FAL
 #' The exact form of the UARS distribution depends upon the distribution of the roation r
 #'
 #' @param r The angle through which all three dimensions are rotated after the axis was picked uniformly on the unit sphere
-#' @param S the principle direction
-#' @return a \eqn{n\times 9} matrix in SO(3) with misorientation angle r and principal direction S
+#' @param S The principle direction
+#' @param space Indicates the desired representation: matrix in SO3, quaternion, or Euler angles 
+#' @return a matrix where each row is a sample point in the desired space
 #' @export
 #' @examples
 #' r<-rvmises(20,0.01)
 #' genR(r)
 
-genR <- function(r, S = diag(1, 3, 3)) {
+genR <- function(r, S = diag(1, 3, 3), space='SO3') {
   
-  if (!is.SO3(S)) {
+  if(!(space %in% c("SO3","Q4","R3")))
+    stop("Incorrect space argument.  Options are: SO3, Q4 and R3. ")
+  
+  if (!is.SO3(S))
     stop("The principal direction must be in SO(3).")
-  }
   
-  o <- matrix(NA, length(r), 9)
-  I <- diag(1, 3, 3)
+  if(space=="SO3")
+    o <- matrix(NA, length(r), 9)
+  else if(space=="Q4")
+    q <- matrix(NA, length(r), 4)
+  else
+    ea <- matrix(NA, length(r), 3)
+
   
   # Generate angles theta from a uniform distribution from 0 to pi
   theta <- acos(runif(length(r), -1, 1))
@@ -308,16 +316,31 @@ genR <- function(r, S = diag(1, 3, 3)) {
   for (i in 1:length(r)) {
     
     # Using theta and phi generate a point uniformly on the unit sphere
-    u <- matrix(c(sin(theta[i]) * cos(phi[i]), sin(theta[i]) * sin(phi[i]), cos(theta[i])), nrow = 3, ncol = 1, 
-                byrow = T)
+    u <- c(sin(theta[i]) * cos(phi[i]), sin(theta[i]) * sin(phi[i]), cos(theta[i]))
     
-    
-    # Put it all together to make a rotation matrix O
-    o[i, ] <- as.vector(S %*% angle_axis(u, r[i]))
-    
+    if(space=="SO3"){
+      
+      o[i,] <- as.vector(S %*% angle_axis(u, r[i]))
+      
+    }else if(space=="Q4"){
+      
+      u <- 
+      q[i,] <- c(cos(r[i]/2),sin(r[i]/2)*S%*%u)
+      
+    }else{
+      
+      ea[i,] <- euler(S %*% angle_axis(u, r[i]))
+    }
   }
-  class(o) <- "SO3"
-  return(o)
+  if(space=="SO3"){
+    class(o) <- "SO3"
+    return(o)
+  }else if (space=="Q4"){
+    class(q)<-"Q4"
+    return(q)
+  }else{
+    return(ea)
+  }
 }
 
 
@@ -462,6 +485,25 @@ mean.SO3 <- function(Rs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
   return(R)
 }
 
+mean.Q4 <- function(Qs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
+  #For now this function returs a matrix in SO3, once I get 'eangle' and 'eaxis' from Dr. Hofmann I can return a quaternion
+  Rs<-t(apply(Qs,1,QtoSO3))
+  
+  R<-mean.SO3(Rs)
+  
+  #return(qu(R))
+  return(R)
+}
+
+mean.R3 <- function(EAs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
+  
+  Rs<-t(apply(EAs,1,EAtoSO3))
+  
+  R<-mean.SO3(Rs)
+  
+  return(euler(Rs))
+}
+
 
 #' Compute the projected or intrinsic median estimate of the central direction
 #'
@@ -526,6 +568,25 @@ median.SO3 <- function(Rs, type = "projected", epsilon = 1e-05, maxIter = 2000) 
     }
   }
   return(S)
+}
+
+median.Q4 <- function(Qs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
+  #For now this function returs a matrix in SO3, once I get 'eangle' and 'eaxis' from Dr. Hofmann I can return a quaternion
+  Rs<-t(apply(Qs,1,QtoSO3))
+  
+  R<-median.SO3(Rs)
+  
+  #return(qu(R))
+  return(R)
+}
+
+median.R3 <- function(EAs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
+  
+  Rs<-t(apply(EAs,1,EAtoSO3))
+  
+  R<-median.SO3(Rs)
+  
+  return(euler(Rs))
 }
 
 #' The projection of an arbitrary \eqn{3\times 3} matrix into \eqn{SO(3)}

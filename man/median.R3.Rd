@@ -1,13 +1,13 @@
-\name{median.SO3}
-\alias{median.SO3}
+\name{median.R3}
+\alias{median.R3}
 \title{Compute the projected or intrinsic median estimate of the central direction}
 \usage{
-  median.SO3(Rs, type = "projected", epsilon = 1e-05,
+  median.R3(EAs, type = "projected", epsilon = 1e-05,
     maxIter = 2000)
 }
 \arguments{
-  \item{Rs}{A \eqn{n\times 9} matrix where each row
-  corresponds to a random rotation in matrix form}
+  \item{EAs}{A \eqn{n\times 3} matrix where each row
+  corresponds to a random rotation in Euler angle form}
 
   \item{type}{String indicating 'projeted' or 'intrinsic'
   type mean estimator}
@@ -19,8 +19,8 @@
   allowed}
 }
 \value{
-  S the element in SO(3) minimizing the sum of first order
-  Euclidean or Riemannian distances for sample Rs
+  S the vector of Euler angles minimizing the sum of first
+  order Euclidean or Riemannian distances for sample Rs
 }
 \description{
   The median-type estimators are defined as
@@ -35,8 +35,8 @@
 }
 \examples{
 r<-rcayley(50,1)
-Rs<-genR(r)
-median(Rs)
+EA<-genR(r,space="R3")
+median.R3(EA)
 }
 \references{
   Hartley R, Aftab K and Trumpf J (2011). "L1 rotation

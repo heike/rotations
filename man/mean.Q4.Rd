@@ -1,13 +1,13 @@
-\name{mean.SO3}
-\alias{mean.SO3}
+\name{mean.Q4}
+\alias{mean.Q4}
 \title{Compute the projected or intrinsic mean estimate of the central direction}
 \usage{
-  mean.SO3(Rs, type = "projected", epsilon = 1e-05,
+  mean.Q4(Qs, type = "projected", epsilon = 1e-05,
     maxIter = 2000)
 }
 \arguments{
-  \item{Rs}{A \eqn{n\times 9} matrix where each row
-  corresponds to a random rotation in matrix form}
+  \item{Qs}{A \eqn{n\times 4} matrix where each row
+  corresponds to a random rotation in unit quaternion}
 
   \item{type}{String indicating 'projeted' or 'intrinsic'
   type mean estimator}
@@ -39,7 +39,7 @@
 }
 \examples{
 r<-rvmises(20,0.01)
-Rs<-genR(r)
+Qs<-genR(r,space="Q4")
 mean(Rs)
 }
 \references{

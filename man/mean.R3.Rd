@@ -1,13 +1,13 @@
-\name{mean.SO3}
-\alias{mean.SO3}
+\name{mean.R3}
+\alias{mean.R3}
 \title{Compute the projected or intrinsic mean estimate of the central direction}
 \usage{
-  mean.SO3(Rs, type = "projected", epsilon = 1e-05,
+  mean.R3(EAs, type = "projected", epsilon = 1e-05,
     maxIter = 2000)
 }
 \arguments{
-  \item{Rs}{A \eqn{n\times 9} matrix where each row
-  corresponds to a random rotation in matrix form}
+  \item{EAs}{A \eqn{n\times 3} matrix where each row
+  corresponds to a random rotation in Euler angle form}
 
   \item{type}{String indicating 'projeted' or 'intrinsic'
   type mean estimator}
@@ -39,8 +39,8 @@
 }
 \examples{
 r<-rvmises(20,0.01)
-Rs<-genR(r)
-mean(Rs)
+Qs<-genR(r,space="R3")
+mean.R3(Rs)
 }
 \references{
   Moakher M (2002). "Means and averaging in the group of

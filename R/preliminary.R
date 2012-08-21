@@ -434,7 +434,7 @@ log.SO3 <- function(R) {
 #' For a sample of \eqn{n} random rotations \eqn{\bm{R}_i\in SO(3)$, $i=1,2,\dots,n}, the mean-type estimator is defined as \deqn{\widehat{\bm{S}}=\argmin_{\bm{S}\in SO(3)}\sum_{i=1}^nd_D^2(\bm{R}_i,\bm{S})} where \eqn{\bar{\bm{R}}=\frac{1}{n}\sum_{i=1}^n\bm{R}_i} and the distance metric \eqn{d_D}
 #' is the Riemannian or Euclidean.  For more on the projected mean see \cite{moakher02} and for the intrinsic mean see \cite{manton04}.
 #'
-#' @param Rs A sample of n \eqn{3\times 3} random rotations
+#' @param Rs A \eqn{n\times 9} matrix where each row corresponds to a random rotation in matrix form
 #' @param type String indicating 'projeted' or 'intrinsic' type mean estimator
 #' @param epsilon Stopping rule for the intrinsic method
 #' @param maxIter The maximum number of iterations allowed before returning most recent estimate
@@ -485,6 +485,26 @@ mean.SO3 <- function(Rs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
   return(R)
 }
 
+#' Compute the projected or intrinsic mean estimate of the central direction
+#'
+#' This function takes a sample of \eqn{3\times 3} rotations (in the form of a \eqn{n\times 9} matrix where n is the sample size) and returns the projected arithmetic mean denoted \eqn{\widehat{\bm S}_P} or
+#' intrinsic mean \eqn{\widehat{\bm S}_G} according to the \code{type} option.
+#' For a sample of \eqn{n} random rotations \eqn{\bm{R}_i\in SO(3)$, $i=1,2,\dots,n}, the mean-type estimator is defined as \deqn{\widehat{\bm{S}}=\argmin_{\bm{S}\in SO(3)}\sum_{i=1}^nd_D^2(\bm{R}_i,\bm{S})} where \eqn{\bar{\bm{R}}=\frac{1}{n}\sum_{i=1}^n\bm{R}_i} and the distance metric \eqn{d_D}
+#' is the Riemannian or Euclidean.  For more on the projected mean see \cite{moakher02} and for the intrinsic mean see \cite{manton04}.
+#'
+#' @param Qs A \eqn{n\times 4} matrix where each row corresponds to a random rotation in unit quaternion
+#' @param type String indicating 'projeted' or 'intrinsic' type mean estimator
+#' @param epsilon Stopping rule for the intrinsic method
+#' @param maxIter The maximum number of iterations allowed before returning most recent estimate
+#' @return projected or intrinsic mean of the sample
+#' @seealso \code{\link{median.SO3}}
+#' @cite moakher02, manton04
+#' @export
+#' @examples
+#' r<-rvmises(20,0.01)
+#' Qs<-genR(r,space="Q4")
+#' mean(Rs)
+
 mean.Q4 <- function(Qs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
   #For now this function returs a matrix in SO3, once I get 'eangle' and 'eaxis' from Dr. Hofmann I can return a quaternion
   Rs<-t(apply(Qs,1,QtoSO3))
@@ -494,6 +514,26 @@ mean.Q4 <- function(Qs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
   #return(qu(R))
   return(R)
 }
+
+#' Compute the projected or intrinsic mean estimate of the central direction
+#'
+#' This function takes a sample of \eqn{3\times 3} rotations (in the form of a \eqn{n\times 9} matrix where n is the sample size) and returns the projected arithmetic mean denoted \eqn{\widehat{\bm S}_P} or
+#' intrinsic mean \eqn{\widehat{\bm S}_G} according to the \code{type} option.
+#' For a sample of \eqn{n} random rotations \eqn{\bm{R}_i\in SO(3)$, $i=1,2,\dots,n}, the mean-type estimator is defined as \deqn{\widehat{\bm{S}}=\argmin_{\bm{S}\in SO(3)}\sum_{i=1}^nd_D^2(\bm{R}_i,\bm{S})} where \eqn{\bar{\bm{R}}=\frac{1}{n}\sum_{i=1}^n\bm{R}_i} and the distance metric \eqn{d_D}
+#' is the Riemannian or Euclidean.  For more on the projected mean see \cite{moakher02} and for the intrinsic mean see \cite{manton04}.
+#'
+#' @param EAs A \eqn{n\times 3} matrix where each row corresponds to a random rotation in Euler angle form
+#' @param type String indicating 'projeted' or 'intrinsic' type mean estimator
+#' @param epsilon Stopping rule for the intrinsic method
+#' @param maxIter The maximum number of iterations allowed before returning most recent estimate
+#' @return projected or intrinsic mean of the sample
+#' @seealso \code{\link{median.SO3}}
+#' @cite moakher02, manton04
+#' @export
+#' @examples
+#' r<-rvmises(20,0.01)
+#' Qs<-genR(r,space="R3")
+#' mean.R3(Rs)
 
 mean.R3 <- function(EAs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
   
@@ -510,7 +550,7 @@ mean.R3 <- function(EAs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
 #' The median-type estimators are defined as \deqn{\widetilde{\bm{S}}=\argmin_{\bm{S}\in SO(3)}\sum_{i=1}^nd_D(\bm{R}_i,\bm{S})}.  If the choice of distance metrid, \eqn{d_D}, is Riemannian then the estimator is called the intrinsic, and if the distance metric in Euclidean then it projected.
 #' The algorithm used in the intrinsic case is discussed in \cite{hartley11} and the projected case was written by the authors.
 #'
-#' @param Rs the sample \eqn{n \times 9} matrix with rows corresponding to observations
+#' @param Rs A \eqn{n\times 9} matrix where each row corresponds to a random rotation in matrix form
 #' @param type String indicating 'projeted' or 'intrinsic' type mean estimator
 #' @param epsilon the stopping rule for the iterative algorithm
 #' @param maxIter integer, the maximum number of iterations allowed
@@ -570,6 +610,24 @@ median.SO3 <- function(Rs, type = "projected", epsilon = 1e-05, maxIter = 2000) 
   return(S)
 }
 
+#' Compute the projected or intrinsic median estimate of the central direction
+#'
+#' The median-type estimators are defined as \deqn{\widetilde{\bm{S}}=\argmin_{\bm{S}\in SO(3)}\sum_{i=1}^nd_D(\bm{R}_i,\bm{S})}.  If the choice of distance metrid, \eqn{d_D}, is Riemannian then the estimator is called the intrinsic, and if the distance metric in Euclidean then it projected.
+#' The algorithm used in the intrinsic case is discussed in \cite{hartley11} and the projected case was written by the authors.
+#'
+#' @param Qs A \eqn{n\times 4} matrix where each row corresponds to a random rotation in unit quaternion form
+#' @param type String indicating 'projeted' or 'intrinsic' type mean estimator
+#' @param epsilon the stopping rule for the iterative algorithm
+#' @param maxIter integer, the maximum number of iterations allowed
+#' @return S the unit quaternion minimizing  the sum of first order Euclidean or Riemannian distances for sample Rs
+#' @seealso \code{\link{mean.SO3}}
+#' @cite hartley11
+#' @export
+#' @examples
+#' r<-rcayley(50,1)
+#' Qs<-genR(r,space="Q4")
+#' median(Rs)
+
 median.Q4 <- function(Qs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
   #For now this function returs a matrix in SO3, once I get 'eangle' and 'eaxis' from Dr. Hofmann I can return a quaternion
   Rs<-t(apply(Qs,1,QtoSO3))
@@ -579,6 +637,24 @@ median.Q4 <- function(Qs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
   #return(qu(R))
   return(R)
 }
+
+#' Compute the projected or intrinsic median estimate of the central direction
+#'
+#' The median-type estimators are defined as \deqn{\widetilde{\bm{S}}=\argmin_{\bm{S}\in SO(3)}\sum_{i=1}^nd_D(\bm{R}_i,\bm{S})}.  If the choice of distance metrid, \eqn{d_D}, is Riemannian then the estimator is called the intrinsic, and if the distance metric in Euclidean then it projected.
+#' The algorithm used in the intrinsic case is discussed in \cite{hartley11} and the projected case was written by the authors.
+#'
+#' @param EAs A \eqn{n\times 3} matrix where each row corresponds to a random rotation in Euler angle form
+#' @param type String indicating 'projeted' or 'intrinsic' type mean estimator
+#' @param epsilon the stopping rule for the iterative algorithm
+#' @param maxIter integer, the maximum number of iterations allowed
+#' @return S the vector of Euler angles minimizing  the sum of first order Euclidean or Riemannian distances for sample Rs
+#' @seealso \code{\link{mean.SO3}}
+#' @cite hartley11
+#' @export
+#' @examples
+#' r<-rcayley(50,1)
+#' EA<-genR(r,space="R3")
+#' median.R3(EA)
 
 median.R3 <- function(EAs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
   

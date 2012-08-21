@@ -1,13 +1,13 @@
-\name{median.SO3}
-\alias{median.SO3}
+\name{median.Q4}
+\alias{median.Q4}
 \title{Compute the projected or intrinsic median estimate of the central direction}
 \usage{
-  median.SO3(Rs, type = "projected", epsilon = 1e-05,
+  median.Q4(Qs, type = "projected", epsilon = 1e-05,
     maxIter = 2000)
 }
 \arguments{
-  \item{Rs}{A \eqn{n\times 9} matrix where each row
-  corresponds to a random rotation in matrix form}
+  \item{Qs}{A \eqn{n\times 4} matrix where each row
+  corresponds to a random rotation in unit quaternion form}
 
   \item{type}{String indicating 'projeted' or 'intrinsic'
   type mean estimator}
@@ -19,7 +19,7 @@
   allowed}
 }
 \value{
-  S the element in SO(3) minimizing the sum of first order
+  S the unit quaternion minimizing the sum of first order
   Euclidean or Riemannian distances for sample Rs
 }
 \description{
@@ -35,7 +35,7 @@
 }
 \examples{
 r<-rcayley(50,1)
-Rs<-genR(r)
+Qs<-genR(r,space="Q4")
 median(Rs)
 }
 \references{

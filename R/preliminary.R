@@ -502,7 +502,7 @@ mean.SO3 <- function(Rs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
 #' @examples
 #' r<-rvmises(20,0.01)
 #' Qs<-genR(r,space="Q4")
-#' mean(Rs)
+#' mean(Qs)
 
 mean.Q4 <- function(Qs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
 
@@ -530,8 +530,8 @@ mean.Q4 <- function(Qs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
 #' @export
 #' @examples
 #' r<-rvmises(20,0.01)
-#' Qs<-genR(r,space="R3")
-#' mean.R3(Rs)
+#' EAs<-genR(r,space="R3")
+#' mean.R3(EAs)
 
 mean.R3 <- function(EAs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
   
@@ -625,10 +625,10 @@ median.SO3 <- function(Rs, type = "projected", epsilon = 1e-05, maxIter = 2000) 
 #' @examples
 #' r<-rcayley(50,1)
 #' Qs<-genR(r,space="Q4")
-#' median(Rs)
+#' median(Qs)
 
 median.Q4 <- function(Qs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
-  #For now this function returs a matrix in SO3, once I get 'eangle' and 'eaxis' from Dr. Hofmann I can return a quaternion
+
   Rs<-t(apply(Qs,1,QtoSO3))
   
   R<-median.SO3(Rs,type,epsilon,maxIter)

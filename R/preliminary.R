@@ -414,12 +414,12 @@ log.SO3 <- function(R) {
     stop("This the input matrix must be in SO(n).")
   }
   
-  tR <- sum(diag(R))
-  cost <- 0.5 * (tR - 1)
-  if (abs(cost) >= 1) {
+  theta <- eangle(R)
+  
+  if (abs(cos(theta)) >= 1) {
     return(diag(0, 3, 3))
   } else {
-    theta <- acos(cost)
+    
     c <- theta/(2 * sin(theta))
     mlog <- c * (R - t(R))
     return(mlog)
@@ -505,13 +505,12 @@ mean.SO3 <- function(Rs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
 #' mean(Rs)
 
 mean.Q4 <- function(Qs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
-  #For now this function returs a matrix in SO3, once I get 'eangle' and 'eaxis' from Dr. Hofmann I can return a quaternion
+
   Rs<-t(apply(Qs,1,QtoSO3))
   
-  R<-mean.SO3(Rs)
+  R<-mean.SO3(Rs,type,epsilon,maxIter)
   
-  #return(qu(R))
-  return(R)
+  return(qu(R))
 }
 
 #' Compute the projected or intrinsic mean estimate of the central direction
@@ -538,7 +537,7 @@ mean.R3 <- function(EAs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
   
   Rs<-t(apply(EAs,1,EAtoSO3))
   
-  R<-mean.SO3(Rs)
+  R<-mean.SO3(Rs,type,epsilon,maxIter)
   
   return(R)
   #return(euler(R))
@@ -571,7 +570,7 @@ median.SO3 <- function(Rs, type = "projected", epsilon = 1e-05, maxIter = 2000) 
   if (type != "projected" & type != "intrinsic") 
     stop("Incorrect usage of type option.  Select from 'projected' or 'intrinsic'.")
   
-  S <- mean(Rs)
+  S <- mean.SO3(Rs)
   d <- 1
   iter <- 1
   delta <- matrix(0, 3, 3)
@@ -632,10 +631,9 @@ median.Q4 <- function(Qs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
   #For now this function returs a matrix in SO3, once I get 'eangle' and 'eaxis' from Dr. Hofmann I can return a quaternion
   Rs<-t(apply(Qs,1,QtoSO3))
   
-  R<-median.SO3(Rs)
+  R<-median.SO3(Rs,type,epsilon,maxIter)
   
-  #return(qu(R))
-  return(R)
+  return(qu(R))
 }
 
 #' Compute the projected or intrinsic median estimate of the central direction
@@ -660,7 +658,7 @@ median.R3 <- function(EAs, type = "projected", epsilon = 1e-05, maxIter = 2000) 
   
   Rs<-t(apply(EAs,1,EAtoSO3))
   
-  R<-median.SO3(Rs)
+  R<-median.SO3(Rs,type,epsilon,maxIter)
   
   return(euler(Rs))
 }
@@ -689,8 +687,10 @@ project.SO3 <- function(M) {
   return(R)
 }
 
+#' Translate a unit quaternion to a rotation matrix
+#'
 #' A function to translate from unit quaternion representation to \eqn{SO(3)} representation
-#' of a rotation matrix
+#' of a rotation matrix.  Wikipedia has a good summary of this and other transforms.
 #'
 #' @param q numeric unit vector, i.e. \eqn{q^\top q=1}, representing an element in SO(3)
 #' @return vector representation of a rotation matrix in SO(3)
@@ -699,29 +699,18 @@ project.SO3 <- function(M) {
 #' @examples
 #' is.SO3(QtoSO3(c(1/sqrt(2),0,0,1/sqrt(2))))
 
-QtoSO3 <- function(q) {
+QtoSO3<-function(q){
   
-  if (round(t(q) %*% q, digits = 10) != 1) {
-    stop("Input must have unit length.")
+  theta<-2*acos(q[1])
+  
+  if(theta==0){
+    u <- rep(0,3)
+  }else{
+    u <- q[2:4]/sin(theta/2)
   }
-  
-  a <- q[1]
-  b <- q[2]
-  c <- q[3]
-  d <- q[4]
-  S <- matrix(NA, 3, 3)
-  S[1, 1] <- a^2 + b^2 - c^2 - d^2
-  S[1, 2] <- 2 * b * c - 2 * a * d
-  S[1, 3] <- 2 * b * d + 2 * a * c
-  S[2, 1] <- 2 * b * c + 2 * a * d
-  S[2, 2] <- a^2 - b^2 + c^2 - d^2
-  S[2, 3] <- 2 * c * d - 2 * a * b
-  S[3, 1] <- 2 * b * d - 2 * a * c
-  S[3, 2] <- 2 * c * d + 2 * a * b
-  S[3, 3] <- a^2 - b^2 - c^2 + d^2
-  
-  return(as.vector(S))
+  return(angle_axis(u, theta)) 
 }
+
 
 
 #' Sample of size n from target density f
@@ -895,15 +884,32 @@ vecNorm <- function(x, S, ...) {
   return(norm(matrix(cenX, n, n), ...))
 }
 
+eangle<-function(Rs){
+  if(is.matrix(Rs))
+    Rs<-as.vector(Rs)
+  tr<-Rs[1]+Rs[5]+Rs[9]
+  return(acos((tr-1)/2))
+}
 
+eaxis<-function(Rs){
+  
+  if(!is.matrix(Rs))
+    Rs<-matrix(Rs,3,3)
+  
+  decomp<-eigen(Rs)
+  
+  val<-which(abs(Re(decomp$values)-1)<10e-10 & abs(Im(decomp$values))<10e-10)
+  
+  return(Re(decomp$vectors[,val]))
+}
 
 qu <- function(Rs) {
   # represent rotation as quaternion
   theta <- eangle(Rs)
   u <- eaxis(Rs)
   x <- c(cos(theta/2), sin(theta/2) * u)
-  names(x) <- c("s", "i", "j", "k")
-  x
+  class(x) <- "Q4"
+  return(x)
 }
 
 euler <- function(rot) {

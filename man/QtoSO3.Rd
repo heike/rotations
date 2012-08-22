@@ -1,7 +1,6 @@
 \name{QtoSO3}
 \alias{QtoSO3}
-\title{A function to translate from unit quaternion representation to \eqn{SO(3)} representation
-of a rotation matrix}
+\title{Translate a unit quaternion to a rotation matrix}
 \usage{
   QtoSO3(q)
 }
@@ -15,7 +14,8 @@ of a rotation matrix}
 \description{
   A function to translate from unit quaternion
   representation to \eqn{SO(3)} representation of a
-  rotation matrix
+  rotation matrix.  Wikipedia has a good summary of this
+  and other transforms.
 }
 \examples{
 is.SO3(QtoSO3(c(1/sqrt(2),0,0,1/sqrt(2))))

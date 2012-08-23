@@ -486,31 +486,36 @@ mean.SO3 <- function(Rs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
 
 #' Compute the projected or intrinsic mean estimate of the central direction
 #'
-#' This function takes a sample of \eqn{3\times 3} rotations (in the form of a \eqn{n\times 9} matrix where n is the sample size) and returns the projected arithmetic mean denoted \eqn{\widehat{\bm S}_P} or
-#' intrinsic mean \eqn{\widehat{\bm S}_G} according to the \code{type} option.
-#' For a sample of \eqn{n} random rotations \eqn{\bm{R}_i\in SO(3)$, $i=1,2,\dots,n}, the mean-type estimator is defined as \deqn{\widehat{\bm{S}}=\argmin_{\bm{S}\in SO(3)}\sum_{i=1}^nd_D^2(\bm{R}_i,\bm{S})} where \eqn{\bar{\bm{R}}=\frac{1}{n}\sum_{i=1}^n\bm{R}_i} and the distance metric \eqn{d_D}
-#' is the Riemannian or Euclidean.  For more on the projected mean see \cite{moakher02} and for the intrinsic mean see \cite{manton04}.
+#' This function takes a sample of n unit quaternions and approximates the mean rotation.  If the projected mean
+#' is called for then the quaternions are turned reparameterized to matrices and mean.SO3 is called.  If the intrinsic
+#' mean is called then according to \cite{gramkow01} a better approximation is achieved by taking average quaternion
+#' and renormalizing.  Our simulations confirm this claim.
 #'
+#' 
 #' @param Qs A \eqn{n\times 4} matrix where each row corresponds to a random rotation in unit quaternion
 #' @param type String indicating 'projeted' or 'intrinsic' type mean estimator
 #' @param epsilon Stopping rule for the intrinsic method
 #' @param maxIter The maximum number of iterations allowed before returning most recent estimate
 #' @return projected or intrinsic mean of the sample
 #' @seealso \code{\link{median.SO3}}
-#' @cite moakher02, manton04
+#' @cite moakher02, manton04, gramkow01
 #' @export
 #' @examples
 #' r<-rvmises(20,0.01)
 #' Qs<-genR(r,space="Q4")
-#' mean(Qs)
+#' mean(Qs,type='intrinsic')
 
 mean.Q4 <- function(Qs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
 
-  Rs<-t(apply(Qs,1,QtoSO3))
-  
-  R<-mean.SO3(Rs,type,epsilon,maxIter)
-  
-  return(qu(R))
+  if(type=='projected'){
+    Rs<-t(apply(Qs,1,QtoSO3))
+    R<-mean.SO3(Rs,type,epsilon,maxIter)
+    return(qu(R))
+  }else if(type=='intrinsic'){
+    Qhat<-colSums(Qs)/sqrt(t(colSums(Qs))%*%colSums(Qs))
+    return(Qhat)
+  }
+  stop("Incorrect usage of type option.  Select from 'projected' or 'intrinsic'.")
 }
 
 #' Compute the projected or intrinsic mean estimate of the central direction
@@ -701,6 +706,9 @@ project.SO3 <- function(M) {
 
 QtoSO3<-function(q){
   
+  if((t(q)%*%q-1)>10e-10)
+    stop("The input is not a unit quaternion.  Please normalize.")
+    
   theta<-2*acos(q[1])
   
   if(theta==0){
@@ -772,7 +780,7 @@ rfisher <- function(n, kappa = 1) {
   return(rar(n, dfisher, runif, M, min = -pi, max = pi, kappa = kappa))
 }
 
-#' Riemannian Distance Between Two Random Rotations
+#' Riemannian Distance Between Two Random Rotations in matrix format
 #'
 #' This function will calculate the riemannian distance between an estimate of the central direction (in matrix or vector form) and the central direction.  By default the central direction
 #' is taken to be the identity matrix, but any matrix in SO(3) will work.  It calls the matrix log and matrix exponential functions also given here.
@@ -785,13 +793,33 @@ rfisher <- function(n, kappa = 1) {
 #' r<-rvmises(20,0.01)
 #' Rs<-genR(r)
 #' Sp<-mean(Rs)
-#' riedist(Sp,diag(1,3,3))
+#' riedist.SO3(Sp,diag(1,3,3))
 
-riedist <- function(R, S = diag(1, 3, 3)) {
+riedist.SO3 <- function(R, S = diag(1, 3, 3)) {
   R <- matrix(R, 3, 3)
   lRtS <- log.SO3(R %*% t(S))
   no <- norm(lRtS, type = "F")
   return(no/sqrt(2))
+}
+
+#' Riemannian Distance Between Two Random Rotations in quaternion
+#'
+#' This function will calculate the riemannian distance between an estimate of the central direction (in matrix or vector form) and the central direction.  By default the central direction
+#' is taken to be the identity matrix, but any matrix in SO(3) will work.  It calls the matrix log and matrix exponential functions also given here.
+#'
+#' @param q The estimate of the central direction
+#' @param Q The true central direction
+#' @return the Riemannian distance between the two rotations given in quaternion form
+#' @export
+#' @examples
+#' r<-rvmises(20,0.01)
+#' Qs<-genR(r,space="Q4")
+#' Qp<-mean(Qs)
+#' riedist.Q4(Qp)
+
+riedist.Q4 <- function(q, Q = c(1,0,0,0)) {
+  cp <- (t(q)%*%Q)[1,1]
+  return(2*acos(cp))
 }
 
 #' Generate a vector of angles(r) from the von Mises Circular distribution
@@ -864,7 +892,7 @@ SumDist <- function(Rs, S = diag(1, 3, 3), p) {
   dist2 <- 0
   n <- nrow(Rs)
   
-  dR <- sum(apply(Rs, 1, riedist, S = S)^p)
+  dR <- sum(apply(Rs, 1, riedist.SO3 , S = S)^p)
   
   dE <- sum(apply(Rs, 1, vecNorm, type = "F", S = S)^p)
   
@@ -898,7 +926,7 @@ eaxis<-function(Rs){
   
   decomp<-eigen(Rs)
   
-  val<-which(abs(Re(decomp$values)-1)<10e-10 & abs(Im(decomp$values))<10e-10)
+  val<-min(which(abs(Re(decomp$values)-1)<10e-10 & abs(Im(decomp$values))<10e-10))
   
   return(Re(decomp$vectors[,val]))
 }

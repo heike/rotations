@@ -36,7 +36,7 @@
 \examples{
 r<-rcayley(50,1)
 Qs<-genR(r,space="Q4")
-median(Rs)
+median(Qs)
 }
 \references{
   Hartley R, Aftab K and Trumpf J (2011). "L1 rotation

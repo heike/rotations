@@ -21,28 +21,24 @@
   projected or intrinsic mean of the sample
 }
 \description{
-  This function takes a sample of \eqn{3\times 3} rotations
-  (in the form of a \eqn{n\times 9} matrix where n is the
-  sample size) and returns the projected arithmetic mean
-  denoted \eqn{\widehat{\bm S}_P} or intrinsic mean
-  \eqn{\widehat{\bm S}_G} according to the \code{type}
-  option. For a sample of \eqn{n} random rotations
-  \eqn{\bm{R}_i\in SO(3)$, $i=1,2,\dots,n}, the mean-type
-  estimator is defined as
-  \deqn{\widehat{\bm{S}}=\argmin_{\bm{S}\in
-  SO(3)}\sum_{i=1}^nd_D^2(\bm{R}_i,\bm{S})} where
-  \eqn{\bar{\bm{R}}=\frac{1}{n}\sum_{i=1}^n\bm{R}_i} and
-  the distance metric \eqn{d_D} is the Riemannian or
-  Euclidean.  For more on the projected mean see
-  \cite{Moakher (2002)} and for the intrinsic mean see
-  \cite{Manton (2004)}.
+  This function takes a sample of n unit quaternions and
+  approximates the mean rotation.  If the projected mean is
+  called for then the quaternions are turned
+  reparameterized to matrices and mean.SO3 is called.  If
+  the intrinsic mean is called then according to
+  \cite{Gramkow (2001)} a better approximation is achieved
+  by taking average quaternion and renormalizing.  Our
+  simulations confirm this claim.
 }
 \examples{
 r<-rvmises(20,0.01)
 Qs<-genR(r,space="Q4")
-mean(Rs)
+mean(Qs,type='intrinsic')
 }
 \references{
+  Gramkow C (2001). "On averaging rotations." _Journal of
+  Mathematical Imaging and Vision_, *15*(1), pp. 7-16.
+
   Moakher M (2002). "Means and averaging in the group of
   rotations." _SIAM Journal on Matrix Analysis and
   Applications_, *24*(1), pp. 1-16.

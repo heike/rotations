@@ -54,6 +54,6 @@ mean.R3(EAs)
   IEEE.
 }
 \seealso{
-  \code{\link{median.SO3}}
+  \code{\link{mean.SO3}}
 }
 

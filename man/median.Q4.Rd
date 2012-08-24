@@ -45,6 +45,6 @@ median(Qs)
   (CVPR)_, pp. 3041-3048. IEEE.
 }
 \seealso{
-  \code{\link{mean.SO3}}
+  \code{\link{median.SO3}}
 }
 

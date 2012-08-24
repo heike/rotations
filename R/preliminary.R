@@ -489,7 +489,7 @@ mean.SO3 <- function(Rs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
 #' This function takes a sample of n unit quaternions and approximates the mean rotation.  If the projected mean
 #' is called for then the quaternions are turned reparameterized to matrices and mean.SO3 is called.  If the intrinsic
 #' mean is called then according to \cite{gramkow01} a better approximation is achieved by taking average quaternion
-#' and renormalizing.  Our simulations confirm this claim.
+#' and normalizing.  Our simulations don't match this claim.
 #'
 #' 
 #' @param Qs A \eqn{n\times 4} matrix where each row corresponds to a random rotation in unit quaternion
@@ -497,8 +497,8 @@ mean.SO3 <- function(Rs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
 #' @param epsilon Stopping rule for the intrinsic method
 #' @param maxIter The maximum number of iterations allowed before returning most recent estimate
 #' @return projected or intrinsic mean of the sample
-#' @seealso \code{\link{median.SO3}}
-#' @cite moakher02, manton04, gramkow01
+#' @seealso \code{\link{mean.SO3}}
+#' @cite moakher02, manton04
 #' @export
 #' @examples
 #' r<-rvmises(20,0.01)
@@ -506,23 +506,13 @@ mean.SO3 <- function(Rs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
 #' mean(Qs,type='intrinsic')
 
 mean.Q4 <- function(Qs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
-
-  if(type=='projected'){
-    Rs<-t(apply(Qs,1,QtoSO3))
-    R<-mean.SO3(Rs,type)
-    Qhat<-qu(R)
+  
+  Rs<-t(apply(Qs,1,QtoSO3))
+  
+  R<-mean.SO3(Rs,type,epsilon,maxIter)
     
-    if(max(QtoSO3(Qhat)-t(R))<10e-10)     #I only have empirical reasons for doing this
-      return(c(Qhat[1],-Qhat[2:4]))       #NEED TO UNDERSTAND BETTER
-    else
-      return(Qhat)
+  return(qu(R))
     
-  }else if(type=='intrinsic'){
-    sumQ<-colSums(Qs)
-    Qhat<-sumQ/sqrt(t(sumQ)%*%sumQ)
-    return(Qhat)
-  }
-  stop("Incorrect usage of type option.  Select from 'projected' or 'intrinsic'.")
 }
 
 #' Compute the projected or intrinsic mean estimate of the central direction
@@ -537,7 +527,7 @@ mean.Q4 <- function(Qs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
 #' @param epsilon Stopping rule for the intrinsic method
 #' @param maxIter The maximum number of iterations allowed before returning most recent estimate
 #' @return projected or intrinsic mean of the sample
-#' @seealso \code{\link{median.SO3}}
+#' @seealso \code{\link{mean.SO3}}
 #' @cite moakher02, manton04
 #' @export
 #' @examples
@@ -631,7 +621,7 @@ median.SO3 <- function(Rs, type = "projected", epsilon = 1e-05, maxIter = 2000) 
 #' @param epsilon the stopping rule for the iterative algorithm
 #' @param maxIter integer, the maximum number of iterations allowed
 #' @return S the unit quaternion minimizing  the sum of first order Euclidean or Riemannian distances for sample Rs
-#' @seealso \code{\link{mean.SO3}}
+#' @seealso \code{\link{median.SO3}}
 #' @cite hartley11
 #' @export
 #' @examples
@@ -658,7 +648,7 @@ median.Q4 <- function(Qs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
 #' @param epsilon the stopping rule for the iterative algorithm
 #' @param maxIter integer, the maximum number of iterations allowed
 #' @return S the vector of Euler angles minimizing  the sum of first order Euclidean or Riemannian distances for sample Rs
-#' @seealso \code{\link{mean.SO3}}
+#' @seealso \code{\link{median.SO3}}
 #' @cite hartley11
 #' @export
 #' @examples
@@ -713,8 +703,10 @@ project.SO3 <- function(M) {
 
 QtoSO3<-function(q){
   
-  if((t(q)%*%q-1)>10e-10)
-    stop("The input is not a unit quaternion.  Please normalize.")
+  if((sum(q^2)-1)>10e-10){
+    warning("Unit quaternions required.  Input was normalized.")
+    q<-q/sum(q^2)
+  }
     
   theta<-2*acos(q[1])
   
@@ -830,7 +822,7 @@ riedist.SO3 <- function(R, S = diag(1, 3, 3)) {
 
 riedist.Q4 <- function(q, Q = c(1,0,0,0)) {
   
-  cp <- (t(q)%*%Q)[1,1]
+  cp <- sum(q*Q)
   
   return(acos(2*cp*cp-1))
 }
@@ -926,25 +918,26 @@ vecNorm <- function(x, S, ...) {
 }
 
 eangle<-function(Rs){
-# for R in SO(3):
-#	1 + 2 cos(theta) = tr(R)
-  if(is.matrix(Rs))
-    Rs<-as.vector(Rs)
+  # for R in SO(3):
+  #	1 + 2 cos(theta) = tr(R)
+  
   tr<-Rs[1]+Rs[5]+Rs[9]
   return(acos((tr-1)/2))
 }
 
-eaxis<-function(Rs){
+eaxis<-function(R){
 # based on Rodrigues formula: R - t(R)
-# need to check: is Rs a 3 by 3 matrix?
+  
+  if(!is.matrix(R))
+    R<-matrix(R,3,3)
+  
 	X <- R - t(R)
 	u <- rev(X[upper.tri(X)])*c(-1,1,-1)
-	if (norm == FALSE) return(u)
+	#if (norm == FALSE) return(u)
 
 	return(u/sqrt(sum(u^2))) # will be trouble, if R is symmetric, i.e. id,  .... 
   
-  # if(!is.matrix(Rs))
-    # Rs<-matrix(Rs,3,3)
+
   
   # decomp<-eigen(Rs)
   

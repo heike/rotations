@@ -27,8 +27,8 @@
   reparameterized to matrices and mean.SO3 is called.  If
   the intrinsic mean is called then according to
   \cite{Gramkow (2001)} a better approximation is achieved
-  by taking average quaternion and renormalizing.  Our
-  simulations confirm this claim.
+  by taking average quaternion and normalizing.  Our
+  simulations don't match this claim.
 }
 \examples{
 r<-rvmises(20,0.01)
@@ -50,6 +50,6 @@ mean(Qs,type='intrinsic')
   IEEE.
 }
 \seealso{
-  \code{\link{median.SO3}}
+  \code{\link{mean.SO3}}
 }
 

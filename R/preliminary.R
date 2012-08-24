@@ -926,6 +926,8 @@ vecNorm <- function(x, S, ...) {
 }
 
 eangle<-function(Rs){
+# for R in SO(3):
+#	1 + 2 cos(theta) = tr(R)
   if(is.matrix(Rs))
     Rs<-as.vector(Rs)
   tr<-Rs[1]+Rs[5]+Rs[9]
@@ -933,15 +935,22 @@ eangle<-function(Rs){
 }
 
 eaxis<-function(Rs){
+# based on Rodrigues formula: R - t(R)
+# need to check: is Rs a 3 by 3 matrix?
+	X <- R - t(R)
+	u <- rev(X[upper.tri(X)])*c(-1,1,-1)
+	if (norm == FALSE) return(u)
+
+	return(u/sqrt(sum(u^2))) # will be trouble, if R is symmetric, i.e. id,  .... 
   
-  if(!is.matrix(Rs))
-    Rs<-matrix(Rs,3,3)
+  # if(!is.matrix(Rs))
+    # Rs<-matrix(Rs,3,3)
   
-  decomp<-eigen(Rs)
+  # decomp<-eigen(Rs)
   
-  val<-min(which(abs(Re(decomp$values)-1)<10e-10 & abs(Im(decomp$values))<10e-10))
+  # val<-min(which(abs(Re(decomp$values)-1)<10e-10 & abs(Im(decomp$values))<10e-10))
   
-  return(Re(decomp$vectors[,val]))
+  # return(Re(decomp$vectors[,val]))
 }
 
 qu <- function(Rs) {

@@ -323,7 +323,7 @@ genR <- function(r, S = diag(1, 3, 3), space='SO3') {
       o[i,] <- as.vector(S %*% angle_axis(u, r[i]))
       
     }else if(space=="Q4"){
-
+      
       q[i,] <- c(cos(r[i]/2),sin(r[i]/2)*S%*%u)
       
     }else{
@@ -831,7 +831,7 @@ riedist.SO3 <- function(R, S = diag(1, 3, 3)) {
 riedist.Q4 <- function(q, Q = c(1,0,0,0)) {
   
   cp <- (t(q)%*%Q)[1,1]
-  #return(2*acos(cp))
+  
   return(acos(2*cp*cp-1))
 }
 

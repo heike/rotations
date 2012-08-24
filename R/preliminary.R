@@ -509,10 +509,17 @@ mean.Q4 <- function(Qs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
 
   if(type=='projected'){
     Rs<-t(apply(Qs,1,QtoSO3))
-    R<-mean.SO3(Rs,type,epsilon,maxIter)
-    return(qu(R))
+    R<-mean.SO3(Rs,type)
+    Qhat<-qu(R)
+    
+    if(max(QtoSO3(Qhat)-t(R))<10e-10)     #I only have empirical reasons for doing this
+      return(c(Qhat[1],-Qhat[2:4]))       #NEED TO UNDERSTAND BETTER
+    else
+      return(Qhat)
+    
   }else if(type=='intrinsic'){
-    Qhat<-colSums(Qs)/sqrt(t(colSums(Qs))%*%colSums(Qs))
+    sumQ<-colSums(Qs)
+    Qhat<-sumQ/sqrt(t(sumQ)%*%sumQ)
     return(Qhat)
   }
   stop("Incorrect usage of type option.  Select from 'projected' or 'intrinsic'.")
@@ -796,6 +803,10 @@ rfisher <- function(n, kappa = 1) {
 #' riedist.SO3(Sp,diag(1,3,3))
 
 riedist.SO3 <- function(R, S = diag(1, 3, 3)) {
+  
+  if(!is.matrix(S))
+    S<-matrix(S,3,3)
+  
   R <- matrix(R, 3, 3)
   lRtS <- log.SO3(R %*% t(S))
   no <- norm(lRtS, type = "F")
@@ -818,8 +829,10 @@ riedist.SO3 <- function(R, S = diag(1, 3, 3)) {
 #' riedist.Q4(Qp)
 
 riedist.Q4 <- function(q, Q = c(1,0,0,0)) {
+  
   cp <- (t(q)%*%Q)[1,1]
-  return(2*acos(cp))
+  #return(2*acos(cp))
+  return(acos(2*cp*cp-1))
 }
 
 #' Generate a vector of angles(r) from the von Mises Circular distribution

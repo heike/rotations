@@ -32,10 +32,13 @@ When the `space` argument in `genR` is set to `SO3` then a 3-by-3 matrix is form
 
 $$R=uu^\top+(I_{3\times 3}-uu^\top)\cos(r)+\Phi(u)\sin(r)$$
 
-where $\Phi(u)$ is the a skew-symmetric matrix with zeros on the diagonal and $-u_3$, $u_2$, $-u_1$ is the upper triangle.  If the `S` option is left to the default then $R$ is returned, otherwise $SR$ is returned
+where 
+$$\Phi(u)=\begin{pmatrix} 0 & -u_3 & u_2 \\ u_3 & 0 & -u_1\\ -u_2 & u_1 & 0\\ \end{pmatrix}.$$ 
+
+If the `S` option is left to the default then $R$ is returned, otherwise $SR$ is returned
 
 #### Quaternion parameterization
-An alternative to the rotation matrix is the quaternion.  This formulation is typically popular with mathematicians and engineers.  Given the axis $u$ and angle $r$ the quaternion is formed as follows
+An alternative to the rotation matrix is the quaternion, which is chosen by settin the `space` option to `Q4`.  This formulation is typically popular with mathematicians and engineers.  Given the axis $u$ and angle $r$ the quaternion is formed as follows
 
 $$q=(\cos(r/2),\sin(r/2)u).$$
 

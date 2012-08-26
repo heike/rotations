@@ -25,6 +25,6 @@
   by the user.
 }
 \seealso{
-  \code{\link{dfisher}},\code{\link{rvmises}},\code{\link{rcayley}}
+  \code{\link{dfisher}},\code{\link{rvmises}},\code{\link{rcayley}},\code{\link{rhaar}}
 }
 

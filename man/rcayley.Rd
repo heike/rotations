@@ -39,4 +39,7 @@ r<-rcayley(20,0.01)
   for random rotations." _Journal of Multivariate
   Analysis_, *97*(2), pp. 412-430.
 }
+\seealso{
+  \code{\link{dcayley}},\code{\link{rvmises}},\code{\link{rcayley}},\code{\link{rhaar}}
+}
 

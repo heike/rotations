@@ -19,8 +19,8 @@
   between an estimate of the central direction (in matrix
   or vector form) and the central direction.  By default
   the central direction is taken to be the identity matrix,
-  but any matrix in SO(3) will work.  It calls the matrix
-  log and matrix exponential functions also given here.
+  but any matrix in SO(3) will work.  This distance is
+  equivalent to the angle of rotation of R'S
 }
 \examples{
 r<-rvmises(20,0.01)

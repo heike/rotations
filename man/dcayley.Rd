@@ -37,6 +37,6 @@
   Analysis_, *97*(2), pp. 412-430.
 }
 \seealso{
-  \code{\link{rcayley}},\code{\link{dfisher}},\code{\link{dhaar}}
+  \code{\link{rcayley}},\code{\link{dfisher}},\code{\link{dhaar}},\code{\link{dvmises}}
 }
 

@@ -63,6 +63,84 @@ arsample.unif <- function(f, M, ...) {
   # arsample.unif(f, M, ...)
 }
 
+#' Find confidence interval radius for central orientation estimate
+#' 
+#' Given a sample or rotations and estimator for the central orientation, a confidence interval radius will
+#' be estimated based on a bootstrap procedure.  The level of confidence, bootstrap iterations and bootstrap
+#' sample sizes are all options for the user to set.  The procedure is as follows:
+#'           0) Estimate Shat from (R_1,...,R_n) in Rs
+#'           1) Sample R_1,...,R_m from Rs with replacement
+#'           2) Estimate ShatStar from bootstrap sample
+#'           3) Compute That=d_r(Shat,ShatStar)
+#'           4) Repeat steps 1-3 B times
+#'           5) Report q% percentile of That to be the radius of the confidence 'cone'
+#'  @param Rs sample of size n rotations in matrix format
+#'  @param fun The method of central orientation estimation; e.g. mean or median
+#'  @param B bootstrap iterations
+#'  @param m bootstrap sample size
+#'  @param q level of confidence
+#'  @param ... additional arguments passed to 'fun' such as 'type' and 'epsilon'
+#'  @return the radius of the confidence cone
+#'  @references bingham10
+#'  @export
+#'  @examples
+#'  Rs<-genR(rvmises(20))
+#'  CIradius.SO3(Rs,mean.SO3,type='projected')
+
+
+CIradius.SO3<-function(Rs,fun='mean',B=1000,m=n,q=0.95,...){
+  # This is more conservative then Bingham's method since d_r > max abs angle always
+  
+  if(fun=='mean') 
+    cofun<-mean.SO3 
+  else if (fun=='median')
+    cofun<-median.SO3
+  else
+    stop("Please enter a valid estimation method: 'mean' or 'median'.")
+  
+  n<-nrow(Rs)
+  Shat<-cofun(Rs,...) 
+  That<-NULL
+  
+  for(i in 1:B){
+    
+    samp<-sample(1:n,m,replace=T)
+    
+    ShatStar<-cofun(Rs[samp,],...) 
+    
+    That<-c(That,riedist.SO3(Shat,ShatStar))
+  }
+  
+  return(quantile(That,q))
+  
+}
+
+#' Find confidence interval radius for central orientation estimate
+#' 
+#' Works the same was as 'CIradius.SO3' except with the quaternion representation of rotations.
+#'  @param Qs sample of size n rotations in matrix format
+#'  @param fun The method of central orientation estimation; e.g. mean or median
+#'  @param B bootstrap iterations
+#'  @param m bootstrap sample size
+#'  @param q level of confidence
+#'  @param ... additional arguments passed to 'fun' such as 'type' and 'epsilon'
+#'  @return the radius of the confidence cone
+#'  @references bingham10
+#'  @seealso \code{\link{CIradius.SO3}}
+#'  @export
+#'  @examples
+#'  Qs<-genR(rvmises(20),space='Q4')
+#'  CIradius.SO3(Qs,mean.Q4,type='projected')
+
+
+CIradius.Q4<-function(Qs,fun='mean',B=1000,m=n,q=0.95,...){
+  
+  Rs<-t(apply(Qs,1,QtoSO3))
+  
+  return(CIradius.SO3(Rs,fun,B,m,q,...))
+  
+}
+
 #' Symmetric Cayley distribution for angular data
 #'
 #' The symmetric Cayley distribution has a density of the form \deqn{C_\mathrm{C}(r |\kappa)=\frac{1}{\sqrt{\pi}} \frac{\Gamma(\kappa+2)}{\Gamma(\kappa+1/2)}2^{-(\kappa+1)}(1+\cos r)^\kappa(1-\cos r)}.
@@ -73,7 +151,7 @@ arsample.unif <- function(f, M, ...) {
 #' @param kappa The concentration paramter, taken to be zero
 #' @param Haar logical, if density is evaluated with respect to Haar measure or Lebesgue
 #' @return value of Cayley distribution with concentration \eqn{\kappa} evaluated at r
-#' @seealso \code{\link{rcayley}},\code{\link{dfisher}},\code{\link{dhaar}}
+#' @seealso \code{\link{rcayley}},\code{\link{dfisher}},\code{\link{dhaar}},\code{\link{dvmises}}
 #' @cite Schaeben97 leon06
 
 dcayley <- function(r, kappa = 1, Haar = F) {
@@ -93,6 +171,7 @@ dcayley <- function(r, kappa = 1, Haar = F) {
 #' @param kappa The concentration paramter, taken to be zero
 #' @param Haar logical, if density is evaluated with respect to Haar measure or Lebesgue
 #' @return value of Fisher matrix distribution with concentration \eqn{\kappa} evaluated at r
+#' @seealso \code{\link{rfisher}}, \code{\link{dhaar}},\code{\link{dvmises}},\code{\link{dcayley}}
 #' @export
 
 dfisher <- function(r, kappa = 1, Haar = F) {
@@ -112,6 +191,8 @@ dfisher <- function(r, kappa = 1, Haar = F) {
 #'
 #' @param r Where the density is being evaluated
 #' @return the probability density evaluated at r
+#' @seealso \code{\link{rhaar}}, \code{\link{dfisher}},\code{\link{dvmises}},\code{\link{dcayley}}
+#' @export
 
 dhaar <- function(r) return((1 - cos(r))/(2 * pi))
 
@@ -162,6 +243,44 @@ EAtoSO3 <- function(eur) {
   S[3, 2] <- -cos(eur[1]) * sin(eur[2])
   S[3, 3] <- cos(eur[2])
   return(as.vector(S))
+}
+
+#' Find the angle of rotation R
+#' 
+#' This function will find the angle of rotation matrix R.  Used mostly to reparameterize between
+#' quaternions and rotations.
+#' @param R 3-by-3 matrix in SO3 whos angle of rotation is needed
+#' @return angle of rotation
+#' @seealso \code{\link{eaxis}}
+
+eangle<-function(Rs){
+  # for R in SO(3):
+  #  1 + 2 cos(theta) = tr(R)
+  
+  tr<-Rs[1]+Rs[5]+Rs[9]
+  return(acos((tr-1)/2))
+}
+
+#' Find the axis of rotation R
+#' 
+#' This function will find the axis of rotation matrix R.  The simple calculation is based on Rodrigues formula
+#' and noticing that R - t(R) can be simplified greatly.  Used mostly to reparameterize between
+#' quaternions and rotations.
+#' @param R 3-by-3 matrix in SO3 whos axis is needed
+#' @return three dimensional axis of length one
+#' @seealso \code{\link{eangle}}
+
+eaxis<-function(R){
+  # based on Rodrigues formula: R - t(R)
+  
+  if(!is.matrix(R))
+    R<-matrix(R,3,3)
+  
+  X <- R - t(R)
+  u <- rev(X[upper.tri(X)])*c(-1,1,-1)
+  
+  return(u/sqrt(sum(u^2))) # will be trouble, if R is symmetric, i.e. id,  .... 
+
 }
 
 #' Directional vector to skew-symmetric Matrix
@@ -353,15 +472,16 @@ genR <- function(r, S = diag(1, 3, 3), space='SO3') {
 #' is.SO3(1:9)
 is.SO3 <- function(x) {
   
-  x <- matrix(x, 3, 3)
+  if(!is.matrix(x))
+    x <- matrix(x, 3, 3)
   
   # Does it have determinant 1?
-  if (round(det(x), digits = 7) != 1) {
+  if (abs(det(x)- 1)>10e-10) {
     return(FALSE)
   }
   
   # Is its transpose (approximately) its inverse?
-  if (round(sum(t(x) %*% x - diag(1, 3)), digits = 10) != 0) {
+  if (sum(t(x) %*% x - diag(1, 3))>10e-10) {
     return(FALSE)
   }
   
@@ -380,7 +500,7 @@ is.SO3 <- function(x) {
 
 exp.skew <- function(A) {
   
-  if (round(sum(A - t(A)), digits = 7) != 0) {
+  if (sum(abs(A - t(A)))>10e-10) {
     stop("The input matrix must be skew symmetric.")
   }
   
@@ -411,7 +531,7 @@ exp.skew <- function(A) {
 log.SO3 <- function(R) {
   
   if (!is.SO3(R)) {
-    stop("This the input matrix must be in SO(n).")
+    stop("This the input matrix must be in SO(3).")
   }
   
   theta <- eangle(R)
@@ -718,6 +838,20 @@ QtoSO3<-function(q){
   return(angle_axis(u, theta)) 
 }
 
+#' Reparameterize a rotation matrix as a unit quaternion
+#' 
+#' The rotation R is taken, the angle and axis of rotation are found and a unit quaternion is formed from the results.
+#' @param R a rotation matrix in SO3
+#' @return a unit quaternion of class Q4
+
+qu <- function(R) {
+  # represent rotation as quaternion
+  theta <- eangle(R)
+  u <- eaxis(R)
+  x <- c(cos(theta/2), sin(theta/2) * u)
+  class(x) <- "Q4"
+  return(x)
+}
 
 
 #' Sample of size n from target density f
@@ -729,17 +863,13 @@ QtoSO3<-function(q){
 #' @param M maximum number in uniform proposal density
 #' @param ... additional arguments sent to arsample
 #' @return a vector of size n of observations from target density
-#' @export
-#' @examples
-#' kappa=0.5
-#' M <- max(dfisher(seq(-pi, pi, length=1000), kappa))
-#' x.fisher <- rar(10000, dfisher, runif, M, min=-pi, max=pi, kappa=kappa)
 
 rar <- function(n, f, g, M, ...) {
   res <- vector("numeric", length = n)
   for (i in 1:n) res[i] <- arsample(f, g, M, ...)
   return(res)
 }
+
 
 #' Simulate misorientation angles from Cayley distribtuion
 #'
@@ -752,6 +882,7 @@ rar <- function(n, f, g, M, ...) {
 #' @param kappa The concentration paramter
 #' @return vector of n observations from Cayley(kappa) distribution
 #' @cite Schaeben97 leon06
+#' @seealso \code{\link{dcayley}},\code{\link{rvmises}},\code{\link{rcayley}},\code{\link{rhaar}}
 #' @export
 #' @examples
 #' r<-rcayley(20,0.01)
@@ -771,7 +902,7 @@ rcayley <- function(n, kappa = 1) {
 #' @param n sample size
 #' @param kappa the concentration parameter
 #' @return a sample of size \eqn{n} from the matrix Fisher distribution with concentration \eqn{\kappa}
-#' @seealso \code{\link{dfisher}},\code{\link{rvmises}},\code{\link{rcayley}}
+#' @seealso \code{\link{dfisher}},\code{\link{rvmises}},\code{\link{rcayley}},\code{\link{rhaar}}
 
 
 rfisher <- function(n, kappa = 1) {
@@ -779,10 +910,26 @@ rfisher <- function(n, kappa = 1) {
   return(rar(n, dfisher, runif, M, min = -pi, max = pi, kappa = kappa))
 }
 
+#' Simulate a data set of size \eqn{n} from the uniform distribution on the sphere
+#'
+#' The uniform distribution has the density\deqn{C_\mathrm{{F}}(r|\kappa)=\frac{1}{2\pi}1-\cos(r)}.  The is also 
+#' know as the Haar measure.
+#' 
+#' @param n sample size
+#' @return a sample of size \eqn{n} from the uniform distribution on the sphere
+#' @seealso \code{\link{dhaar}},\code{\link{rfisher}},\code{\link{rvmises}},\code{\link{rcayley}}
+
+
+rhaar<-function(n){
+  res<-vector("numeric",length=n)
+  for(i in 1:n) res[i] <- arsample.unif(dhaar,1/pi)
+  return(res)
+}
+
 #' Riemannian Distance Between Two Random Rotations in matrix format
 #'
 #' This function will calculate the riemannian distance between an estimate of the central direction (in matrix or vector form) and the central direction.  By default the central direction
-#' is taken to be the identity matrix, but any matrix in SO(3) will work.  It calls the matrix log and matrix exponential functions also given here.
+#' is taken to be the identity matrix, but any matrix in SO(3) will work.  This distance is equivalent to the angle of rotation of R'S
 #'
 #' @param R The estimate of the central direction
 #' @param S The true central direction
@@ -798,11 +945,13 @@ riedist.SO3 <- function(R, S = diag(1, 3, 3)) {
   
   if(!is.matrix(S))
     S<-matrix(S,3,3)
+  if(!is.matrix(R))
+    R<-matrix(R,3,3)
   
-  R <- matrix(R, 3, 3)
-  lRtS <- log.SO3(R %*% t(S))
-  no <- norm(lRtS, type = "F")
-  return(no/sqrt(2))
+  if(!is.SO3(R) || !is.SO3(S))
+    stop("Both input must be matrices in SO3.")
+  
+  return(eangle(t(R)%*%S))
 }
 
 #' Riemannian Distance Between Two Random Rotations in quaternion
@@ -917,43 +1066,6 @@ vecNorm <- function(x, S, ...) {
   return(norm(matrix(cenX, n, n), ...))
 }
 
-eangle<-function(Rs){
-  # for R in SO(3):
-  #	1 + 2 cos(theta) = tr(R)
-  
-  tr<-Rs[1]+Rs[5]+Rs[9]
-  return(acos((tr-1)/2))
-}
-
-eaxis<-function(R){
-# based on Rodrigues formula: R - t(R)
-  
-  if(!is.matrix(R))
-    R<-matrix(R,3,3)
-  
-	X <- R - t(R)
-	u <- rev(X[upper.tri(X)])*c(-1,1,-1)
-	#if (norm == FALSE) return(u)
-
-	return(u/sqrt(sum(u^2))) # will be trouble, if R is symmetric, i.e. id,  .... 
-  
-
-  
-  # decomp<-eigen(Rs)
-  
-  # val<-min(which(abs(Re(decomp$values)-1)<10e-10 & abs(Im(decomp$values))<10e-10))
-  
-  # return(Re(decomp$vectors[,val]))
-}
-
-qu <- function(Rs) {
-  # represent rotation as quaternion
-  theta <- eangle(Rs)
-  u <- eaxis(Rs)
-  x <- c(cos(theta/2), sin(theta/2) * u)
-  class(x) <- "Q4"
-  return(x)
-}
 
 euler <- function(rot) {
   # rotations to Euler angles

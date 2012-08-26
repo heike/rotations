@@ -27,4 +27,8 @@
   function \eqn{C_\mathrm{{F}}(r|\kappa)} at \eqn{r} with
   \eqn{\kappa} provided by the user.
 }
+\seealso{
+  \code{\link{rfisher}},
+  \code{\link{dhaar}},\code{\link{dvmises}},\code{\link{dcayley}}
+}
 

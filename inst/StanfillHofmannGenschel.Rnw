@@ -19,7 +19,7 @@
 %% replace RJtemplate with your article
 \begin{article}
 
-\title{\pkg{rotate}: A Package for $SO(3)$ Data}
+\title{\pkg{rotations}: A Package for $SO(3)$ Data}
 \author{by Bryan Stanfill, Heike Hofmann, Ulrike Genschel}
 
 \maketitle
@@ -33,20 +33,20 @@ library(ggplot2)
 @
 
 \abstract{
-In this article we introduce the \pkg{rotate} package which provides users the ability to simulate, analyze and visualize data in $SO(3)$.  No package as complete as this one is currently available.  We offer three distributions for which to simulate data, four estimators of the central orientation and a novel approach to visualizing these data.
+In this article we introduce the \pkg{rotations} package which provides users the ability to simulate, analyze and visualize data in $SO(3)$.  No package as complete as this one is currently available.  We offer four distributions from which to simulate data, four estimators of the central orientation and a novel approach to visualizing these data.  All of the above features are avaible to three different parameterizations of rotations: 3-by-3 matrix form, quaternions and Euler angles.
 }
 
 \section{Introduction}
 
 
-The data in form of $3 \times 3$ rotation matrices find application in several scientific areas, such as biomedical engineering, computer visioning, and geological and materials sciences.  A common problem shared by these fields is the estimation of a main or central orientation $\bm S$.  That is, letting the rotation group $SO(3)$ denote the collection of all $3\times 3$ rotation matrices, observations $\bm{R}_1,\ldots,\bm{R}_n \in SO(3)$ can be conceptualized as a random sample from a \textit{location model}
+The data in form of three-dimensional rotation matrices find application in several scientific areas, such as biomedical engineering, computer visioning, and geological and materials sciences.  A common problem shared by these fields is the estimation of a main or central orientation $\bm S$.  That is, letting the rotation group $SO(3)$ denote the collection of all $3\times 3$ rotation matrices, observations $\bm{R}_1,\ldots,\bm{R}_n \in SO(3)$ can be conceptualized as a random sample from a \textit{location model}
 \begin{equation}
 \label{eqn:1}
 \mathbf{R}_i = \bm{S} \bm{E}_i, \quad i=1,\ldots,n,
 \end{equation}
 where $\bm S \in SO(3)$ is the {\it fixed} parameter of interest indicating an orientation of central tendency, and $\bm{E}_1,\ldots,\bm{E}_n \in SO(3)$ denote iid {\it random} rotations which symmetrically perturb $\bm{S}$.
 
-The \pkg{rotate} package allows users to simulate data from three common choices of symmetic distributions, estimate $\bm{S}$ in \ref{eqn:1} and visalize a sample of rotations.
+The \pkg{rotations} package allows users to simulate data from four common choices of symmetic distributions, estimate $\bm{S}$ in \ref{eqn:1} and visalize a sample of rotations.
 
 %For example, \citet{rancourt00} examine rotation matrix data in studying body positions whilst operating machinery. \cite{fletcher09} consider this type of  orientation data in magnetic resonance imaging and in shape analysis; similar examples  can be found in \cite{schwartz05}, \cite{pierrynowski09},  \cite{dai10},  or \cite{hadani11}.  The data in our illustrative example to follow arise from a study in materials science, where $3 \times 3$ rotations represent the orientations of cubic crystals on the micro-surface of a metal specimen as measured through electron backscatter diffraction (EBSD) and ``grains" within metals are composed of crystals which roughly share a common orientation; see \cite{randle03} for details on EBSD data.  
      
@@ -60,6 +60,10 @@ The \pkg{rotate} package allows users to simulate data from three common choices
 %The topic of location estimation has received considerable attention for directional data on circles or spheres, \citep[see][]{fisher53, karcher77, khatri77, fisher85, ducharme87, bajaj88, liu92, chan93, mardia00}, but less is known about  estimator properties with rotation data.  As a compounding factor, several current approaches to estimating $\bm S$ have arisen out of literatures having differing statistical and geometrical emphases.  In the  applied sciences literature, estimators of $\bm S$ are typically based on distance measures involving {\it non-Euclidean} (i.e., Riemannian) geometry, such as the \emph{geometric mean} \citep{arun87, horn88, umeyama91, moakher02} or, more recently, the \emph{geometric median} \citep{fletcher08, fletcher09}.  Preferences may depend on outliers in the data, but such suggestions for estimating $\bm S$ often do {\it not} consider the potential impact of the underlying data-generating mechanism.   On the other hand, approaches in the statistical literature tend to motivate an estimator for $\bm S$  through likelihood or moment-estimation principles applied to a specifically assumed distributional model (e.g., matrix Fisher or Cayley distribution) for the symmetric rotation errors $\bm E_i$ \citep{downs72, jupp79, leon06, bingham10}. Almost always, this estimator turns out to be a \emph{projected arithmetic mean} based on {\it Euclidean} geometry. Hence, in addition to potential distributional assumptions, more fundamental divisions in estimation approaches may be attributable to different geometrical perspectives with rotation data.  
 
 %Considering the potential effects of an underlying data generation model as well as the choice of geometry (i.e., Euclidean vs.~Riemannian), the above discussion indicates a need to investigate and identify good point estimators for rotation data.  In particular, because estimators in the applied sciences literatures  are often selected without decision-theoretical considerations based on underlying distributions, it is of interest to understand how different location estimators behave across common distributions for rotations.  In this paper, we evaluate four common estimators for $\bm S$ in the context of the location model \eqref{eqn:1}. These are either mean- or median-based, and either Euclidean- or Riemannian-based in geometry; the median- and Euclidean-based estimator is new here but its inclusion is natural and its performance can be generally quite good and (as will be evidenced) broadly recommendable.   Through simulation, we compare how these estimators perform with respect to three common probability models for symmetric rotation errors as defined in \eqref{eqn:1}, namely the circular-von Mises-based distribution, the symmetric matrix Fisher distribution and the symmetric Cayley distribution.  The matrix Fisher is arguably the most common distribution in the statistics literature \citep[see][]{chikuse03}. While not noted previously, the symmetric Cayley and the de la Vall\'{e}e Poussin distribution are in fact the same; the de la Vall\'{e}e Poussin distribution has been advocated in the material science literature \citep{Schaeben97}.   The circular-von Mises-based distribution is included because the distribution is non-regular and has been applied to EBSD data \citep{bingham09}.  We describe how error distribution structures for rotation data, in particular their variability and tail behavior, translate into performance differences among point estimators based on varying geometric considerations.
+
+\section{Rotation Representations}
+
+The variety of applications of rotations is echoed by the number of equivalent ways to parameterize them.
 
 \section{Data generation}
 

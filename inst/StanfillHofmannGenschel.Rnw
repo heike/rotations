@@ -33,20 +33,20 @@ library(ggplot2)
 @
 
 \abstract{
-In this article we introduce the \pkg{rotations} package which provides users the ability to simulate, analyze and visualize data in $SO(3)$.  No package as complete as this one is currently available.  We offer four distributions from which to simulate data, four estimators of the central orientation and a novel approach to visualizing these data.  All of the above features are avaible to three different parameterizations of rotations: 3-by-3 matrix form, quaternions and Euler angles.
+In this article we introduce the \pkg{rotations} package which provides users the ability to simulate, analyze and visualize data in $SO(3)$.  No package as complete as this one is currently available.  We offer four distributions from which to simulate data, four estimators of the central orientation and a novel approach to visualizing these data.  All of the above features are available to three different parameterizations of rotations: 3-by-3 matrix form, quaternions and Euler angles.
 }
 
 \section{Introduction}
 
 
-The data in form of three-dimensional rotation matrices find application in several scientific areas, such as biomedical engineering, computer visioning, and geological and materials sciences.  A common problem shared by these fields is the estimation of a main or central orientation $\bm S$.  That is, letting the rotation group $SO(3)$ denote the collection of all $3\times 3$ rotation matrices, observations $\bm{R}_1,\ldots,\bm{R}_n \in SO(3)$ can be conceptualized as a random sample from a \textit{location model}
+The data in form of three-dimensional rotations find application in several scientific areas, such as biomedical engineering, computer visioning, and geological and materials sciences.  A common problem shared by these fields is the estimation of a main or central orientation $\bm S$.  That is, letting the rotation group $SO(3)$ denote the collection of all $3\times 3$ rotation matrices, observations $\bm{R}_1,\ldots,\bm{R}_n \in SO(3)$ can be conceptualized as a random sample from a \textit{location model}
 \begin{equation}
 \label{eqn:1}
 \mathbf{R}_i = \bm{S} \bm{E}_i, \quad i=1,\ldots,n,
 \end{equation}
 where $\bm S \in SO(3)$ is the {\it fixed} parameter of interest indicating an orientation of central tendency, and $\bm{E}_1,\ldots,\bm{E}_n \in SO(3)$ denote iid {\it random} rotations which symmetrically perturb $\bm{S}$.
 
-The \pkg{rotations} package allows users to simulate data from four common choices of symmetic distributions, estimate $\bm{S}$ in \ref{eqn:1} and visalize a sample of rotations.
+The \pkg{rotations} package allows users to simulate data from four common choices of symmetric distributions, estimate $\bm{S}$ in \ref{eqn:1} and visualize a sample of rotations.
 
 %For example, \citet{rancourt00} examine rotation matrix data in studying body positions whilst operating machinery. \cite{fletcher09} consider this type of  orientation data in magnetic resonance imaging and in shape analysis; similar examples  can be found in \cite{schwartz05}, \cite{pierrynowski09},  \cite{dai10},  or \cite{hadani11}.  The data in our illustrative example to follow arise from a study in materials science, where $3 \times 3$ rotations represent the orientations of cubic crystals on the micro-surface of a metal specimen as measured through electron backscatter diffraction (EBSD) and ``grains" within metals are composed of crystals which roughly share a common orientation; see \cite{randle03} for details on EBSD data.  
      
@@ -63,26 +63,55 @@ The \pkg{rotations} package allows users to simulate data from four common choic
 
 \section{Rotation Representations}
 
-The variety of applications of rotations is echoed by the number of equivalent ways to parameterize them.
+The variety of applications for rotations is echoed by the number of equivalent ways to parameterize them.  We consider the three of the most popular: $3\times 3$ matrices in $SO(3)$, unit quaternions and Euler angles.  
+
+\subsection{Matrix Form}
+
+Given the angle, $r$, and axis, $\bm u$, necessary to define a rotation a $3\times 3$ rotation matrix can be formed by
+\begin{equation}\label{eqn:angleaxis}
+ \bm{R} = \bm{R}(r,\bm{u}) = \bm{u}\bm{u}^\top+(\bm{I}_{3\times3}-\bm{u}\bm{u}^\top)\cos(r) +\Phi(\bm{u})\sin(r)
+\end{equation}
+where
+\[
+\Phi(\bm{u}) = \Phi (u_1,u_2,u_3) = \left(\begin{array}{ccc}0 & -u_3 & u_2 \\ u_3 & 0 & -u_1 \\-u_2 & u_1 & 0\end{array}\right).
+\]
+This is called the axis-angle representation of rotation matrices because $\bm{R}$ is represented by rotating the coordinate axis $\bm{I}_{3 \times 3}$ about the axis $\bm{U}\in\mathbb{R}^3$ by the angle $r$.  We adopt the material scientist's terminology in calling $r$ the misorientation angle and $\bm U$ the misorientation axis.
+
+\subsection{Quaternion Form}
+
+Quaternions are a form of imaginary numbers with one real entry and a vector of three imaginary parts that can be expressed as
+\[
+q = x_1 + x_2 i + x_3 j + x_4 k
+\]
+where $i,j,$ and $k$ are square roots of -1, i.e. $i^2 = j^2= k^2 = -1$.  We can write $q=(s,v)$ as tuple of the scalar $s$ for coefficient {\bf 1} and vector $v$ for the imaginary coefficients, i.e. $s=x_1$ and $v= (x_2, x_3, x_4)$.
+
+A rotation around axis $\bm u$ by angle $r$ translates to $q=(s,v)$ with
+\[
+s = \cos{(r/2)},  \ \ \bm v = \bm u \sin {(r/2)}
+\]
+This makes $q$ a unit quaternion.
+
+This form is popular with mathematicians and others interested in the theory of rotations because their form makes them simple to deal with in certain situations.
+
+\subsection{Euler Angles}
+We haven't decided on our favorite form of Euler angles so I will leave this empty for now.
+
+All of the functions in \pkg{rotations} will work with any of these representations.  For the remainder of this article, however, we will present our work using the matrix representation.
 
 \section{Data generation}
 
-To simulate data according to model \eqref{eqn:1} it's helpful to note that for every matrix $\bm R \in SO(3)$ there exists $r\in[0,\pi]$ and $\bm{U}\in\mathbb{R}^3$, $\|\bm{U}\|=1$ such that
-\begin{equation}\label{eqn:angleaxis}
- \bm{R} = \bm{R}(r,\bm{U}) = \exp[\bm\Phi(\bm{U} r)] 
-\end{equation}
-where 
-\begin{align}
-  \exp[&\bm{\Phi}(\bm{U}r)] =\nonumber\\ &\bm{I}_{3\times3}\cos(r) + \sin(r) \bm{\Phi}(\bm{U}) + (1-\cos r) \bm{U} \bm{U}^\top.\nonumber
-\end{align}
-This is called the axis-angle representation of rotation matrices because $\bm{R}$ is represented by rotating the coordinate axis $\bm{I}_{3 \times 3}$ about the axis $\bm{U}\in\mathbb{R}^3$ by the angle $r$.  We adopt the material scientist's terminology in calling $r$ the misorientation angle and $\bm U$ the misorientation axis.
-
-Using \eqref{eqn:1} one can simulate a matrix $\bm{E}_i\in SO(3)$ by picking an axis $\bm U$ uniformly on the sphere then drawing an angle $r$ from a distribution symmetric about $0$ and bounded between $-\pi$ and $\pi$ then applying \eqref{eqn:angleaxis}.  A matrix generated in this fashion is said to belong to the \dfn{uniform-axis random spin}, or UARS, class of distributions \citep{bingham09}.  The choice of angular distribution distinguishes between members of this class.
+Using \eqref{eqn:1} one can simulate a matrix $\bm{E}_i\in SO(3)$ by picking an axis $\bm u$ uniformly on the sphere then drawing an angle $r$ from a distribution symmetric about $0$ and bounded between $-\pi$ and $\pi$ then applying \eqref{eqn:angleaxis}.  A matrix generated in this fashion is said to belong to the \dfn{uniform-axis random spin}, or UARS, class of distributions \citep{bingham09}.  The choice of angular distribution distinguishes between members of this class.
 
 
-The \pkg{rotate} package allows the user access to three members of the UARS class accoring to three common distributional models on $r$: the symmetric matrix Fisher \citep{langevin05, downs72, khatri77, jupp79}, the symmetric Cayley  \citep{Schaeben97, leon06} and the circular von Mises-based distribution \citep{bingham09}. 
+The \pkg{rotate} package allows the user access to four members of the UARS class according to four common distributional models on $r$: the uniform distribution on the sphere, the symmetric matrix Fisher \citep{langevin05, downs72, khatri77, jupp79}, the symmetric Cayley  \citep{Schaeben97, leon06} and the circular von Mises-based distribution \citep{bingham09}. 
 
 %A general construction approach exists for random rotations that are symmetrically distributed around the identity matrix $\bm{I}_{3 \times 3}$; see \citet{watson83, bingham09} and \citet{hielscher10}.  To this end, let $\bm{U}\in\mathbb{R}^3$ represent a point chosen uniformly on the unit sphere and, independently, generate a random angle $r$ according to some circular density $C(r|\kappa)$ on $(-\pi,\pi]$, which is symmetric around 0 and where $\kappa$ denotes a concentration parameter governing the spread of the circular distribution.  Then, define a random rotation as $\bm{E}=\bm{E}(\bm{U},r)$ using the constructive definition (\ref{eqn:angleaxis}) (i.e., $\bm{E}$ represents the position of $\bm{I}_{3\times 3}$ upon rotating the standard coordinate frame in $\mathbb{R}^3$ about the random axis $\bm{U}$ by the random angle $r$).  The resulting rotation $\bm{E}$ will be symmetrically distributed and its distributional type (i.e., matrix Fisher, Cayley or circular-von Mises-based) is determined by the form of the circular density $C(r|\kappa)$ for the (misorientation) angle $r$.
+
+The uniform distribution on the sphere is given by the following density function
+\[
+C_\mathrm{{H}}(r)=\frac{1-\cos(r)}{2\pi}
+\]
+for $r\in(-\pi,\pi]$.  This function also plays the part of a measure on the sphere, called the Haar measure on the sphere.
 
 The symmetric matrix Fisher distribution is the oldest and also the most difficult to sample from with the following distributional form
 \[
@@ -103,13 +132,13 @@ C_\mathrm{M}(r|\kappa)=\frac{1}{2\pi \mathrm{I_0}(\kappa)}e^{\kappa\cos(r)}.
 \]
 Simulation from this distribution was developed by \citet{best79} and the function \code{rvmises} follows this procedure closely.  Also, \code{dvmises} evaluates the density at a given angle, $r$.
 
-Once an angular distribution has been choosen and a vector of $n$ angles of rotation have been generated, the \code{genR} function creates an $n\times 9$ matrix representing a sample from the approporiate UARS member as demonstrated in the following code.
+Once an angular distribution has been chosen and a vector of $n$ angles of rotation have been generated, the \code{genR} function with option \code{space="SO3"} creates an $n\times 9$ matrix representing a sample from the appropriate UARS member as demonstrated in the following code.  If quaternions or Euler angles are desired the options \code{space} can be changed to \code{"Q4"} and \code{"R3"}, respectively.
 
 <<genRs,background='white',highlight=FALSE>>=
 rs<-rcayley(20,1)
 Rs<-genR(rs)
 R1<-matrix(Rs[1,],3,3)
-is.SOn(R1)
+is.SO3(R1)
 @
 
 Here \code{rcayley(20,1)} simulates $r_1,\ldots,r_{20}$ from  $C_\mathrm{C}(r |\kappa=1)$ then \code{genR} generates the matrices.  Each row of \code{Rs} is an element in $SO(3)$, as demonstrated by \code{is.SOn}, in vector form with central orientation $\bm I_{3\times 3}$.  Any other central orientation in $SO(3)$ is possible by changing the \code{S} option.  If a central orientation not in $SO(3)$ is proposed, however, an error is returned.
@@ -146,7 +175,7 @@ SO(3)}\tr(\bm{S}^{\top}\bar{\bm{R}})
 \end{align}
 and is computed by the function \code{arith.mean}.  For an in-depth discussion of the algorithm used to compute this value consult \citet{moakher02}.
 
-The intrisic estimators are refered to as geometric estimators and minimize the first and second order Riemannian distances.  The \dfn{geometric median} is 
+The intrinsic estimators are referred to as geometric estimators and minimize the first and second order Riemannian distances.  The \dfn{geometric median} is 
 \begin{equation}\label{est:lone}
 \widetilde{\bm{S}}_{G}=\argmin_{\bm{S}\in
 SO(3)}\sum_{i=1}^nd_G(\bm{R}_i,\bm{S});
@@ -157,6 +186,19 @@ and is computed by the function \code{HartleyL1}, which uses an algorithm propos
 SO(3)}\sum_{i=1}^nd_G^2(\bm{R}_i,\bm{S}).
 \end{equation}
 and is computed using  the function \code{MantonL2} as proposed by \citet{manton04}.
+
+\section{Confidence Area Construction}
+
+With limited theory available for estimators of the central orientation, a bootstrap method is proposed to estimate the uncertainty associated with them.  The procedure implemented by the function \code{CIradius} is as follows where $\widehat{\bm S}$ is any of the estimators discussed so far:
+\begin{enumerate}
+\item Estimate $\widehat{\bm S}$ from $(\bm R_1,\dots,\bm R_n)$ 
+\item Sample $\bm R_1$,...,$\bm R_m$ from $(\bm R_1,\dots,\bm R_n)$ with replacement
+\item Estimate $\widehat{\bm S}^*$ from bootstrap sample
+\item Compute $\hat{T}=d_G(\widehat{\bm S},\widehat{\bm S}^*)$
+\item Repeat steps 1-3 B times
+\item Report q\% percentile of $\hat{T}$ to be the radius of the confidence `cone'
+\end{enumerate}
+A similar procedure was used by \cite{bingham10}, but in place of $d_R$ the maximum absolute angle between all three axis, which they called $\alpha$, was used.  It's easy to show that $\alpha$ is less than or equal to the geodesic distance between any two rotations making our method slightly more conservative.
 
 \section{Visualizations}
 In this section we introduce a method to visualize $SO(3)$ data via the the \pkg{ggplot2} package \citep{wickham09}.  The function \code{eyeBall} takes as input a $n\times 9$ matrix of $SO(3)$ observations and returns a visualization of one of the three columns.  The user can specify which column to use with the \code{column} option, the default is one.

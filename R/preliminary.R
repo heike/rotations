@@ -229,7 +229,7 @@ dvmises <- function(r, kappa = 1, Haar = F) {
 #' SO3Dat<-EAtoSO3(eaExample)
 #' is.SO3(SO3Dat)
 
-EAtoSO3 <- function(eur) {
+SO3.EA <- function(eur) {
   
   S <- matrix(NA, 3, 3)
   S[1, 1] <- cos(eur[1]) * cos(eur[3]) - sin(eur[1]) * sin(eur[3]) * cos(eur[2])
@@ -243,7 +243,9 @@ EAtoSO3 <- function(eur) {
   S[3, 1] <- sin(eur[1]) * sin(eur[2])
   S[3, 2] <- -cos(eur[1]) * sin(eur[2])
   S[3, 3] <- cos(eur[2])
-  return(as.vector(S))
+  S <- as.vector(S)
+  class(S) <- "SO3"
+  return(S)
 }
 
 #' Find the angle of rotation R

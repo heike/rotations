@@ -136,7 +136,7 @@ CIradius.SO3<-function(Rs,fun='mean',B=1000,m=n,q=0.95,...){
 
 CIradius.Q4<-function(Qs,fun='mean',B=1000,m=n,q=0.95,...){
   
-  Rs<-t(apply(Qs,1,QtoSO3))
+  Rs<-t(apply(Qs,1,SO3.Q4))
   
   return(CIradius.SO3(Rs,fun,B,m,q,...))
   
@@ -226,7 +226,7 @@ dvmises <- function(r, kappa = 1, Haar = F) {
 #' @export
 #' @examples
 #' eaExample<-c(pi/2,3*pi/4,0)
-#' SO3Dat<-EAtoSO3(eaExample)
+#' SO3Dat<-SO3.EA(eaExample)
 #' is.SO3(SO3Dat)
 
 SO3.EA <- function(eur) {
@@ -630,7 +630,7 @@ mean.SO3 <- function(Rs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
 
 mean.Q4 <- function(Qs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
   
-  Rs<-t(apply(Qs,1,QtoSO3))
+  Rs<-t(apply(Qs,1,SO3.Q4))
   
   R<-mean.SO3(Rs,type,epsilon,maxIter)
     
@@ -660,7 +660,7 @@ mean.Q4 <- function(Qs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
 
 mean.R3 <- function(EAs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
   
-  Rs<-t(apply(EAs,1,EAtoSO3))
+  Rs<-t(apply(EAs,1,SO3.EA))
   
   R<-mean.SO3(Rs,type,epsilon,maxIter)
   
@@ -754,7 +754,7 @@ median.SO3 <- function(Rs, type = "projected", epsilon = 1e-05, maxIter = 2000) 
 
 median.Q4 <- function(Qs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
 
-  Rs<-t(apply(Qs,1,QtoSO3))
+  Rs<-t(apply(Qs,1,SO3.Q4))
   
   R<-median.SO3(Rs,type,epsilon,maxIter)
   
@@ -781,7 +781,7 @@ median.Q4 <- function(Qs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
 
 median.R3 <- function(EAs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
   
-  Rs<-t(apply(EAs,1,EAtoSO3))
+  Rs<-t(apply(EAs,1,SO3.EA))
   
   R<-median.SO3(Rs,type,epsilon,maxIter)
   
@@ -822,9 +822,9 @@ project.SO3 <- function(M) {
 #' @seealso \code{\link{is.SO3}} can be used to check the return vector
 #' @export
 #' @examples
-#' is.SO3(QtoSO3(c(1/sqrt(2),0,0,1/sqrt(2))))
+#' is.SO3(SO3.Q4(c(1/sqrt(2),0,0,1/sqrt(2))))
 
-QtoSO3<-function(q){
+SO3.Q4<-function(q){
   
   if((sum(q^2)-1)>10e-10){
     warning("Unit quaternions required.  Input was normalized.")

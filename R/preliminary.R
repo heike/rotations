@@ -7,7 +7,7 @@
 #' @param theta angle between -pi and pi
 #' @return Used in \code{\link{eyeBall}} to orient the data properly
 
-angle_axis <- function(U, theta) {
+SO3 <- function(U, theta) {
   # based on Rodrigues formula
   U <- U/sqrt(sum(U^2))
   P <- U %*% t(U)
@@ -17,6 +17,7 @@ angle_axis <- function(U, theta) {
   
   
   R <- P + (id - P) * cos(theta) + eskew(U) * sin(theta)
+  class(R) <- "SO3"
   return(R)
 }
 
@@ -345,7 +346,7 @@ eyeBall <- function(Rs, center = diag(1, 3, 3), column = 1, show.estimates = FAL
   
   circles <- rbind(circles, circles.2)
   
-  rot <- angle_axis(c(1, -1, 0), pi/8)
+  rot <- SO3(c(1, -1, 0), pi/8)
   
   pcircles <- data.frame(as.matrix(circles[, 1:3]) %*% rot)
   
@@ -360,11 +361,11 @@ eyeBall <- function(Rs, center = diag(1, 3, 3), column = 1, show.estimates = FAL
   
   if (column == 1) {
     cols <- 1:3
-    rot <- angle_axis(c(0, 1, 0), pi/2) %*% rot
+    rot <- SO3(c(0, 1, 0), pi/2) %*% rot
     
   } else if (column == 2) {
     cols <- 4:6
-    rot <- angle_axis(c(1, 0, 0), -pi/2) %*% rot
+    rot <- SO3(c(1, 0, 0), -pi/2) %*% rot
     
   } else {
     cols <- 7:9
@@ -439,7 +440,7 @@ genR <- function(r, S = diag(1, 3, 3), space='SO3') {
     
     if(space=="SO3"){
       
-      o[i,] <- as.vector(S %*% angle_axis(u, r[i]))
+      o[i,] <- as.vector(S %*% SO3(u, r[i]))
       
     }else if(space=="Q4"){
       
@@ -447,7 +448,7 @@ genR <- function(r, S = diag(1, 3, 3), space='SO3') {
       
     }else{
       
-      ea[i,] <- euler(S %*% angle_axis(u, r[i]))
+      ea[i,] <- euler(S %*% SO3(u, r[i]))
     }
   }
   if(space=="SO3"){
@@ -835,7 +836,7 @@ QtoSO3<-function(q){
   }else{
     u <- q[2:4]/sin(theta/2)
   }
-  return(angle_axis(u, theta)) 
+  return(SO3(u, theta)) 
 }
 
 #' Reparameterize a rotation matrix as a unit quaternion

@@ -250,6 +250,7 @@ SO3.EA <- function(eur) {
 
 #' Find the angle of rotation R
 #' 
+#' This is a test
 #' This function will find the angle of rotation matrix R.  Used mostly to reparameterize between
 #' quaternions and rotations.
 #' @param R 3-by-3 matrix in SO3 whos angle of rotation is needed

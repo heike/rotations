@@ -79,7 +79,7 @@ arsample.unif <- function(f, M, ...) {
 #'  @param fun The method of central orientation estimation; e.g. mean or median
 #'  @param B bootstrap iterations
 #'  @param m bootstrap sample size
-#'  @param q level of confidence
+#'  @param alpha level of confidence
 #'  @param ... additional arguments passed to 'fun' such as 'type' and 'epsilon'
 #'  @return the radius of the confidence cone
 #'  @references bingham10
@@ -89,7 +89,7 @@ arsample.unif <- function(f, M, ...) {
 #'  CIradius.SO3(Rs,mean.SO3,type='projected')
 
 
-CIradius.SO3<-function(Rs,fun='mean',B=1000,m=n,q=0.95,...){
+CIradius.SO3<-function(Rs,fun='mean',B=1000,m=n,alpha=0.95,...){
   # This is more conservative then Bingham's method since d_r > max abs angle always
   
   if(fun=='mean') 
@@ -101,7 +101,7 @@ CIradius.SO3<-function(Rs,fun='mean',B=1000,m=n,q=0.95,...){
   
   n<-nrow(Rs)
   Shat<-cofun(Rs,...) 
-  That<-NULL
+  That<-rep(NA, length=B)
   
   for(i in 1:B){
     
@@ -109,10 +109,10 @@ CIradius.SO3<-function(Rs,fun='mean',B=1000,m=n,q=0.95,...){
     
     ShatStar<-cofun(Rs[samp,],...) 
     
-    That<-c(That,riedist.SO3(Shat,ShatStar))
+    That[i]<-riedist.SO3(Shat,ShatStar)
   }
   
-  return(quantile(That,q))
+  return(quantile(That,alpha))
   
 }
 
@@ -123,7 +123,7 @@ CIradius.SO3<-function(Rs,fun='mean',B=1000,m=n,q=0.95,...){
 #'  @param fun The method of central orientation estimation; e.g. mean or median
 #'  @param B bootstrap iterations
 #'  @param m bootstrap sample size
-#'  @param q level of confidence
+#'  @param alpha level of confidence
 #'  @param ... additional arguments passed to 'fun' such as 'type' and 'epsilon'
 #'  @return the radius of the confidence cone
 #'  @references bingham10
@@ -134,11 +134,11 @@ CIradius.SO3<-function(Rs,fun='mean',B=1000,m=n,q=0.95,...){
 #'  CIradius.SO3(Qs,mean.Q4,type='projected')
 
 
-CIradius.Q4<-function(Qs,fun='mean',B=1000,m=n,q=0.95,...){
+CIradius.Q4<-function(Qs,fun='mean',B=1000,m=n,alpha=0.95,...){
   
   Rs<-t(apply(Qs,1,SO3.Q4))
   
-  return(CIradius.SO3(Rs,fun,B,m,q,...))
+  return(CIradius.SO3(Rs,fun,B,m,alpha,...))
   
 }
 
@@ -218,7 +218,7 @@ dvmises <- function(r, kappa = 1, Haar = F) {
   }
 }
 
-#' A function that will take in a Euler angle and return a rotation matrix in vector format
+#' A function that will take  a Euler angle and return a rotation matrix in vector format
 #'
 #' @param eur numeric Euler angle representation of an element in SO(3)
 #' @return numeric \eqn{9\times 1} vector of a matrix in SO(3)

@@ -127,6 +127,14 @@ where
 \]
 This is called the axis-angle representation of rotation matrices because $\bm{R}$ is represented by rotating the coordinate axis $\bm{I}_{3 \times 3}$ about the axis $\bm{U}\in\mathbb{R}^3$ by the angle $r$.  We adopt the material scientist's terminology in calling $r$ the misorientation angle and $\bm U$ the misorientation axis.
 
+Given a matrix $\bm R\in SO(3)$ it is also useful to be able to find the angle, $r$, and axis, $\bm u$ that form that matrix.  The angle can be found from the fact that $\cos(r)=\frac{1}{2}[\text{tr}(\bm R)-1]$.  The function \code{eangle} will perform this caluclation.
+
+Next, \ref{eqn:angleaxis} can be used with the following facts to find $\bm u$: $\bm{uu}^\top$ and $(\bm{I}_{3\times3}-\bm{u}\bm{u}^\top)$ are symmetric, $\Phi(\bm u)$ is skew-symmetric implying $\Phi(\bm u)^\top=-\Phi(\bm u)$.  Now form $\bm R-\bm R^\top$:
+\[
+\bm R-\bm R^\top=\Phi(\bm u)\sin(r)-\Phi(\bm u)^\top\sin(r)=2\sin(r)\Phi(\bm u).
+\]
+Now let $\bm V=2\sin(r)\Phi(\bm u)$ then by the definition of $\Phi(\cdot)$, $u_1=-V_{2,3}/2\sin(r)$, $u_2=V_{1,3}/2\sin(r)$ and $u_3=-V_{1,2}/2\sin(r)$.  The function \code{eaxis} will perform this calculation.
+
 \subsection{Quaternion Form}
 
 Quaternions are a form of imaginary numbers with one real entry and a vector of three imaginary parts that can be expressed as

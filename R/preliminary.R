@@ -103,6 +103,17 @@ arsample.unif <- function(f, M, ...) {
   # arsample.unif(f, M, ...)
 }
 
+#' Convert anything into SO3 class
+#' 
+#' @param x can be anything
+#' @return x with class "SO3"
+#' @export
+
+as.SO3<-function(x){
+  class(x)<-"SO3"
+  return(x)
+}
+
 #' Find confidence interval radius for central orientation estimate
 #' 
 #' Given a sample or rotations and estimator for the central orientation, a confidence interval radius will
@@ -159,7 +170,7 @@ CIradius.SO3 <- function(Rs,fun='mean',B=1000,m=n,alpha=0.95,...){
     
     samp<-sample(1:n,m,replace=T)
     
-    ShatStar<-fun(Rs[samp,],...)
+    ShatStar<-fun(as.SO3(Rs[samp,]),...)
     
     That[i]<-dist.SO3(c(Shat,ShatStar))
   }

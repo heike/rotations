@@ -2,7 +2,7 @@
 \alias{dfisher}
 \title{von Mises-Fisher distribution for angular data}
 \usage{
-  dfisher(r, kappa = 1, Haar = F)
+  dfisher(r, kappa = 1, Haar = T)
 }
 \arguments{
   \item{r}{Where the density is being evaluated}

@@ -2,7 +2,7 @@
 \alias{dvmises}
 \title{Density function for circular von Mises distribution}
 \usage{
-  dvmises(r, kappa = 1, Haar = F)
+  dvmises(r, kappa = 1, Haar = T)
 }
 \arguments{
   \item{r}{value at which to evaluate the distribution

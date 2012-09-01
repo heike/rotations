@@ -2,14 +2,12 @@
 \alias{rar}
 \title{Sample of size n from target density f}
 \usage{
-  rar(n, f, g, M, ...)
+  rar(n, f, M, ...)
 }
 \arguments{
   \item{n}{number of sample wanted}
 
   \item{f}{target density}
-
-  \item{g}{sampling distribution}
 
   \item{M}{maximum number in uniform proposal density}
 

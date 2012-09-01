@@ -2,7 +2,7 @@
 \alias{dcayley}
 \title{Symmetric Cayley distribution for angular data}
 \usage{
-  dcayley(r, kappa = 1, Haar = F)
+  dcayley(r, kappa = 1, Haar = T)
 }
 \arguments{
   \item{r}{Where the density is being evaluated}
@@ -29,10 +29,10 @@
 }
 \references{
   Schaeben H (1997). "A Simple Standard Orientation Density
-  Function: The Hyperspherical de la VallÃ©e Poussin
+  Function: The Hyperspherical de la Vallée Poussin
   Kernel." _Phys. Stat. Sol. (B)_, *200*, pp. 367-376.
 
-  Le\'on C, Ã© JM and Rivest L (2006). "A statistical model
+  Le\'on C, é JM and Rivest L (2006). "A statistical model
   for random rotations." _Journal of Multivariate
   Analysis_, *97*(2), pp. 412-430.
 }

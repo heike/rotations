@@ -64,12 +64,12 @@ SO3 <- function(U, theta) {
 #' @param ... additional arguments passed to samping density, g
 #' @return a random observation from target density
 
-arsample <- function(f, g, M, kappa, ...) {
+arsample <- function(f, g, M, kappa, Haar, ...) {
   found = FALSE
   while (!found) {
     x <- g(1, ...)
     y <- runif(1, min = 0, max = M)
-    if (y < f(x, kappa)) 
+    if (y < f(x, kappa, Haar)) 
       found = TRUE
   }
   return(x)
@@ -191,7 +191,7 @@ CIradius.Q4<-function(Qs,fun='mean',B=1000,m=n,alpha=0.95,...){
 #' @seealso \code{\link{rcayley}},\code{\link{dfisher}},\code{\link{dhaar}},\code{\link{dvmises}}
 #' @cite Schaeben97 leon06
 
-dcayley <- function(r, kappa = 1, Haar = F) {
+dcayley <- function(r, kappa = 1, Haar = T) {
   den <- 0.5 * gamma(kappa + 2)/(sqrt(pi) * 2^kappa * gamma(kappa + 0.5)) * (1 + cos(r))^kappa * (1 - cos(r))
   
   if (Haar) 
@@ -211,7 +211,7 @@ dcayley <- function(r, kappa = 1, Haar = F) {
 #' @seealso \code{\link{rfisher}}, \code{\link{dhaar}},\code{\link{dvmises}},\code{\link{dcayley}}
 #' @export
 
-dfisher <- function(r, kappa = 1, Haar = F) {
+dfisher <- function(r, kappa = 1, Haar = T) {
   den <- exp(2 * kappa * cos(r)) * (1 - cos(r))/(2 * pi * (besselI(2 * kappa, 0) - besselI(2 * kappa, 1)))
   
   if (Haar) {
@@ -244,7 +244,7 @@ dhaar <- function(r) return((1 - cos(r))/(2 * pi))
 #' @return value of circular-von Mises distribution with concentration \eqn{\kappa} evaluated at r
 #' @seealso \code{\link{rvmises}}, \code{\link{dfisher}},\code{\link{dhaar}},\code{\link{dcayley}}
 
-dvmises <- function(r, kappa = 1, Haar = F) {
+dvmises <- function(r, kappa = 1, Haar = T) {
   den <- 1/(2 * pi * besselI(kappa, 0)) * exp(kappa * cos(r))
   
   if (Haar) {
@@ -900,14 +900,13 @@ qu <- function(R) {
 #' @author Heike Hofmann
 #' @param n number of sample wanted
 #' @param f target density
-#' @param g sampling distribution
 #' @param M maximum number in uniform proposal density
 #' @param ... additional arguments sent to arsample
 #' @return a vector of size n of observations from target density
 
-rar <- function(n, f, g, M, ...) {
+rar <- function(n, f, M, ...) {
   res <- vector("numeric", length = n)
-  for (i in 1:n) res[i] <- arsample(f, g, M, ...)
+  for (i in 1:n) res[i] <- arsample.unif(f, M, ...)
   return(res)
 }
 
@@ -947,8 +946,8 @@ rcayley <- function(n, kappa = 1) {
 
 
 rfisher <- function(n, kappa = 1) {
-  M <- max(dfisher(seq(-pi, pi, length = 1000), kappa))
-  return(rar(n, dfisher, runif, M, min = -pi, max = pi, kappa = kappa))
+  M <- max(dfisher(seq(-pi, pi, length = 1000), kappa,Haar=F))
+  return(rar(n, dfisher, M, kappa = kappa, Haar=F))
 }
 
 #' Simulate a data set of size \eqn{n} from the uniform distribution on the sphere
@@ -962,9 +961,7 @@ rfisher <- function(n, kappa = 1) {
 
 
 rhaar<-function(n){
-  res<-vector("numeric",length=n)
-  for(i in 1:n) res[i] <- arsample.unif(dhaar,1/pi)
-  return(res)
+  return(rar(n, dhaar, 1/pi))
 }
 
 #' Riemannian Distance Between Two Random Rotations in matrix format

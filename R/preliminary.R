@@ -237,6 +237,92 @@ dfisher <- function(r, kappa = 1, Haar = T) {
 
 dhaar <- function(r) return((1 - cos(r))/(2 * pi))
 
+#' Riemannian Distance Between Two Rotations
+#'
+#' This function will calculate the riemannian or Euclidean distance between two rotations.  If only one rotation is specified
+#' the other will be set to the identity and the distance between the two is returned.
+#'
+#' @param Rs The estimate of the central direction
+#' @param S The true central direction
+#' @return S3 \code{dist} object; a number between 0 and pi that is the shortest geodesic curve connecting two matrices, i.e., the Riemannian distance
+#' @export
+#' @examples
+#' r<-rvmises(20,0.01)
+#' Rs<-genR(r)
+#' Sp<-mean(Rs)
+#' dist.SO3(Sp)
+
+dist<-function(Rs, method='euclidean' , p=1){
+  
+  UseMethod("dist")
+
+}
+
+#' @return \code{NULL}
+#'
+#' @rdname dist
+#' @method dist SO3
+#' @S3method dist SO3
+
+dist.SO3 <- function(Rs, method='euclidean' , p=1) {
+  
+  if(is.matrix(Rs) && length(Rs)>9){
+    R1<-matrix(Rs[1,],3,3)
+    R2<-matrix(Rs[2,],3,3)
+  }else{
+    R1<-matrix(Rs,3,3)
+    R2<-diag(1,3,3)
+  }
+  
+  if(!is.SO3(R1) || !is.SO3(R2))
+    stop("Both input must be matrices in SO3.")
+  
+  if(method=='euclidean'){
+    
+    so3dist<-vecNorm(R1,R2)^p
+    
+  }else if(method=='riemannian'){
+    
+    so3dist<-eangle(t(R1)%*%R2)^p
+    
+  }else{
+    stop("Incorrect usage of method argument.")
+  }
+  
+  return(so3dist)
+}
+
+#' @return \code{NULL}
+#'
+#' @rdname dist
+#' @method dist Q4
+#' @S3method dist Q4
+
+dist.Q4 <- function(Qs,method='euclidean', p=1) {
+  
+  if(length(Qs)>4){
+    Q1<-Qs[1,]
+    Q2<-Qs[2,]
+  }else{
+    Q1<-Qs[1:4]
+    Q2<-c(1,0,0,0)
+  }
+  
+  if(method=='riemannian'){
+    
+    cp <- sum(Q1*Q2)
+    q4dist<-acos(2*cp*cp-1)^p
+    
+  }else if(method=='euclidean'){
+    R1<-as.vector(SO3.Q4(Q1))
+    R2<-as.vector(SO3.Q4(Q2))
+    q4dist<-vecNorm(R1,R2)^p
+  }
+  
+  return(q4dist)
+}
+
+
 #'Density function for circular von Mises distribution
 #'
 #' The circular von Mises-based distribution has the density \deqn{C_\mathrm{M}(r|\kappa)=\frac{1}{2\pi \mathrm{I_0}(\kappa)}e^{\kappa\cos(r)}}.  This function allows the use to
@@ -522,8 +608,7 @@ genR <- function(r, S = diag(1, 3, 3), space='SO3') {
 #' is.SO3(1:9)
 is.SO3 <- function(x) {
   
-  if(!is.matrix(x))
-    x <- matrix(x, 3, 3)
+  x <- matrix(x, 3, 3)
   
   # Does it have determinant 1?
   if (abs(det(x)- 1)>10e-10) {
@@ -651,7 +736,7 @@ mean.SO3 <- function(Rs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
     }
     
   }
-  
+  class(R)<-"SO3"
   return(R)
 }
 
@@ -682,7 +767,7 @@ mean.Q4 <- function(Qs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
   
   R<-mean.SO3(Rs,type,epsilon,maxIter)
     
-  return(qu(R))
+  return(Q4.SO3(R))
     
 }
 
@@ -779,6 +864,7 @@ median.SO3 <- function(Rs, type = "projected", epsilon = 1e-05, maxIter = 2000) 
       return(S)
     }
   }
+  class(S)<-"SO3"
   return(S)
 }
 
@@ -806,7 +892,7 @@ median.Q4 <- function(Qs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
   
   R<-median.SO3(Rs,type,epsilon,maxIter)
   
-  return(qu(R))
+  return(Q4.SO3(R))
 }
 
 #' Compute the projected or intrinsic median estimate of the central direction
@@ -896,7 +982,7 @@ SO3.Q4<-function(q){
 #' @param R a rotation matrix in SO3
 #' @return a unit quaternion of class Q4
 
-qu <- function(R) {
+Q4.SO3 <- function(R) {
   # represent rotation as quaternion
   theta <- eangle(R)
   u <- eaxis(R)
@@ -975,87 +1061,6 @@ rhaar<-function(n){
   return(rar(n, dhaar, 1/pi))
 }
 
-#' Riemannian Distance Between Two Random Rotations in matrix format
-#'
-#' This function will calculate the riemannian distance between an estimate of the central direction (in matrix or vector form) and the central direction.  By default the central direction
-#' is taken to be the identity matrix, but any matrix in SO(3) will work.  This distance is equivalent to the angle of rotation of R'S
-#'
-#' @param R The estimate of the central direction
-#' @param S The true central direction
-#' @return S3 \code{dist} object; a number between 0 and pi that is the shortest geodesic curve connecting two matrices, i.e., the Riemannian distance
-#' @export
-#' @examples
-#' r<-rvmises(20,0.01)
-#' Rs<-genR(r)
-#' Sp<-mean(Rs)
-#' dist.SO3(Sp,diag(1,3,3))
-
-dist.SO3 <- function(Rs, method='euclidean' , p=1) {
-  
-  if(is.matrix(Rs) && length(Rs)>9){
-    R1<-matrix(Rs[1,],3,3)
-    R2<-matrix(Rs[2,],3,3)
-  }else{
-    R1<-matrix(Rs,3,3)
-    R2<-diag(1,3,3)
-  }
-  
-  if(!is.SO3(R1) || !is.SO3(R2))
-    stop("Both input must be matrices in SO3.")
-  
-  if(method=='euclidean'){
-    
-    so3dist<-vecNorm(R1,R2)^p
-    
-  }else if(method=='riemannian'){
-    
-    so3dist<-eangle(t(R1)%*%R2)^p
-  
-  }else{
-    stop("Incorrect usage of method argument.")
-  }
-  
-  return(so3dist)
-}
-
-#' Riemannian Distance Between Two Random Rotations in quaternion
-#'
-#' This function will calculate the riemannian distance between an estimate of the central direction (in matrix or vector form) and the central direction.  By default the central direction
-#' is taken to be the identity matrix, but any matrix in SO(3) will work.  It calls the matrix log and matrix exponential functions also given here.
-#'
-#' @param q The estimate of the central direction
-#' @param Q The true central direction
-#' @return the Riemannian distance between the two rotations given in quaternion form
-#' @export
-#' @examples
-#' r<-rvmises(20,0.01)
-#' Qs<-genR(r,space="Q4")
-#' Qp<-mean(Qs)
-#' dist.Q4(Qp)
-
-dist.Q4 <- function(Qs,method='euclidean', p=1) {
-  
-  if(length(Qs)>4){
-    Q1<-Qs[1,]
-    Q2<-Qs[2,]
-  }else{
-    Q1<-Qs[1:4]
-    Q2<-c(1,0,0,0)
-  }
-  
-  if(method=='riemannian'){
-    
-    cp <- sum(Q1*Q2)
-    q4dist<-acos(2*cp*cp-1)^p
-    
-  }else if(method=='euclidean'){
-    R1<-as.vector(SO3.Q4(Q1))
-    R2<-as.vector(SO3.Q4(Q2))
-    q4dist<-vecNorm(R1,R2)^p
-  }
-  
-  return(q4dist)
-}
 
 #' Generate a vector of angles(r) from the von Mises Circular distribution
 #'

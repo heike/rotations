@@ -4,13 +4,13 @@
 \alias{CIradius.SO3}
 \title{Find confidence interval radius for central orientation estimate}
 \usage{
-  CIradius(Rs, fun = "mean", B = 1000, m = n, alpha = 0.95,
+  CIradius(Rs, fun = mean, B = 1000, m = n, alpha = 0.95,
     ...)
 
-  \method{CIradius}{SO3} (Rs, fun = "mean", B = 1000,
-    m = n, alpha = 0.95, ...)
+  \method{CIradius}{SO3} (Rs, fun = mean, B = 1000, m = n,
+    alpha = 0.95, ...)
 
-  \method{CIradius}{Q4} (Qs, fun = "mean", B = 1000, m = n,
+  \method{CIradius}{Q4} (Qs, fun = mean, B = 1000, m = n,
     alpha = 0.95, ...)
 }
 \arguments{

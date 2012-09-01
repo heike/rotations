@@ -141,7 +141,7 @@ as.SO3<-function(x){
 #'  CIradius(Qs,mean,type='projected')  ## calls CIradius.Q4
 
 
-CIradius <- function(Rs,fun=mean,B=1000,m=n,alpha=0.95,...)
+CIradius <- function(Rs,fun='mean',B=1000,m=n,alpha=0.95,...)
 {
   UseMethod( "CIradius" )
 }
@@ -153,12 +153,12 @@ CIradius <- function(Rs,fun=mean,B=1000,m=n,alpha=0.95,...)
 #' @method CIradius SO3
 #' @S3method CIradius SO3
 
-CIradius.SO3 <- function(Rs,fun=mean,B=1000,m=n,alpha=0.95,...){
+CIradius.SO3 <- function(Rs,fun='mean',B=1000,m=n,alpha=0.95,...){
+  
   # This is more conservative then Bingham's method since d_r > max abs angle always
-  
   args <- as.list(match.call())[-1]
-  
   fname <- as.character(args$fun)
+  
   if (!(fname %in% c("mean", "median")))
     stop(sprintf("'%s' is not valid function for estimating main direction. Use 'mean' or 'median'.", fname))
   
@@ -172,7 +172,7 @@ CIradius.SO3 <- function(Rs,fun=mean,B=1000,m=n,alpha=0.95,...){
     
     ShatStar<-fun(as.SO3(Rs[samp,]),...)
     
-    That[i]<-dist(as.SO3(c(Shat,ShatStar)),method='riemannian',p=1)
+    That[i]<-dist.SO3(c(Shat,ShatStar),method='riemannian',p=1)
   }
   
   return(quantile(That,alpha))
@@ -185,12 +185,27 @@ CIradius.SO3 <- function(Rs,fun=mean,B=1000,m=n,alpha=0.95,...){
 #' @method CIradius Q4
 #' @S3method CIradius Q4
 
-CIradius.Q4<-function(Qs,fun=mean,B=1000,m=n,alpha=0.95,...){
+CIradius.Q4<-function(Qs,fun='mean',B=1000,m=n,alpha=0.95,...){
+
+  # This is more conservative then Bingham's method since d_r > max abs angle always
+  args <- as.list(match.call())[-1]
+  fname <- as.character(args$fun)
   
-  Rs<-t(apply(Qs,1,SO3.Q4))
+  Rs<-as.SO3(t(apply(Qs,1,SO3.Q4)))
   
-  return(CIradius.SO3(Rs,fun,B,m,alpha,...))
+  if(fname=='mean'){
+    
+    return(CIradius(Rs,fun='mean',B,m,alpha,...))
   
+  }else if(fname=='median'){
+    
+    return(CIradius(Rs,fun='median',B,m,alpha,...))
+    
+  }else{
+   
+    stop(sprintf("'%s' is not valid function for estimating main direction. Use 'mean' or 'median'.", fname))
+  
+  }
 }
 
 #' Symmetric Cayley distribution for angular data

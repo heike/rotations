@@ -30,15 +30,6 @@
 \examples{
 r<-rcayley(20,0.01)
 }
-\references{
-  Schaeben H (1997). "A Simple Standard Orientation Density
-  Function: The Hyperspherical de la Vallée Poussin
-  Kernel." _Phys. Stat. Sol. (B)_, *200*, pp. 367-376.
-
-  Le\'on C, é JM and Rivest L (2006). "A statistical model
-  for random rotations." _Journal of Multivariate
-  Analysis_, *97*(2), pp. 412-430.
-}
 \seealso{
   \code{\link{dcayley}},\code{\link{rvmises}},\code{\link{rcayley}},\code{\link{rhaar}}
 }

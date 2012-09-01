@@ -2,8 +2,8 @@
 \alias{CIradius.SO3}
 \title{Find confidence interval radius for central orientation estimate}
 \usage{
-  CIradius.SO3(Rs, fun = "mean", B = 1000, m = n, q = 0.95,
-    ...)
+  CIradius.SO3(Rs, fun = "mean", B = 1000, m = n,
+    alpha = 0.95, ...)
 }
 \arguments{
   \item{Rs}{sample of size n rotations in matrix format}
@@ -15,7 +15,7 @@
 
   \item{m}{bootstrap sample size}
 
-  \item{q}{level of confidence}
+  \item{alpha}{level of confidence}
 
   \item{...}{additional arguments passed to 'fun' such as
   'type' and 'epsilon'}

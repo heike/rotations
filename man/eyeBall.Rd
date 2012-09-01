@@ -28,16 +28,11 @@
   which the on column of the provided sample is drawn.  The
   data are centered around a provided matrix and the user
   can choose to display this center or not.  Based on
-  \code{ggplot2} package by \cite{Wickham (2009)}.
+  \code{ggplot2} package by \cite{wickham09}.
 }
 \examples{
 r<-rvmises(20,1.0)
 Rs<-genR(r)
 eyeBall(Rs,center=mean(Rs),show.estimates=TRUE,shape=4)
-}
-\references{
-  Wickham H (2009). _ggplot2: elegant graphics for data
-  analysis_. Springer New York. ISBN 978-0-387-98140-6,
-  <URL: http://had.co.nz/ggplot2/book>.
 }
 

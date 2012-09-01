@@ -12,9 +12,9 @@
   angle of rotation
 }
 \description{
-  This function will find the angle of rotation matrix R.
-  Used mostly to reparameterize between quaternions and
-  rotations.
+  This is a test This function will find the angle of
+  rotation matrix R.  Used mostly to reparameterize between
+  quaternions and rotations.
 }
 \seealso{
   \code{\link{eaxis}}

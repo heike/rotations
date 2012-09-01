@@ -152,16 +152,16 @@ CIradius.SO3 <- function(Rs,fun='mean',B=1000,m=n,alpha=0.95,...){
     stop(sprintf("'%s' is not valid function for estimating main direction. Use 'mean' or 'median'.", fname))
   
   n<-nrow(Rs)
-  Shat<-fun(Rs,...) 
+  Shat<-fun(Rs,...)
   That<-rep(NA, length=B)
   
   for(i in 1:B){
     
     samp<-sample(1:n,m,replace=T)
     
-    ShatStar<-fun(Rs[samp,],...) 
+    ShatStar<-fun(Rs[samp,],...)
     
-    That[i]<-dist.SO3(Shat,ShatStar)
+    That[i]<-dist.SO3(c(Shat,ShatStar))
   }
   
   return(quantile(That,alpha))
@@ -193,6 +193,7 @@ CIradius.Q4<-function(Qs,fun='mean',B=1000,m=n,alpha=0.95,...){
 #' @param Haar logical, if density is evaluated with respect to Haar measure or Lebesgue
 #' @return value of Cayley distribution with concentration \eqn{\kappa} evaluated at r
 #' @seealso \code{\link{rcayley}},\code{\link{dfisher}},\code{\link{dhaar}},\code{\link{dvmises}}
+#' @export
 #' @cite Schaeben97 leon06
 
 dcayley <- function(r, kappa = 1, Haar = T) {
@@ -237,14 +238,15 @@ dfisher <- function(r, kappa = 1, Haar = T) {
 
 dhaar <- function(r) return((1 - cos(r))/(2 * pi))
 
-#' Riemannian Distance Between Two Rotations
+#' Distance Between Two Rotations
 #'
 #' This function will calculate the riemannian or Euclidean distance between two rotations.  If only one rotation is specified
 #' the other will be set to the identity and the distance between the two is returned.
 #'
 #' @param Rs The estimate of the central direction
-#' @param S The true central direction
-#' @return S3 \code{dist} object; a number between 0 and pi that is the shortest geodesic curve connecting two matrices, i.e., the Riemannian distance
+#' @param method calculate riemannian or euclidean distance
+#' @param p the power of the respective distance
+#' @return the pth power of the euclidean or riemannian distance
 #' @export
 #' @examples
 #' r<-rvmises(20,0.01)
@@ -252,26 +254,29 @@ dhaar <- function(r) return((1 - cos(r))/(2 * pi))
 #' Sp<-mean(Rs)
 #' dist.SO3(Sp)
 
-dist<-function(Rs, method='euclidean' , p=1){
-  
-  UseMethod("dist")
-
-}
-
-#' @return \code{NULL}
-#'
-#' @rdname dist
-#' @method dist SO3
-#' @S3method dist SO3
-
 dist.SO3 <- function(Rs, method='euclidean' , p=1) {
   
-  if(is.matrix(Rs) && length(Rs)>9){
+  
+  if(is.matrix(Rs) && nrow(Rs)==2){
+    
+    #If Rs is in a 2x9 matrix, the rows correspond to rotations
     R1<-matrix(Rs[1,],3,3)
     R2<-matrix(Rs[2,],3,3)
-  }else{
+    
+  }else if(length(Rs)==9){
+    
+    #If only one rotation is given assume the other to be the identity matrix
     R1<-matrix(Rs,3,3)
     R2<-diag(1,3,3)
+    
+  }else if(length(Rs)==18){
+    
+    #This allows input of the from c(R1,R2)
+    R1<-matrix(Rs[1:9],3,3)
+    R2<-matrix(Rs[10:18],3,3)
+    
+  }else{
+    stop("Rs is not in a usable form.  See help(dist.SO3).")
   }
   
   if(!is.SO3(R1) || !is.SO3(R2))
@@ -292,11 +297,21 @@ dist.SO3 <- function(Rs, method='euclidean' , p=1) {
   return(so3dist)
 }
 
-#' @return \code{NULL}
+#' Distance Between Two Rotations
 #'
-#' @rdname dist
-#' @method dist Q4
-#' @S3method dist Q4
+#' This function will calculate the riemannian or Euclidean distance between two rotations.  If only one rotation is specified
+#' the other will be set to the identity and the distance between the two is returned.
+#'
+#' @param Qs The estimate of the central direction
+#' @param method calculate riemannian or euclidean distance
+#' @param p the power of the respective distance
+#' @return the pth power of the euclidean or riemannian distance between Q1 and Q2
+#' @export
+#' @examples
+#' r<-rvmises(20,0.01)
+#' Qs<-genR(r,space="Q4")
+#' Qp<-mean(Rs)
+#' dist(Qp)
 
 dist.Q4 <- function(Qs,method='euclidean', p=1) {
   
@@ -331,6 +346,7 @@ dist.Q4 <- function(Qs,method='euclidean', p=1) {
 #' @param r value at which to evaluate the distribution function
 #' @param kappa concentration paramter
 #' @param Haar logical, if density is evaluated with respect to Haar measure or Lebesgue
+#' @export
 #' @return value of circular-von Mises distribution with concentration \eqn{\kappa} evaluated at r
 #' @seealso \code{\link{rvmises}}, \code{\link{dfisher}},\code{\link{dhaar}},\code{\link{dcayley}}
 

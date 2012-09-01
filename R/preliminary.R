@@ -41,7 +41,13 @@ setOldClass("EA")
 
 SO3 <- function(U, theta) {
   # based on Rodrigues formula
-  U <- U/sqrt(sum(U^2))
+  
+  ulen<-sqrt(sum(U^2))
+  
+  if(ulen!=0){
+    U <- U/ulen
+  }
+  
   P <- U %*% t(U)
   
   id <- matrix(0, length(U), length(U))
@@ -311,8 +317,7 @@ eangle<-function(Rs){
 eaxis<-function(R){
   # based on Rodrigues formula: R - t(R)
   
-  if(nrow(R)!=3)
-    R<-matrix(R,3,3)
+  R<-matrix(R,3,3)
   
   X <- R - t(R)
   u <- rev(X[upper.tri(X)])*c(-1,1,-1)
@@ -328,7 +333,13 @@ eaxis<-function(R){
 #' @return skew-symmetric matrix
 
 eskew <- function(U) {
-  U <- U/sqrt(sum(U^2))
+  
+  ulen<-sqrt(sum(U^2))
+  
+  if(ulen!=0){
+    U<-U/ulen
+  }
+  
   u <- U[1]
   v <- U[2]
   w <- U[3]
@@ -669,7 +680,7 @@ mean.Q4 <- function(Qs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
   
   Rs<-t(apply(Qs,1,SO3.Q4))
   
-  R<-mean(Rs,type,epsilon,maxIter)
+  R<-mean.SO3(Rs,type,epsilon,maxIter)
     
   return(qu(R))
     
@@ -693,9 +704,9 @@ mean.Q4 <- function(Qs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
 #' @examples
 #' r<-rvmises(20,0.01)
 #' EAs<-genR(r,space="R3")
-#' mean.R3(EAs)
+#' mean.EA(EAs)
 
-mean.R3 <- function(EAs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
+mean.EA <- function(EAs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
   
   Rs<-t(apply(EAs,1,SO3.EA))
   
@@ -867,7 +878,8 @@ SO3.Q4<-function(q){
     warning("Unit quaternions required.  Input was normalized.")
     q<-q/sqrt(sum(q^2))
   }
-    
+  
+  
   theta<-2*acos(q[1])
   
   if(theta==0){
@@ -1019,7 +1031,7 @@ dist.SO3 <- function(Rs, method='euclidean' , p=1) {
 #' r<-rvmises(20,0.01)
 #' Qs<-genR(r,space="Q4")
 #' Qp<-mean(Qs)
-#' riedist.Q4(Qp)
+#' dist.Q4(Qp)
 
 dist.Q4 <- function(Qs,method='euclidean', p=1) {
   
@@ -1031,9 +1043,18 @@ dist.Q4 <- function(Qs,method='euclidean', p=1) {
     Q2<-c(1,0,0,0)
   }
   
-  cp <- sum(q*Q)
+  if(method=='riemannian'){
+    
+    cp <- sum(Q1*Q2)
+    q4dist<-acos(2*cp*cp-1)^p
+    
+  }else if(method=='euclidean'){
+    R1<-as.vector(SO3.Q4(Q1))
+    R2<-as.vector(SO3.Q4(Q2))
+    q4dist<-vecNorm(R1,R2)^p
+  }
   
-  return(acos(2*cp*cp-1))
+  return(q4dist)
 }
 
 #' Generate a vector of angles(r) from the von Mises Circular distribution

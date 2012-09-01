@@ -61,6 +61,7 @@ SO3 <- function(U, theta) {
 #' @param g sampling density
 #' @param M real valued constant, maximum of g
 #' @param kappa second parameter in the target density
+#' @param Haar should f be with respect to Haar or not
 #' @param ... additional arguments passed to samping density, g
 #' @return a random observation from target density
 
@@ -123,7 +124,7 @@ arsample.unif <- function(f, M, ...) {
 #'  CIradius(Qs,mean,type='projected')  ## calls CIradius.Q4
 
 
-CIradius = function(Rs,fun='mean',B=1000,m=n,alpha=0.95,...)
+CIradius <- function(Rs,fun='mean',B=1000,m=n,alpha=0.95,...)
 {
   UseMethod( "CIradius" )
 }
@@ -154,15 +155,12 @@ CIradius.SO3 <- function(Rs,fun='mean',B=1000,m=n,alpha=0.95,...){
     
     ShatStar<-fun(Rs[samp,],...) 
     
-    That[i]<-riedist.SO3(Shat,ShatStar)
+    That[i]<-dist.SO3(Shat,ShatStar)
   }
   
   return(quantile(That,alpha))
   
 }
-
-
-
 
 #' @return \code{NULL}
 #'
@@ -313,7 +311,7 @@ eangle<-function(Rs){
 eaxis<-function(R){
   # based on Rodrigues formula: R - t(R)
   
-  if(!is.matrix(R))
+  if(nrow(R)!=3)
     R<-matrix(R,3,3)
   
   X <- R - t(R)
@@ -452,8 +450,8 @@ eyeBall <- function(Rs, center = diag(1, 3, 3), column = 1, show.estimates = FAL
 
 genR <- function(r, S = diag(1, 3, 3), space='SO3') {
   
-  if(!(space %in% c("SO3","Q4","R3")))
-    stop("Incorrect space argument.  Options are: SO3, Q4 and R3. ")
+  if(!(space %in% c("SO3","Q4","EA")))
+    stop("Incorrect space argument.  Options are: SO3, Q4 and EA. ")
   
   if (!is.SO3(S))
     stop("The principal direction must be in SO(3).")
@@ -497,6 +495,7 @@ genR <- function(r, S = diag(1, 3, 3), space='SO3') {
     class(q)<-"Q4"
     return(q)
   }else{
+    class(ea)<-"EA"
     return(ea)
   }
 }
@@ -540,7 +539,7 @@ is.SO3 <- function(x) {
 
 exp.skew <- function(A) {
   
-  if (sum(abs(A - t(A)))>10e-10) {
+  if (sum(abs(A + t(A)))>10e-10) {
     stop("The input matrix must be skew symmetric.")
   }
   
@@ -866,7 +865,7 @@ SO3.Q4<-function(q){
   
   if((sum(q^2)-1)>10e-10){
     warning("Unit quaternions required.  Input was normalized.")
-    q<-q/sum(q^2)
+    q<-q/sqrt(sum(q^2))
   }
     
   theta<-2*acos(q[1])
@@ -971,25 +970,40 @@ rhaar<-function(n){
 #'
 #' @param R The estimate of the central direction
 #' @param S The true central direction
-#' @return S3 \code{riedist} object; a number between 0 and pi that is the shortest geodesic curve connecting two matrices, i.e., the Riemannian distance
+#' @return S3 \code{dist} object; a number between 0 and pi that is the shortest geodesic curve connecting two matrices, i.e., the Riemannian distance
 #' @export
 #' @examples
 #' r<-rvmises(20,0.01)
 #' Rs<-genR(r)
 #' Sp<-mean(Rs)
-#' riedist.SO3(Sp,diag(1,3,3))
+#' dist.SO3(Sp,diag(1,3,3))
 
-riedist.SO3 <- function(R, S = diag(1, 3, 3)) {
+dist.SO3 <- function(Rs, method='euclidean' , p=1) {
   
-  if(!is.matrix(S))
-    S<-matrix(S,3,3)
-  if(!is.matrix(R))
-    R<-matrix(R,3,3)
+  if(is.matrix(Rs) && length(Rs)>9){
+    R1<-matrix(Rs[1,],3,3)
+    R2<-matrix(Rs[2,],3,3)
+  }else{
+    R1<-matrix(Rs,3,3)
+    R2<-diag(1,3,3)
+  }
   
-  if(!is.SO3(R) || !is.SO3(S))
+  if(!is.SO3(R1) || !is.SO3(R2))
     stop("Both input must be matrices in SO3.")
   
-  return(eangle(t(R)%*%S))
+  if(method=='euclidean'){
+    
+    so3dist<-vecNorm(R1,R2)^p
+    
+  }else if(method=='riemannian'){
+    
+    so3dist<-eangle(t(R1)%*%R2)^p
+  
+  }else{
+    stop("Incorrect usage of method argument.")
+  }
+  
+  return(so3dist)
 }
 
 #' Riemannian Distance Between Two Random Rotations in quaternion
@@ -1007,7 +1021,15 @@ riedist.SO3 <- function(R, S = diag(1, 3, 3)) {
 #' Qp<-mean(Qs)
 #' riedist.Q4(Qp)
 
-riedist.Q4 <- function(q, Q = c(1,0,0,0)) {
+dist.Q4 <- function(Qs,method='euclidean', p=1) {
+  
+  if(length(Qs)>4){
+    Q1<-Qs[1,]
+    Q2<-Qs[2,]
+  }else{
+    Q1<-Qs[1:4]
+    Q2<-c(1,0,0,0)
+  }
   
   cp <- sum(q*Q)
   
@@ -1084,7 +1106,7 @@ SumDist <- function(Rs, S = diag(1, 3, 3), p) {
   dist2 <- 0
   n <- nrow(Rs)
   
-  dR <- sum(apply(Rs, 1, riedist.SO3 , S = S)^p)
+  dR <- sum(apply(Rs, 1, dist.SO3 , S = S)^p)
   
   dE <- sum(apply(Rs, 1, vecNorm, type = "F", S = S)^p)
   

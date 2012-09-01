@@ -12,6 +12,11 @@
   numeric matrix \eqn{e^{\bm A}}
 }
 \description{
-  See \cite{moakher02}
+  See \cite{Moakher (2002)}
+}
+\references{
+  Moakher M (2002). "Means and averaging in the group of
+  rotations." _SIAM Journal on Matrix Analysis and
+  Applications_, *24*(1), pp. 1-16.
 }
 

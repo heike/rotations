@@ -2,8 +2,8 @@
 \alias{mean.SO3}
 \title{Compute the projected or intrinsic mean estimate of the central direction}
 \usage{
-  mean.SO3(Rs, type = "projected", epsilon = 1e-05,
-    maxIter = 2000)
+  \method{mean}{SO3} (Rs, type = "projected",
+    epsilon = 1e-05, maxIter = 2000)
 }
 \arguments{
   \item{Rs}{A \eqn{n\times 9} matrix where each row
@@ -34,13 +34,24 @@
   \eqn{\bar{\bm{R}}=\frac{1}{n}\sum_{i=1}^n\bm{R}_i} and
   the distance metric \eqn{d_D} is the Riemannian or
   Euclidean.  For more on the projected mean see
-  \cite{moakher02} and for the intrinsic mean see
-  \cite{manton04}.
+  \cite{Moakher (2002)} and for the intrinsic mean see
+  \cite{Manton (2004)}.
 }
 \examples{
 r<-rvmises(20,0.01)
 Rs<-genR(r)
 mean(Rs)
+}
+\references{
+  Moakher M (2002). "Means and averaging in the group of
+  rotations." _SIAM Journal on Matrix Analysis and
+  Applications_, *24*(1), pp. 1-16.
+
+  Manton J (2004). "A globally convergent numerical
+  algorithm for computing the centre of mass on compact Lie
+  groups." In _8th Conference on Control, Automation,
+  Robotics and Vision, (ICARCV) _, volume 3, pp. 2211-2216.
+  IEEE.
 }
 \seealso{
   \code{\link{median.SO3}}

@@ -1,9 +1,17 @@
-\name{CIradius.SO3}
+\name{CIradius}
+\alias{CIradius}
+\alias{CIradius.Q4}
 \alias{CIradius.SO3}
 \title{Find confidence interval radius for central orientation estimate}
 \usage{
+  CIradius(Rs, fun = "mean", B = 1000, m = n, alpha = 0.95,
+    ...)
+
   \method{CIradius}{SO3} (Rs, fun = "mean", B = 1000,
     m = n, alpha = 0.95, ...)
+
+  \method{CIradius}{Q4} (Qs, fun = "mean", B = 1000, m = n,
+    alpha = 0.95, ...)
 }
 \arguments{
   \item{Rs}{sample of size n rotations in matrix format}
@@ -22,6 +30,10 @@
 }
 \value{
   the radius of the confidence cone
+
+  \code{NULL}
+
+  \code{NULL}
 }
 \description{
   Given a sample or rotations and estimator for the central
@@ -38,7 +50,9 @@
 }
 \examples{
 Rs<-genR(rvmises(20))
- CIradius.SO3(Rs,mean.SO3,type='projected')
+ CIradius(Rs,mean,type='projected')  ## calls CIradius.SO3
+ Qs<-genR(rvmises(20),space='Q4')
+ CIradius(Qs,mean,type='projected')  ## calls CIradius.Q4
 }
 \references{
   bingham10

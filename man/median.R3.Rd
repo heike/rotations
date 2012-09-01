@@ -29,13 +29,20 @@
   of distance metrid, \eqn{d_D}, is Riemannian then the
   estimator is called the intrinsic, and if the distance
   metric in Euclidean then it projected. The algorithm used
-  in the intrinsic case is discussed in \cite{hartley11}
-  and the projected case was written by the authors.
+  in the intrinsic case is discussed in \cite{Hartley et
+  al. (2011)} and the projected case was written by the
+  authors.
 }
 \examples{
 r<-rcayley(50,1)
 EA<-genR(r,space="R3")
 median.R3(EA)
+}
+\references{
+  Hartley R, Aftab K and Trumpf J (2011). "L1 rotation
+  averaging using the Weiszfeld algorithm." In _2011 IEEE
+  Conference on Computer Vision and Pattern Recognition
+  (CVPR)_, pp. 3041-3048. IEEE.
 }
 \seealso{
   \code{\link{median.SO3}}

@@ -1,3 +1,35 @@
+#' "SO3" class
+#'
+#' @name SO3-class
+#' @aliases SO3
+#' @family SO3
+#'
+#' @exportClass SO3
+setOldClass("SO3")
+
+
+#' Q4 class
+#'
+#' Class for quaterion representation of rotations
+#' 
+#' @name Q4-class
+#' @aliases Q4
+#' @family Q4
+#'
+#' @exportClass Q4
+setOldClass("Q4")
+
+#' EA class
+#'
+#' Class for Euler angle representation of rotations
+#' 
+#' @name EA-class
+#' @aliases EA
+#' @family EA
+#'
+#' @exportClass EA
+setOldClass("EA")
+
 #' Method for creating a rotation using the angle axis representation
 #'
 #' Angle-axis representation based on the Rodrigues formula.
@@ -86,28 +118,41 @@ arsample.unif <- function(f, M, ...) {
 #'  @export
 #'  @examples
 #'  Rs<-genR(rvmises(20))
-#'  CIradius.SO3(Rs,mean.SO3,type='projected')
+#'  CIradius(Rs,mean,type='projected')  ## calls CIradius.SO3
+#'  Qs<-genR(rvmises(20),space='Q4')
+#'  CIradius(Qs,mean,type='projected')  ## calls CIradius.Q4
 
 
-CIradius.SO3<-function(Rs,fun='mean',B=1000,m=n,alpha=0.95,...){
+CIradius = function(Rs,fun='mean',B=1000,m=n,alpha=0.95,...)
+{
+  UseMethod( "CIradius" )
+}
+
+
+#' @return \code{NULL}
+#'
+#' @rdname CIradius
+#' @method CIradius SO3
+#' @S3method CIradius SO3
+
+CIradius.SO3 <- function(Rs,fun='mean',B=1000,m=n,alpha=0.95,...){
   # This is more conservative then Bingham's method since d_r > max abs angle always
   
-  if(fun=='mean') 
-    cofun<-mean.SO3 
-  else if (fun=='median')
-    cofun<-median.SO3
-  else
-    stop("Please enter a valid estimation method: 'mean' or 'median'.")
+  args <- as.list(match.call())[-1]
+  
+  fname <- as.character(args$fun)
+  if (!(fname %in% c("mean", "median")))
+    stop(sprintf("'%s' is not valid function for estimating main direction. Use 'mean' or 'median'.", fname))
   
   n<-nrow(Rs)
-  Shat<-cofun(Rs,...) 
+  Shat<-fun(Rs,...) 
   That<-rep(NA, length=B)
   
   for(i in 1:B){
     
     samp<-sample(1:n,m,replace=T)
     
-    ShatStar<-cofun(Rs[samp,],...) 
+    ShatStar<-fun(Rs[samp,],...) 
     
     That[i]<-riedist.SO3(Shat,ShatStar)
   }
@@ -116,23 +161,14 @@ CIradius.SO3<-function(Rs,fun='mean',B=1000,m=n,alpha=0.95,...){
   
 }
 
-#' Find confidence interval radius for central orientation estimate
-#' 
-#' Works the same was as 'CIradius.SO3' except with the quaternion representation of rotations.
-#'  @param Qs sample of size n rotations in matrix format
-#'  @param fun The method of central orientation estimation; e.g. mean or median
-#'  @param B bootstrap iterations
-#'  @param m bootstrap sample size
-#'  @param alpha level of confidence
-#'  @param ... additional arguments passed to 'fun' such as 'type' and 'epsilon'
-#'  @return the radius of the confidence cone
-#'  @references bingham10
-#'  @seealso \code{\link{CIradius.SO3}}
-#'  @export
-#'  @examples
-#'  Qs<-genR(rvmises(20),space='Q4')
-#'  CIradius.SO3(Qs,mean.Q4,type='projected')
 
+
+
+#' @return \code{NULL}
+#'
+#' @rdname CIradius
+#' @method CIradius Q4
+#' @S3method CIradius Q4
 
 CIradius.Q4<-function(Qs,fun='mean',B=1000,m=n,alpha=0.95,...){
   
@@ -225,8 +261,8 @@ dvmises <- function(r, kappa = 1, Haar = F) {
 #' @seealso \code{\link{is.SO3}} can be used to check the output of this function
 #' @export
 #' @examples
-#' eaExample<-c(pi/2,3*pi/4,0)
-#' SO3Dat<-SO3.EA(eaExample)
+#' eaExample<-structure(c(pi/2,3*pi/4,0), class="EA")
+#' SO3Dat<-SO3(eaExample)
 #' is.SO3(SO3Dat)
 
 SO3.EA <- function(eur) {
@@ -564,7 +600,8 @@ log.SO3 <- function(R) {
 #' @return projected or intrinsic mean of the sample
 #' @seealso \code{\link{median.SO3}}
 #' @cite moakher02, manton04
-#' @export
+#' @S3method mean SO3
+#' @method mean SO3
 #' @examples
 #' r<-rvmises(20,0.01)
 #' Rs<-genR(r)

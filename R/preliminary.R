@@ -404,7 +404,7 @@ dist.EA <- function(EA1, EA2=id.EA ,method='euclidean', p=1) {
   
   EAdist<-dist.SO3(R1,R2,method,p)
   
-  return(q4dist)
+  return(EAdist)
 }
 
 

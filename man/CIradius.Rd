@@ -4,20 +4,21 @@
 \alias{CIradius.SO3}
 \title{Find confidence interval radius for central orientation estimate}
 \usage{
-  CIradius(Rs, fun = "mean", B = 1000, m = n, alpha = 0.95,
-    ...)
-
-  \method{CIradius}{SO3} (Rs, fun = "mean", B = 1000,
-    m = n, alpha = 0.95, ...)
-
-  \method{CIradius}{Q4} (Qs, fun = "mean", B = 1000, m = n,
+  CIradius(Rs, main = mean, B = 1000, m = nrow(Rs),
     alpha = 0.95, ...)
+
+  \method{CIradius}{SO3} (Rs, main = mean, B = 1000,
+    m = nrow(Rs), alpha = 0.95, ...)
+
+  \method{CIradius}{Q4} (Qs, main = mean, B = 1000,
+    m = nrow(Qs), alpha = 0.95, ...)
 }
 \arguments{
   \item{Rs}{sample of size n rotations in matrix format}
 
-  \item{fun}{The method of central orientation estimation;
-  e.g. mean or median}
+  \item{main}{The method of central orientation estimation;
+  e.g. mean or median, other methods can be used, but will
+  result in a warning}
 
   \item{B}{bootstrap iterations}
 

@@ -2,10 +2,12 @@
 \alias{dist.SO3}
 \title{Distance Between Two Rotations}
 \usage{
-  dist.SO3(Rs, method = "euclidean", p = 1)
+  dist.SO3(R, S = id.SO3, method = "euclidean", p = 1)
 }
 \arguments{
-  \item{Rs}{The estimate of the central direction}
+  \item{R}{rotation in SO3 representation}
+
+  \item{S}{rotation in SO3 representation}
 
   \item{method}{calculate riemannian or euclidean distance}
 

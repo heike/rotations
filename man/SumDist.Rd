@@ -2,7 +2,7 @@
 \alias{SumDist}
 \title{Compute the sum of the \eqn{p^{\text{th}}} order distances between Rs and S}
 \usage{
-  SumDist(Rs, S = diag(1, 3, 3), p)
+  SumDist(Rs, S = id.SO3, p)
 }
 \arguments{
   \item{Rs}{numeric matrix with sample size n rows and m

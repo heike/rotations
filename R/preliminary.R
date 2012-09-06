@@ -368,34 +368,31 @@ dvmises <- function(r, kappa = 1, Haar = T) {
   }
 }
 
-#' A function that will take  a Euler angle and return a rotation matrix in vector format
+#'Translate from matrix to Euler angle format
 #'
-#' @param eur numeric Euler angle representation of an element in SO(3)
-#' @return numeric \eqn{9\times 1} vector of a matrix in SO(3)
-#' @seealso \code{\link{is.SO3}} can be used to check the output of this function
-#' @export
-#' @examples
-#' eaExample<-structure(c(pi/2,3*pi/4,0), class="EA")
-#' SO3Dat<-SO3(eaExample)
-#' is.SO3(SO3Dat)
+#'Based on the Z-X-Z definition of Euler angles, this will take a 3x3 rotation matrix and return
+#'the Euler angle reprentation of that rotation.
+#'@param rot a rotation matrix in the form of a 3x3 matrix
+#'@return a vector of Euler angles
 
-SO3.EA <- function(eur) {
+EA.SO3 <- function(rot){
   
-  S <- matrix(NA, 3, 3)
-  S[1, 1] <- cos(eur[1]) * cos(eur[3]) - sin(eur[1]) * sin(eur[3]) * cos(eur[2])
-  S[1, 2] <- sin(eur[1]) * cos(eur[3]) + cos(eur[1]) * sin(eur[3]) * cos(eur[2])
-  S[1, 3] <- sin(eur[3]) * sin(eur[2])
+  beta<-acos(rot[9])
+  alpha <- asin(rot[3]/sin(beta))
   
-  S[2, 1] <- -cos(eur[1]) * sin(eur[3]) - sin(eur[1]) * cos(eur[3]) * cos(eur[2])
-  S[2, 2] <- -sin(eur[1]) * sin(eur[3]) + cos(eur[1]) * cos(eur[3]) * cos(eur[2])
-  S[2, 3] <- cos(eur[3]) * sin(eur[2])
+  if(alpha<0){
+    alpha<-alpha+2*pi
+  }
   
-  S[3, 1] <- sin(eur[1]) * sin(eur[2])
-  S[3, 2] <- -cos(eur[1]) * sin(eur[2])
-  S[3, 3] <- cos(eur[2])
-  S <- as.vector(S)
-  class(S) <- "SO3"
-  return(S)
+  gamma <- asin(rot[7]/sin(beta))
+  
+  if(gamma<0){
+    gamma<-gamma+2*pi
+  }
+  
+  ea<-c(alpha,beta,gamma)
+  class(ea)<-"EA"
+  return(ea)
 }
 
 #' Find the angle of rotation R
@@ -606,7 +603,7 @@ genR <- function(r, S = diag(1, 3, 3), space='SO3') {
       
     }else{
       
-      ea[i,] <- euler(S %*% SO3(u, r[i]))
+      ea[i,] <- EA.SO3(S %*% SO3(u, r[i]))
     }
   }
   if(space=="SO3"){
@@ -816,12 +813,12 @@ mean.Q4 <- function(Qs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
 
 mean.EA <- function(EAs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
   
-  Rs<-t(apply(EAs,1,SO3.EA))
+  Rs<-as.SO3(t(apply(EAs,1,SO3.EA)))
   
   R<-mean(Rs,type,epsilon,maxIter)
   
-  return(R)
-  #return(euler(R))
+  #return(R)
+  return(EA.SO3(R))
 }
 
 
@@ -936,13 +933,13 @@ median.Q4 <- function(Qs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
 #' EA<-genR(r,space="R3")
 #' median.R3(EA)
 
-median.R3 <- function(EAs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
+median.EA <- function(EAs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
   
   Rs<-t(apply(EAs,1,SO3.EA))
   
   R<-median.SO3(Rs,type,epsilon,maxIter)
   
-  return(euler(Rs))
+  return(EA.SO3(R))
 }
 
 #' The projection of an arbitrary \eqn{3\times 3} matrix into \eqn{SO(3)}
@@ -967,6 +964,36 @@ project.SO3 <- function(M) {
   
   R <- M %*% u %*% diag(x = c(d1, d2, d3), 3, 3) %*% t(u)
   return(R)
+}
+
+#' A function that will take  a Euler angle and return a rotation matrix in vector format
+#'
+#' @param eur numeric Euler angle representation of an element in SO(3)
+#' @return numeric \eqn{9\times 1} vector of a matrix in SO(3)
+#' @seealso \code{\link{is.SO3}} can be used to check the output of this function
+#' @export
+#' @examples
+#' eaExample<-structure(c(pi/2,3*pi/4,0), class="EA")
+#' SO3Dat<-SO3(eaExample)
+#' is.SO3(SO3Dat)
+
+SO3.EA <- function(eur) {
+  
+  S <- matrix(NA, 3, 3)
+  S[1, 1] <- cos(eur[1]) * cos(eur[3]) - sin(eur[1]) * sin(eur[3]) * cos(eur[2])
+  S[1, 2] <- sin(eur[1]) * cos(eur[3]) + cos(eur[1]) * sin(eur[3]) * cos(eur[2])
+  S[1, 3] <- sin(eur[3]) * sin(eur[2])
+  
+  S[2, 1] <- -cos(eur[1]) * sin(eur[3]) - sin(eur[1]) * cos(eur[3]) * cos(eur[2])
+  S[2, 2] <- -sin(eur[1]) * sin(eur[3]) + cos(eur[1]) * cos(eur[3]) * cos(eur[2])
+  S[2, 3] <- cos(eur[3]) * sin(eur[2])
+  
+  S[3, 1] <- sin(eur[1]) * sin(eur[2])
+  S[3, 2] <- -cos(eur[1]) * sin(eur[2])
+  S[3, 3] <- cos(eur[2])
+  S <- as.vector(S)
+  class(S) <- "SO3"
+  return(S)
 }
 
 #' Translate a unit quaternion to a rotation matrix

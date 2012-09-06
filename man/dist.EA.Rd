@@ -1,14 +1,11 @@
-\name{dist.Q4}
-\alias{dist.Q4}
+\name{dist.EA}
+\alias{dist.EA}
 \title{Distance Between Two Rotations}
 \usage{
-  dist.Q4(Q1, Q2 = id.Q4, method = "euclidean", p = 1)
+  dist.EA(EA1, EA2 = id.EA, method = "euclidean", p = 1)
 }
 \arguments{
-  \item{Q1}{First rotation in quaternion form}
-
-  \item{Q2}{Second rotation in quaternion form, identity by
-  default}
+  \item{s}{The estimate of the central direction}
 
   \item{method}{calculate riemannian or euclidean distance}
 
@@ -26,8 +23,8 @@
 }
 \examples{
 r<-rvmises(20,0.01)
-Qs<-genR(r,space="Q4")
-Qp<-mean(Qs)
-dist(Qp)
+EAs<-genR(r,space="EA")
+EAp<-mean(EAs)
+dist(EAp)
 }
 

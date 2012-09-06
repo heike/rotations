@@ -103,6 +103,28 @@ arsample.unif <- function(f, M, ...) {
   # arsample.unif(f, M, ...)
 }
 
+#' Convert anything into EA class
+#' 
+#' @param x can be anything
+#' @return x with class "EA"
+#' @export
+
+as.EA<-function(x){
+  class(x)<-"EA"
+  return(x)
+}
+
+#' Convert anything into Q4 class
+#' 
+#' @param x can be anything
+#' @return x with class "Q4"
+#' @export
+
+as.Q4<-function(x){
+  class(x)<-"Q4"
+  return(x)
+}
+
 #' Convert anything into SO3 class
 #' 
 #' @param x can be anything
@@ -113,6 +135,7 @@ as.SO3<-function(x){
   class(x)<-"SO3"
   return(x)
 }
+
 
 #' Find confidence interval radius for central orientation estimate
 #' 
@@ -188,6 +211,20 @@ CIradius.Q4<-function(Qs,main=mean,B=1000,m=nrow(Qs),alpha=0.95,...){
   return(CIradius(Rs,main,B,m,alpha,...))
 }
 
+#' @return \code{NULL}
+#'
+#' @rdname CIradius
+#' @method CIradius EA
+#' @S3method CIradius EA
+
+CIradius.EA<-function(EAs,main=mean,B=1000,m=nrow(EAs),alpha=0.95,...){  
+  Rs<-as.SO3(t(apply(EAs,1,SO3.EA)))
+  #  args <- as.list(match.call())[-1]
+  #  fname <- as.character(args$main)
+  
+  return(CIradius(Rs,main,B,m,alpha,...))
+}
+
 #' Symmetric Cayley distribution for angular data
 #'
 #' The symmetric Cayley distribution has a density of the form \deqn{C_\mathrm{C}(r |\kappa)=\frac{1}{\sqrt{\pi}} \frac{\Gamma(\kappa+2)}{\Gamma(\kappa+1/2)}2^{-(\kappa+1)}(1+\cos r)^\kappa(1-\cos r)}.
@@ -245,6 +282,8 @@ dfisher <- function(r, kappa = 1, Haar = T) {
 dhaar <- function(r) return((1 - cos(r))/(2 * pi))
 
 id.SO3 <- as.SO3(diag(c(1,1,1)))
+id.Q4 <- as.Q4(c(1,0,0,0))
+id.EA <- as.EA(c(0,0,0))
 
 #' Distance Between Two Rotations
 #'
@@ -265,31 +304,6 @@ id.SO3 <- as.SO3(diag(c(1,1,1)))
 
 dist.SO3 <- function(R, S=id.SO3, method='euclidean' , p=1) {
   
-#   if(is.matrix(Rs) && nrow(Rs)==2){
-#     
-#     #If Rs is in a 2x9 matrix, the rows correspond to rotations
-#     R1<-matrix(Rs[1,],3,3)
-#     R2<-matrix(Rs[2,],3,3)
-#     
-#   }else if(length(Rs)==9){
-#     
-#     #If only one rotation is given assume the other to be the identity matrix
-#     R1<-matrix(Rs,3,3)
-#     R2<-diag(1,3,3)
-#     
-#   }else if(length(Rs)==18){
-#     
-#     #This allows input of the from c(R1,R2)
-#     R1<-matrix(Rs[1:9],3,3)
-#     R2<-matrix(Rs[10:18],3,3)
-#     
-#   }else{
-#     stop("Rs is not in a usable form.  See help(dist.SO3).")
-#   }
-#   
-#   if(!is.SO3(R1) || !is.SO3(R2))
-#     stop("Both input must be matrices in SO3.")
-  
   if(method=='euclidean'){
     
     so3dist<-vecNorm(R,S)^p
@@ -299,10 +313,35 @@ dist.SO3 <- function(R, S=id.SO3, method='euclidean' , p=1) {
     so3dist<-eangle(t(R)%*%S)^p
     
   }else{
-    stop("Incorrect usage of method argument.")
+    stop("Incorrect usage of method argument.  Please choose riemannian or euclidean.")
   }
   
   return(so3dist)
+  
+  #   if(is.matrix(Rs) && nrow(Rs)==2){
+  #     
+  #     #If Rs is in a 2x9 matrix, the rows correspond to rotations
+  #     R1<-matrix(Rs[1,],3,3)
+  #     R2<-matrix(Rs[2,],3,3)
+  #     
+  #   }else if(length(Rs)==9){
+  #     
+  #     #If only one rotation is given assume the other to be the identity matrix
+  #     R1<-matrix(Rs,3,3)
+  #     R2<-diag(1,3,3)
+  #     
+  #   }else if(length(Rs)==18){
+  #     
+  #     #This allows input of the from c(R1,R2)
+  #     R1<-matrix(Rs[1:9],3,3)
+  #     R2<-matrix(Rs[10:18],3,3)
+  #     
+  #   }else{
+  #     stop("Rs is not in a usable form.  See help(dist.SO3).")
+  #   }
+  #   
+  #   if(!is.SO3(R1) || !is.SO3(R2))
+  #     stop("Both input must be matrices in SO3.")
 }
 
 #' Distance Between Two Rotations
@@ -310,7 +349,8 @@ dist.SO3 <- function(R, S=id.SO3, method='euclidean' , p=1) {
 #' This function will calculate the riemannian or Euclidean distance between two rotations.  If only one rotation is specified
 #' the other will be set to the identity and the distance between the two is returned.
 #'
-#' @param Qs The estimate of the central direction
+#' @param Q1 First rotation in quaternion form
+#' @param Q2 Second rotation in quaternion form, identity by default
 #' @param method calculate riemannian or euclidean distance
 #' @param p the power of the respective distance
 #' @return the pth power of the euclidean or riemannian distance between Q1 and Q2
@@ -318,18 +358,11 @@ dist.SO3 <- function(R, S=id.SO3, method='euclidean' , p=1) {
 #' @examples
 #' r<-rvmises(20,0.01)
 #' Qs<-genR(r,space="Q4")
-#' Qp<-mean(Rs)
+#' Qp<-mean(Qs)
 #' dist(Qp)
 
-dist.Q4 <- function(Qs,method='euclidean', p=1) {
+dist.Q4 <- function(Q1, Q2=id.Q4 ,method='euclidean', p=1) {
   
-  if(length(Qs)>4){
-    Q1<-Qs[1,]
-    Q2<-Qs[2,]
-  }else{
-    Q1<-Qs[1:4]
-    Q2<-c(1,0,0,0)
-  }
   
   if(method=='riemannian'){
     
@@ -340,7 +373,36 @@ dist.Q4 <- function(Qs,method='euclidean', p=1) {
     R1<-as.vector(SO3.Q4(Q1))
     R2<-as.vector(SO3.Q4(Q2))
     q4dist<-vecNorm(R1,R2)^p
+  }else{
+    stop("Incorrect usage of method argument.  Please choose riemannian or euclidean.")
   }
+  
+  return(q4dist)
+}
+
+#' Distance Between Two Rotations
+#'
+#' This function will calculate the riemannian or Euclidean distance between two rotations.  If only one rotation is specified
+#' the other will be set to the identity and the distance between the two is returned.
+#'
+#' @param s The estimate of the central direction
+#' @param method calculate riemannian or euclidean distance
+#' @param p the power of the respective distance
+#' @return the pth power of the euclidean or riemannian distance between Q1 and Q2
+#' @export
+#' @examples
+#' r<-rvmises(20,0.01)
+#' EAs<-genR(r,space="EA")
+#' EAp<-mean(EAs)
+#' dist(EAp)
+
+dist.EA <- function(EA1, EA2=id.EA ,method='euclidean', p=1) {
+  
+  R1<-SO3.EA(EA1)
+  
+  R2<-SO3.EA(EA2)
+  
+  EAdist<-dist.SO3(R1,R2,method,p)
   
   return(q4dist)
 }
@@ -378,6 +440,13 @@ dvmises <- function(r, kappa = 1, Haar = T) {
 EA.SO3 <- function(rot){
   
   beta<-acos(rot[9])
+  
+  #THIS IS A TEMPORARY FIX!  See "Orientations and rotations:..." FOR A REAL ANSWER TO THIS
+  
+  if(beta == 0){
+    return(c(0,0,0))
+  }
+  
   alpha <- asin(rot[3]/sin(beta))
   
   if(alpha<0){

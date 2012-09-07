@@ -532,7 +532,9 @@ eskew <- function(U) {
 #' @param Rs the sample of n random rotations
 #' @param center point about which to center the observations
 #' @param column integer 1 to 3 indicating which column to display
-#' @param show.estimates rather to display the four estimates of the principal direction or not
+#' @param show_estimates rather to display the four estimates of the principal direction or not
+#' @param xlimits limits for the x-axis, appropriate range is [-1,1]
+#' @param ylimits limits for the y-axis, appropriate range is [-1,1]
 #' @param ... Additional arguments passed to ggplot2
 #' @return  a ggplot2 object with the data dispalyed on a blank sphere
 #' @cite wickham09
@@ -540,9 +542,9 @@ eskew <- function(U) {
 #' @examples
 #' r<-rvmises(20,1.0)
 #' Rs<-genR(r)
-#' eyeBall(Rs,center=mean(Rs),show.estimates=TRUE,shape=4)
+#' eyeBall(Rs,center=mean(Rs),show_estimates=TRUE,shape=4)
 
-eyeBall <- function(Rs, center = id.SO3, column = 1, show.estimates = FALSE, ...) {
+eyeBall <- function(Rs, center = id.SO3, column = 1, show_estimates = FALSE, xlimits=c(-1,1),ylimits=c(-1,1), ...) {
   
   # construct helper grid lines for sphere
   
@@ -581,7 +583,7 @@ eyeBall <- function(Rs, center = id.SO3, column = 1, show.estimates = FALSE, ...
     geom_point(aes(colour = X3), size = 0.6) + scale_colour_continuous(low = I("white"), high = I("grey50")) + 
     opts(panel.background = theme_blank(), panel.grid.minor = theme_blank(), panel.grid.major = theme_blank(), 
          axis.title.x = theme_blank(), axis.title.y = theme_blank(), axis.text.x = theme_blank(), axis.text.y = theme_blank(), 
-         axis.ticks = theme_blank())
+         axis.ticks = theme_blank())+xlim(xlimits)+ylim(ylimits)
   
   if (column == 1) {
     cols <- 1:3
@@ -597,7 +599,7 @@ eyeBall <- function(Rs, center = id.SO3, column = 1, show.estimates = FALSE, ...
   
   obs <- data.frame(as.matrix(Rs[, cols]) %*% center %*% rot)
   
-  if (show.estimates) {
+  if (show_estimates) {
     
     GMean <- as.vector(mean(Rs, type = "intrinsic"))
     GMed <- as.vector(median.SO3(Rs, type = "intrinsic"))
@@ -820,7 +822,7 @@ mean.SO3 <- function(Rs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
       
       if (iter >= maxIter) {
         warning(paste("No convergence in ", iter, " iterations."))
-        return(R)
+        return(as.SO3(R))
       }
     }
     
@@ -949,7 +951,8 @@ median.SO3 <- function(Rs, type = "projected", epsilon = 1e-05, maxIter = 2000) 
     
     if (iter >= maxIter) {
       warning(paste("Unique solution wasn't found after ", iter, " iterations."))
-      return(S)
+  
+      return(as.SO3(S))
     }
   }
   class(S)<-"SO3"
@@ -1059,8 +1062,8 @@ SO3.EA <- function(eur) {
   S[3, 1] <- sin(eur[1]) * sin(eur[2])
   S[3, 2] <- -cos(eur[1]) * sin(eur[2])
   S[3, 3] <- cos(eur[2])
-  S <- as.vector(S)
-  class(S) <- "SO3"
+  S <- as.SO3(as.vector(S))
+
   return(S)
 }
 
@@ -1101,11 +1104,11 @@ SO3.Q4<-function(q){
 #' @return a unit quaternion of class Q4
 
 Q4.SO3 <- function(R) {
-  # represent rotation as quaternion
+  
   theta <- eangle(R)
   u <- eaxis(R)
-  x <- c(cos(theta/2), sin(theta/2) * u)
-  class(x) <- "Q4"
+  x <- as.Q4(c(cos(theta/2), sin(theta/2) * u))
+
   return(x)
 }
 
@@ -1286,10 +1289,6 @@ sum_dist.SO3 <- function(Rs, S = id.SO3, method='projected', p=1) {
 }
 
 
-
-
-
-
 tLogMat <- function(x, S) {
   tra <- log.SO3(t(S) %*% matrix(x, 3, 3))
   return(as.vector(tra))
@@ -1305,5 +1304,11 @@ vecNorm <- function(x, S, ...) {
 #' Identity in SO(3) space
 #' @export
 id.SO3 <- as.SO3(diag(c(1,1,1)))
+
+#' Identity in Q4 space
+#' @export
 id.Q4 <- as.Q4(c(1,0,0,0))
+
+#' Identity in EA space
+#' @export
 id.EA <- as.EA(c(0,0,0))

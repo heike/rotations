@@ -304,13 +304,14 @@ id.EA <- as.EA(c(0,0,0))
 
 dist.SO3 <- function(R, S=id.SO3, method='euclidean' , p=1) {
   
-  R<-as.SO3(matrix(R,3,3))
   
   if(method=='euclidean'){
     
     so3dist<-vecNorm(R,S)^p
     
   }else if(method=='riemannian'){
+    
+    R<-as.SO3(matrix(R,3,3))
     
     so3dist<-eangle(t(R)%*%S)^p
     
@@ -402,7 +403,7 @@ dist.EA <- function(EA1, EA2=id.EA ,method='euclidean', p=1) {
   
   R1<-SO3.EA(EA1)
   
-  R2<-SO3.EA(EA2)
+  R2<-as.SO3(matrix(SO3.EA(EA2),3,3))
   
   EAdist<-dist.SO3(R1,R2,method,p)
   
@@ -1297,13 +1298,3 @@ vecNorm <- function(x, S, ...) {
 }
 
 
-euler <- function(rot) {
-  # rotations to Euler angles
-  if (is.matrix(rot)) 
-    rot <- as.vector(rot)
-  
-  alpha <- acos(-rot[6]/sqrt(1 - rot[9]^2))
-  beta <- acos(rot[9])
-  gamma <- acos(rot[8]/sqrt(1 - rot[9]^2))
-  return(cbind(alpha, beta, gamma))
-}

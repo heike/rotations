@@ -281,10 +281,6 @@ dfisher <- function(r, kappa = 1, Haar = T) {
 
 dhaar <- function(r) return((1 - cos(r))/(2 * pi))
 
-id.SO3 <- as.SO3(diag(c(1,1,1)))
-id.Q4 <- as.Q4(c(1,0,0,0))
-id.EA <- as.EA(c(0,0,0))
-
 #' Distance Between Two Rotations
 #'
 #' This function will calculate the riemannian or Euclidean distance between two rotations.  If only one rotation is specified
@@ -307,7 +303,7 @@ dist.SO3 <- function(R, S=id.SO3, method='euclidean' , p=1) {
   
   if(method=='euclidean'){
     
-    so3dist<-vecNorm(R,S)^p
+    so3dist<-vecNorm(R,S,type='F')^p
     
   }else if(method=='riemannian'){
     
@@ -373,9 +369,11 @@ dist.Q4 <- function(Q1, Q2=id.Q4 ,method='euclidean', p=1) {
     q4dist<-acos(2*cp*cp-1)^p
     
   }else if(method=='euclidean'){
-    R1<-as.vector(SO3.Q4(Q1))
-    R2<-as.vector(SO3.Q4(Q2))
-    q4dist<-vecNorm(R1,R2)^p
+    
+    R1<-SO3.Q4(Q1)
+    R2<-SO3.Q4(Q2)
+    q4dist<-norm(R1-R2,type='F')^p
+    
   }else{
     stop("Incorrect usage of method argument.  Please choose riemannian or euclidean.")
   }
@@ -912,7 +910,6 @@ mean.EA <- function(EAs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
   
   R<-mean(Rs,type,epsilon,maxIter)
   
-  #return(R)
   return(EA.SO3(R))
 }
 
@@ -1297,4 +1294,6 @@ vecNorm <- function(x, S, ...) {
   return(norm(matrix(cenX, n, n), ...))
 }
 
-
+id.SO3 <- as.SO3(diag(c(1,1,1)))
+id.Q4 <- as.Q4(c(1,0,0,0))
+id.EA <- as.EA(c(0,0,0))

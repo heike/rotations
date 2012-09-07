@@ -439,24 +439,33 @@ dvmises <- function(r, kappa = 1, Haar = T) {
 
 EA.SO3 <- function(rot){
   
+  zeta<-sqrt(1-rot[9]^2)
+  
+  Salpha <- asin(rot[3]/zeta)
+  Calpha <- acos(-rot[6]/zeta)
+  
+  if(Salpha==Calpha){
+    alpha <- Salpha 
+  }else if(sin(Calpha)==rot[3]/zeta){
+    alpha <- Calpha
+  }else{
+    alpha <- Salpha
+  }
+  
+  
   beta<-acos(rot[9])
   
-  #THIS IS A TEMPORARY FIX!  See "Orientations and rotations:..." FOR A REAL ANSWER TO THIS
+  Sgamma <- rot[7]/zeta
+  Cgamma<- rot[8]/zeta
   
-  if(beta == 0){
-    return(c(0,0,0))
-  }
-  
-  alpha <- asin(rot[3]/sin(beta))
-  
-  if(alpha<0){
-    alpha<-alpha+2*pi
-  }
-  
-  gamma <- asin(rot[7]/sin(beta))
-  
-  if(gamma<0){
-    gamma<-gamma+2*pi
+
+  if(Sgamma==Cgamma){
+    gamma <- Sgamma 
+  }else if(sin(Cgamma)==rot[3]/zeta){
+    gamma <- Cgamma    
+  }else{
+    gamma <- Sgamma
+    
   }
   
   ea<-c(alpha,beta,gamma)

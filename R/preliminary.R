@@ -191,7 +191,7 @@ CIradius.SO3 <- function(Rs,main=mean,B=1000,m=nrow(Rs),alpha=0.95,...){
   for (i in 1:B) {  
     samp<-sample(1:n,m,replace=T)
     ShatStar<-main(as.SO3(Rs[samp,]),...)
-    That[i] <- dist.SO3(Shat,ShatStar,method='riemannian',p=1)
+    That[i] <- dist.SO3(Shat,ShatStar,method='intrinsic',p=1)
   }
   
   return(quantile(That,alpha))  
@@ -283,14 +283,14 @@ dhaar <- function(r) return((1 - cos(r))/(2 * pi))
 
 #' Distance Between Two Rotations
 #'
-#' This function will calculate the riemannian or Euclidean distance between two rotations.  If only one rotation is specified
+#' This function will calculate the intrinsic (Riemannian) or projected (Euclidean) distance between two rotations.  If only one rotation is specified
 #' the other will be set to the identity and the distance between the two is returned.
 #'
-#' @param R rotation in SO3 representation
-#' @param S rotation in SO3 representation
-#' @param method calculate riemannian or euclidean distance
+#' @param R1 rotation in SO3 representation
+#' @param R2 rotation in SO3 representation
+#' @param method calculate intrinsic or projected distance
 #' @param p the power of the respective distance
-#' @return the pth power of the euclidean or riemannian distance
+#' @return the pth power of the intrinsic or projected distance
 #' @export
 #' @examples
 #' r<-rvmises(20,0.01)
@@ -298,61 +298,37 @@ dhaar <- function(r) return((1 - cos(r))/(2 * pi))
 #' Sp<-mean(Rs)
 #' dist.SO3(Sp)
 
-dist.SO3 <- function(R, S=id.SO3, method='euclidean' , p=1) {
+dist.SO3 <- function(R1, R2=id.SO3, method='projected' , p=1) {
   
-  R<-matrix(R,3,3)
-  S<-matrix(S,3,3)
+  R1<-matrix(R1,3,3)
+  R2<-matrix(R2,3,3)
   
-  if(method=='euclidean'){
+  if(method=='projected'){
     
-    so3dist<-norm(R-S,type='F')^p
+    so3dist<-norm(R1-R2,type='F')^p
     
-  }else if(method=='riemannian'){
+  }else if(method=='intrinsic'){
     
-    so3dist<-eangle(t(R)%*%S)^p
+    so3dist<-eangle(t(R1)%*%R2)^p
     
   }else{
-    stop("Incorrect usage of method argument.  Please choose riemannian or euclidean.")
+    stop("Incorrect usage of method argument.  Please choose intrinsic or projected.")
   }
   
   return(so3dist)
   
-  #   if(is.matrix(Rs) && nrow(Rs)==2){
-  #     
-  #     #If Rs is in a 2x9 matrix, the rows correspond to rotations
-  #     R1<-matrix(Rs[1,],3,3)
-  #     R2<-matrix(Rs[2,],3,3)
-  #     
-  #   }else if(length(Rs)==9){
-  #     
-  #     #If only one rotation is given assume the other to be the identity matrix
-  #     R1<-matrix(Rs,3,3)
-  #     R2<-diag(1,3,3)
-  #     
-  #   }else if(length(Rs)==18){
-  #     
-  #     #This allows input of the from c(R1,R2)
-  #     R1<-matrix(Rs[1:9],3,3)
-  #     R2<-matrix(Rs[10:18],3,3)
-  #     
-  #   }else{
-  #     stop("Rs is not in a usable form.  See help(dist.SO3).")
-  #   }
-  #   
-  #   if(!is.SO3(R1) || !is.SO3(R2))
-  #     stop("Both input must be matrices in SO3.")
 }
 
 #' Distance Between Two Rotations
 #'
-#' This function will calculate the riemannian or Euclidean distance between two rotations.  If only one rotation is specified
+#' This function will calculate the intrinsic (Riemannian) or projected (Euclidean) distance between two rotations.  If only one rotation is specified
 #' the other will be set to the identity and the distance between the two is returned.
 #'
 #' @param Q1 First rotation in quaternion form
 #' @param Q2 Second rotation in quaternion form, identity by default
-#' @param method calculate riemannian or euclidean distance
+#' @param method calculate intrinsic or projected distance
 #' @param p the power of the respective distance
-#' @return the pth power of the euclidean or riemannian distance between Q1 and Q2
+#' @return the pth power of the intrinsic or projected distance between Q1 and Q2
 #' @export
 #' @examples
 #' r<-rvmises(20,0.01)
@@ -360,22 +336,22 @@ dist.SO3 <- function(R, S=id.SO3, method='euclidean' , p=1) {
 #' Qp<-mean(Qs)
 #' dist(Qp)
 
-dist.Q4 <- function(Q1, Q2=id.Q4 ,method='euclidean', p=1) {
+dist.Q4 <- function(Q1, Q2=id.Q4 ,method='projected', p=1) {
   
   
-  if(method=='riemannian'){
+  if(method=='intrinsic'){
     
     cp <- sum(Q1*Q2)
     q4dist<-acos(2*cp*cp-1)^p
     
-  }else if(method=='euclidean'){
+  }else if(method=='projected'){
     
     R1<-SO3.Q4(Q1)
     R2<-SO3.Q4(Q2)
     q4dist<-norm(R1-R2,type='F')^p
     
   }else{
-    stop("Incorrect usage of method argument.  Please choose riemannian or euclidean.")
+    stop("Incorrect usage of method argument.  Please choose intrinsic or projected.")
   }
   
   return(q4dist)
@@ -383,13 +359,13 @@ dist.Q4 <- function(Q1, Q2=id.Q4 ,method='euclidean', p=1) {
 
 #' Distance Between Two Rotations
 #'
-#' This function will calculate the riemannian or Euclidean distance between two rotations.  If only one rotation is specified
+#' This function will calculate the intrinsic (Riemannian) or projected (Euclidean) distance between two rotations.  If only one rotation is specified
 #' the other will be set to the identity and the distance between the two is returned.
 #'
 #' @param s The estimate of the central direction
-#' @param method calculate riemannian or euclidean distance
+#' @param method calculate intrinsic or projected distance
 #' @param p the power of the respective distance
-#' @return the pth power of the euclidean or riemannian distance between Q1 and Q2
+#' @return the pth power of the projected or intrinsic distance between Q1 and Q2
 #' @export
 #' @examples
 #' r<-rvmises(20,0.01)
@@ -397,7 +373,7 @@ dist.Q4 <- function(Q1, Q2=id.Q4 ,method='euclidean', p=1) {
 #' EAp<-mean(EAs)
 #' dist(EAp)
 
-dist.EA <- function(EA1, EA2=id.EA ,method='euclidean', p=1) {
+dist.EA <- function(EA1, EA2=id.EA ,method='projected', p=1) {
   
   R1<-SO3.EA(EA1)
   
@@ -566,7 +542,7 @@ eskew <- function(U) {
 #' Rs<-genR(r)
 #' eyeBall(Rs,center=mean(Rs),show.estimates=TRUE,shape=4)
 
-eyeBall <- function(Rs, center = diag(1, 3, 3), column = 1, show.estimates = FALSE, ...) {
+eyeBall <- function(Rs, center = id.SO3, column = 1, show.estimates = FALSE, ...) {
   
   # construct helper grid lines for sphere
   
@@ -1255,31 +1231,63 @@ rvmises <- function(n, kappa = 1) {
 
 #' Compute the sum of the \eqn{p^{\text{th}}} order distances between Rs and S
 #'
-#' @param Rs numeric matrix with sample size n rows and m columns
-#' @param S the matrix to compute the sum of distances between each row of Rs with
+#' @param Rs a matrix of rotation observations, one row per observation
+#' @param S the individual matrix of interest, usually an estimate of the mean
 #' @param p the order of the distances to compute
-#' @return list of size two
-#'  \item{Rieman}{the sum of \eqn{p^{\text{th}}} order Riemannian distances}
-#'  \item{Euclid}{the sum of \eqn{p^{\text{th}}} order Euclidean distances}
+#' @return the sum of the pth order distance between each sample in Rs and S
 #' @export
 #' @examples
 #' r<-rvmises(20,0.01)
 #' Rs<-genR(r)
 #' Sp<-mean(Rs)
-#' SumDist(Rs,S=Sp,2)
+#' sum_dist(Rs,S=Sp,2)
 
-SumDist <- function(Rs, S = id.SO3, p) {
+sum_dist<-function(Rs, S = id.SO3, method='projected', p=1){
   
-  dist <- 0
-  dist2 <- 0
-  n <- nrow(Rs)
-  
-  dR <- sum(apply(Rs, 1, dist.SO3 , S = S)^p)
-  
-  dE <- sum(apply(Rs, 1, vecNorm, type = "F", S = S)^p)
-  
-  return(list(Rieman = dR, Euclid = dE))
+  UseMethod( "sum_dist" )
+
 }
+
+#' @return \code{NULL}
+#'
+#' @rdname sum_dist
+#' @method sum_dist EA
+#' @S3method sum_dist EA
+
+sum_dist.EA <- function(EAs, S = id.EA, method='projected', p=1) {
+  
+  return(sum(apply(EAs, 1, dist.EA , EA2 = S, method, p)))
+  
+}
+
+#' @return \code{NULL}
+#'
+#' @rdname sum_dist
+#' @method sum_dist Q4
+#' @S3method sum_dist Q4
+
+sum_dist.Q4 <- function(Qs, S = id.Q4, method='projected', p=1) {
+  
+  return(sum(apply(Qs, 1, dist.Q4 , Q2 = S, method, p)))
+  
+}
+
+
+#' @return \code{NULL}
+#'
+#' @rdname sum_dist
+#' @method sum_dist SO3
+#' @S3method sum_dist SO3
+
+sum_dist.SO3 <- function(Rs, S = id.SO3, method='projected', p=1) {
+  
+  return(sum(apply(Rs, 1, dist.SO3 , S = S, method, p)))
+  
+}
+
+
+
+
 
 
 tLogMat <- function(x, S) {
@@ -1294,6 +1302,8 @@ vecNorm <- function(x, S, ...) {
   return(norm(matrix(cenX, n, n), ...))
 }
 
+#' Identity in SO(3) space
+#' @export
 id.SO3 <- as.SO3(diag(c(1,1,1)))
 id.Q4 <- as.Q4(c(1,0,0,0))
 id.EA <- as.EA(c(0,0,0))

@@ -300,14 +300,14 @@ dhaar <- function(r) return((1 - cos(r))/(2 * pi))
 
 dist.SO3 <- function(R, S=id.SO3, method='euclidean' , p=1) {
   
+  R<-matrix(R,3,3)
+  S<-matrix(S,3,3)
   
   if(method=='euclidean'){
     
-    so3dist<-vecNorm(R,S,type='F')^p
+    so3dist<-norm(R-S,type='F')^p
     
   }else if(method=='riemannian'){
-    
-    R<-as.SO3(matrix(R,3,3))
     
     so3dist<-eangle(t(R)%*%S)^p
     

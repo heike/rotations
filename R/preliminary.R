@@ -304,6 +304,8 @@ id.EA <- as.EA(c(0,0,0))
 
 dist.SO3 <- function(R, S=id.SO3, method='euclidean' , p=1) {
   
+  R<-as.SO3(matrix(R,3,3))
+  
   if(method=='euclidean'){
     
     so3dist<-vecNorm(R,S)^p
@@ -433,16 +435,28 @@ dvmises <- function(r, kappa = 1, Haar = T) {
 #'Translate from matrix to Euler angle format
 #'
 #'Based on the Z-X-Z definition of Euler angles, this will take a 3x3 rotation matrix and return
-#'the Euler angle reprentation of that rotation.
+#'the Euler angle reprentation of that rotation.  See \cite{morawiec04} for a full description of this process.
 #'@param rot a rotation matrix in the form of a 3x3 matrix
 #'@return a vector of Euler angles
+#'@cite morawiec04
 
 EA.SO3 <- function(rot){
   
   zeta<-sqrt(1-rot[9]^2)
   
+  #For now deal with singularity this was
+  if(zeta==0){
+    ea<-c(0,0,0)
+    class(ea)<-"EA"
+    return(ea)
+  }
+  
   Salpha <- asin(rot[3]/zeta)
+  if(Salpha<0)  Salpha<-Salpha+2*pi
+  
   Calpha <- acos(-rot[6]/zeta)
+  
+  if(Calpha<0)  Calpha<-Calpha+2*pi
   
   if(Salpha==Calpha){
     alpha <- Salpha 
@@ -455,9 +469,11 @@ EA.SO3 <- function(rot){
   
   beta<-acos(rot[9])
   
-  Sgamma <- rot[7]/zeta
-  Cgamma<- rot[8]/zeta
+  Sgamma <- asin(rot[7]/zeta)
+  if(Sgamma<0) Sgamma<-Sgamma+2*pi
   
+  Cgamma<- acos(rot[8]/zeta)
+  if(Cgamma<0) Cgamma<-Cgamma+2*pi
 
   if(Sgamma==Cgamma){
     gamma <- Sgamma 

@@ -13,6 +13,12 @@
 \description{
   Based on the Z-X-Z definition of Euler angles, this will
   take a 3x3 rotation matrix and return the Euler angle
-  reprentation of that rotation.
+  reprentation of that rotation.  See \cite{Morawiec
+  (2004)} for a full description of this process.
+}
+\references{
+  Morawiec A (2004). _Orientations and rotations:
+  computations in crystallographic textures_. Springer
+  Verlag.
 }
 

@@ -2,13 +2,15 @@
 \alias{rvmises}
 \title{Generate a vector of angles(r) from the von Mises Circular distribution}
 \usage{
-  rvmises(n, kappa = 1)
+  rvmises(n, kappa = 1, nu = NULL)
 }
 \arguments{
+  \item{n}{The number of angles desired}
+
   \item{kappa}{The concentration parameter of the
   distribution}
 
-  \item{n}{The number of angles desired}
+  \item{nu}{An alternative to kappa; circular variance}
 }
 \value{
   S3 \code{rvmises} object; a vector of n angles following

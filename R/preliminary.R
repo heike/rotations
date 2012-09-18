@@ -1138,6 +1138,7 @@ rar <- function(n, f, M, ...) {
 #'
 #' @param n sample size
 #' @param kappa The concentration paramter
+#' @param nu An alternative to kappa; circular variance
 #' @return vector of n observations from Cayley(kappa) distribution
 #' @cite Schaeben97 leon06
 #' @seealso \code{\link{dcayley}},\code{\link{rvmises}},\code{\link{rcayley}},\code{\link{rhaar}}
@@ -1145,7 +1146,11 @@ rar <- function(n, f, M, ...) {
 #' @examples
 #' r<-rcayley(20,0.01)
 
-rcayley <- function(n, kappa = 1) {
+rcayley <- function(n, kappa = 1, nu = NULL) {
+  
+  if(!is.null(nu))
+    kappa <- cayley_kappa(nu)
+      
   bet <- rbeta(n, kappa + 0.5, 3/2)
   theta <- acos(2 * bet - 1) * (1 - 2 * rbinom(n, 1, 0.5))
   return(theta)
@@ -1159,11 +1164,16 @@ rcayley <- function(n, kappa = 1) {
 #'
 #' @param n sample size
 #' @param kappa the concentration parameter
+#' @param nu An alternative to kappa; circular variance
 #' @return a sample of size \eqn{n} from the matrix Fisher distribution with concentration \eqn{\kappa}
 #' @seealso \code{\link{dfisher}},\code{\link{rvmises}},\code{\link{rcayley}},\code{\link{rhaar}}
 
 
-rfisher <- function(n, kappa = 1) {
+rfisher <- function(n, kappa = 1, nu = NULL) {
+  
+  if(!is.null(nu))
+    kappa <- fisher_kappa(nu)
+  
   M <- max(dfisher(seq(-pi, pi, length = 1000), kappa,Haar=F))
   return(rar(n, dfisher, M, kappa = kappa, Haar=F))
 }
@@ -1188,14 +1198,19 @@ rhaar<-function(n){
 #' The circular von Mises-based distribution has the density \deqn{C_\mathrm{M}(r|\kappa)=\frac{1}{2\pi \mathrm{I_0}(\kappa)}e^{\kappa\cos(r)}}.  This function allows the use to
 #' simulate \eqn{n} random deviates from \eqn{C_\mathrm{M}(r|\kappa)} given a concentration parameter \eqn{\kappa}.
 #'
-#' @param kappa The concentration parameter of the distribution
 #' @param n The number of angles desired
+#' @param kappa The concentration parameter of the distribution
+#' @param nu An alternative to kappa; circular variance
 #' @return S3 \code{rvmises} object; a vector of n angles following the von Mises Circular distribution with concentration kappa and mean/mode 0
 #' @export
 #' @examples
 #' r<-rvmises(20,0.01)
 
-rvmises <- function(n, kappa = 1) {
+rvmises <- function(n, kappa = 1, nu = NULL) {
+  
+  if(!is.null(nu))
+    kappa <- vmises_kappa(nu)
+  
   u <- runif(3, 0, 1)
   a <- 1 + sqrt(1 + 4 * kappa^2)
   b <- (a - sqrt(2 * a))/(2 * kappa)
@@ -1312,3 +1327,55 @@ id.Q4 <- as.Q4(c(1,0,0,0))
 #' Identity in EA space
 #' @export
 id.EA <- as.EA(c(0,0,0))
+
+#'  Find kappa for given nu
+#'  
+#'  @param nu The circular variance
+#'  @return the concentration parameter corresponding to nu
+#'  @export
+
+cayley_kappa<-function(nu){
+  (3/nu)-2
+}
+
+fisher_nu_kappa<-function(kappa,nu){
+  (1-(besselI(2*kappa,1)-.5*besselI(2*kappa,2)-.5*besselI(2*kappa,0))/(besselI(2*kappa,0)-besselI(2*kappa,1))-nu)^2
+}
+
+#'  Find kappa for given nu
+#'  
+#'  @param nu The circular variance
+#'  @return the concentration parameter corresponding to nu
+#'  @export
+  
+fisher_kappa<-function(nu){
+  
+  kappa<-rep(0,length(nu))
+  
+  for(i in 1:length(nu))
+    kappa[i]<-optimize(fisher_nu_kappa,interval=c(0,10),tol=.00001,nu=nu[i])$minimum
+  
+  return(kappa)
+}
+
+
+mises_nu_kappa<-function(kappa,nu){
+  (1-besselI(kappa,1)/besselI(kappa,0)-nu)^2
+}
+
+#'  Find kappa for given nu
+#'  
+#'  @param nu The circular variance
+#'  @return the concentration parameter corresponding to nu
+#'  @export
+
+vmises_kappa<-function(nu){
+  
+  kappa<-rep(0,length(nu))
+  
+  for(i in 1:length(nu))
+    kappa[i]<-optimize(mises_nu_kappa,interval=c(0,10),tol=.00001,nu=nu[i])$minimum
+  
+  return(kappa)
+}
+

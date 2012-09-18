@@ -2,12 +2,14 @@
 \alias{rfisher}
 \title{Simulate a data set of size \eqn{n} from the matrix Fisher angular distribution}
 \usage{
-  rfisher(n, kappa = 1)
+  rfisher(n, kappa = 1, nu = NULL)
 }
 \arguments{
   \item{n}{sample size}
 
   \item{kappa}{the concentration parameter}
+
+  \item{nu}{An alternative to kappa; circular variance}
 }
 \value{
   a sample of size \eqn{n} from the matrix Fisher

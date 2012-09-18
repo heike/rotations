@@ -2,12 +2,14 @@
 \alias{rcayley}
 \title{Simulate misorientation angles from Cayley distribtuion}
 \usage{
-  rcayley(n, kappa = 1)
+  rcayley(n, kappa = 1, nu = NULL)
 }
 \arguments{
   \item{n}{sample size}
 
   \item{kappa}{The concentration paramter}
+
+  \item{nu}{An alternative to kappa; circular variance}
 }
 \value{
   vector of n observations from Cayley(kappa) distribution

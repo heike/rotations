@@ -622,6 +622,92 @@ eyeBall <- function(Rs, center = id.SO3, column = 1, show_estimates = FALSE, xli
 }
 
 
+eyeBallwCI <- function(Rs, center = id.SO3, column = 1, show_estimates = FALSE, xlimits=c(-1,1),ylimits=c(-1,1), ...) {
+  
+  # construct helper grid lines for sphere
+  
+  theta <- seq(0, pi, by = pi/8)
+  phi <- seq(0, 2 * pi, by = 0.005)
+  df <- data.frame(expand.grid(theta = theta, phi = phi))
+  
+  # qplot(theta,phi, geom='point', data=df) + coord_polar()
+  
+  x <- with(df, sin(theta) * cos(phi))
+  y <- with(df, sin(theta) * sin(phi))
+  z <- with(df, cos(theta))
+  circles <- data.frame(cbind(x, y, z))
+  circles$ID <- as.numeric(factor(df$theta))
+  
+  theta <- seq(0, pi, by = 0.005)
+  phi <- seq(0, 2 * pi, by = pi/8)
+  df <- data.frame(expand.grid(theta = theta, phi = phi))
+  
+  x <- with(df, sin(theta) * cos(phi))
+  y <- with(df, sin(theta) * sin(phi))
+  z <- with(df, cos(theta))
+  circles.2 <- data.frame(cbind(x, y, z))
+  circles.2$ID <- as.numeric(factor(df$phi)) + 9
+  
+  circles <- rbind(circles, circles.2)
+  
+  rot <- SO3(c(1, -1, 0), pi/8)
+  
+  pcircles <- data.frame(as.matrix(circles[, 1:3]) %*% rot)
+  
+  # this is the coordinate system and should be fixed, no matter what column of the rotation matrices is
+  # shown
+  
+  base <- ggplot(aes(x = X1, y = X2), data = pcircles[order(pcircles$X3), ]) + coord_equal() + opts(legend.position = "none") + 
+    geom_point(aes(colour = X3), size = 0.6) + scale_colour_continuous(low = I("white"), high = I("grey50")) + 
+    opts(panel.background = theme_blank(), panel.grid.minor = theme_blank(), panel.grid.major = theme_blank(), 
+         axis.title.x = theme_blank(), axis.title.y = theme_blank(), axis.text.x = theme_blank(), axis.text.y = theme_blank(), 
+         axis.ticks = theme_blank())+xlim(xlimits)+ylim(ylimits)
+  
+  if (column == 1) {
+    cols <- 1:3
+    rot <- SO3(c(0, 1, 0), pi/2) %*% rot
+    
+  } else if (column == 2) {
+    cols <- 4:6
+    rot <- SO3(c(1, 0, 0), -pi/2) %*% rot
+    
+  } else {
+    cols <- 7:9
+  }
+  
+  obs <- data.frame(as.matrix(Rs[, cols]) %*% center %*% rot)
+  
+  if (show_estimates) {
+    
+    GMean <- as.vector(mean(Rs, type = "intrinsic"))
+    GMeanRad<-CIradius(Rs)
+    
+    GMean.boot <- t(replicate(2000, SO3(c(runif(2,-1,1),0), GMeanRad),simplify="matrix"))
+    
+    GMean.sp<-data.frame(as.matrix(GMean.boot[,7:9]) %*% t(matrix(GMean,3,3)) %*% center %*% rot)
+    
+    GMed <- as.vector(median.SO3(Rs, type = "intrinsic"))
+    PMed <- as.vector(median(Rs))
+    PMean <- as.vector(mean(Rs))
+    ests <- rbind(PMean, GMean, GMed, PMed)
+    
+    EstsDot <- data.frame(as.matrix(ests[, cols]) %*% center %*% rot)
+    EstsDot$Shape <- as.factor(2:5)
+    EstsDot$names <- labels(EstsDot)[[1]]
+    
+    out <- base + geom_point(aes(x = X1, y = X2, colour = X3), data = obs, ...) + geom_point(aes(x = X1, 
+                                                                                                 y = X2, shape = Shape), data = EstsDot, size = 2, ...)
+    
+    out <- out + geom_text(aes(x = X1, y = X2, label = names), data = EstsDot, hjust = 0, vjust = 0)
+    out <- out + geom_point(aes(x=X1,y=X2,colour= X3),data=GMean.sp)
+    
+  } else {
+    out <- base + geom_point(aes(x = X1, y = X2, colour = X3), data = obs, ...)
+  }
+  return(out)
+}
+
+
 
 #' Generate rotation matrix given misorientation angle, r
 #'

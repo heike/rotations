@@ -2,13 +2,16 @@
 \alias{dvmises}
 \title{Density function for circular von Mises distribution}
 \usage{
-  dvmises(r, kappa = 1, Haar = T)
+  dvmises(r, kappa = 1, nu = NULL, Haar = T)
 }
 \arguments{
   \item{r}{value at which to evaluate the distribution
   function}
 
   \item{kappa}{concentration paramter}
+
+  \item{nu}{The circular variance, can be used in place of
+  kappa}
 
   \item{Haar}{logical, if density is evaluated with respect
   to Haar measure or Lebesgue}

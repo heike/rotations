@@ -233,13 +233,18 @@ CIradius.EA<-function(EAs,main=mean,B=1000,m=nrow(EAs),alpha=0.95,...){
 #'
 #' @param r Where the density is being evaluated
 #' @param kappa The concentration paramter, taken to be zero
+#' @param nu The circular variance, can be used in place of kappa
 #' @param Haar logical, if density is evaluated with respect to Haar measure or Lebesgue
 #' @return value of Cayley distribution with concentration \eqn{\kappa} evaluated at r
 #' @seealso \code{\link{rcayley}},\code{\link{dfisher}},\code{\link{dhaar}},\code{\link{dvmises}}
 #' @export
 #' @cite Schaeben97 leon06
 
-dcayley <- function(r, kappa = 1, Haar = T) {
+dcayley <- function(r, kappa = 1, nu = NULL, Haar = T) {
+  
+  if(!is.null(nu))
+    kappa <- cayley_kappa(nu)
+  
   den <- 0.5 * gamma(kappa + 2)/(sqrt(pi) * 2^kappa * gamma(kappa + 0.5)) * (1 + cos(r))^kappa * (1 - cos(r))
   
   if (Haar) 
@@ -254,12 +259,17 @@ dcayley <- function(r, kappa = 1, Haar = T) {
 #'
 #' @param r Where the density is being evaluated
 #' @param kappa The concentration paramter, taken to be zero
+#' @param nu The circular variance, can be used in place of kappa
 #' @param Haar logical, if density is evaluated with respect to Haar measure or Lebesgue
 #' @return value of Fisher matrix distribution with concentration \eqn{\kappa} evaluated at r
 #' @seealso \code{\link{rfisher}}, \code{\link{dhaar}},\code{\link{dvmises}},\code{\link{dcayley}}
 #' @export
 
-dfisher <- function(r, kappa = 1, Haar = T) {
+dfisher <- function(r, kappa = 1, nu = NULL, Haar = T) {
+  
+  if(!is.null(nu))
+    kappa <- fisher_kappa(nu)
+  
   den <- exp(2 * kappa * cos(r)) * (1 - cos(r))/(2 * pi * (besselI(2 * kappa, 0) - besselI(2 * kappa, 1)))
   
   if (Haar) {
@@ -392,12 +402,17 @@ dist.EA <- function(EA1, EA2=id.EA ,method='projected', p=1) {
 #'
 #' @param r value at which to evaluate the distribution function
 #' @param kappa concentration paramter
+#' @param nu The circular variance, can be used in place of kappa
 #' @param Haar logical, if density is evaluated with respect to Haar measure or Lebesgue
 #' @export
 #' @return value of circular-von Mises distribution with concentration \eqn{\kappa} evaluated at r
 #' @seealso \code{\link{rvmises}}, \code{\link{dfisher}},\code{\link{dhaar}},\code{\link{dcayley}}
 
-dvmises <- function(r, kappa = 1, Haar = T) {
+dvmises <- function(r, kappa = 1, nu = NULL, Haar = T) {
+  
+  if(!is.null(nu))
+    kappa <- vmises_kappa(nu)
+  
   den <- 1/(2 * pi * besselI(kappa, 0)) * exp(kappa * cos(r))
   
   if (Haar) {

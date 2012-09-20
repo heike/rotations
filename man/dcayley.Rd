@@ -2,13 +2,16 @@
 \alias{dcayley}
 \title{Symmetric Cayley distribution for angular data}
 \usage{
-  dcayley(r, kappa = 1, Haar = T)
+  dcayley(r, kappa = 1, nu = NULL, Haar = T)
 }
 \arguments{
   \item{r}{Where the density is being evaluated}
 
   \item{kappa}{The concentration paramter, taken to be
   zero}
+
+  \item{nu}{The circular variance, can be used in place of
+  kappa}
 
   \item{Haar}{logical, if density is evaluated with respect
   to Haar measure or Lebesgue}

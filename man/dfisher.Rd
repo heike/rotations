@@ -2,13 +2,16 @@
 \alias{dfisher}
 \title{von Mises-Fisher distribution for angular data}
 \usage{
-  dfisher(r, kappa = 1, Haar = T)
+  dfisher(r, kappa = 1, nu = NULL, Haar = T)
 }
 \arguments{
   \item{r}{Where the density is being evaluated}
 
   \item{kappa}{The concentration paramter, taken to be
   zero}
+
+  \item{nu}{The circular variance, can be used in place of
+  kappa}
 
   \item{Haar}{logical, if density is evaluated with respect
   to Haar measure or Lebesgue}

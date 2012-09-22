@@ -1023,7 +1023,7 @@ mean.EA <- function(EAs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
 median.SO3 <- function(Rs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
   
   if (!all(apply(Rs, 1, is.SO3))) 
-    warning("Atleast one of the given observations is not in SO(3).  Use result with caution.")
+    warning("At least one of the given observations is not in SO(3).  Use result with caution.")
   
   if (type != "projected" & type != "intrinsic") 
     stop("Incorrect usage of type option.  Select from 'projected' or 'intrinsic'.")
@@ -1047,7 +1047,8 @@ median.SO3 <- function(Rs, type = "projected", epsilon = 1e-05, maxIter = 2000) 
       
     } else if (type == "intrinsic") {
       
-      S <- exp.skew(delta) %*% S
+#      S <- exp.skew(delta) %*% S ## needs to be multiplied the other way round
+      S <- S %*% exp.skew(delta)
       
       v <- t(apply(Rs, 1, tLogMat, S = S))
       vn <- apply(v, 1, vecNorm, S = diag(0, 3, 3), type = "F")

@@ -127,7 +127,7 @@ as.Q4<-function(x){
 
 #' Convert anything into SO3 class
 #' 
-#' @param x can be anything
+#' @param x matrix of rotations, note that no check is performed 
 #' @return x with class "SO3"
 #' @export
 
@@ -492,7 +492,18 @@ eangle<-function(Rs){
   # for R in SO(3):
   #  1 + 2 cos(theta) = tr(R)
   
+  ##  trace of a rotation matrix has to be between 0 and 3. If not, this is due
+  ## to numerical inconcistencies, that we have to fix here
   tr<-Rs[1]+Rs[5]+Rs[9]
+  if (tr > 3) {
+  	warning("trace is greater than 3")
+  	tr <- 3
+  } 
+  if (tr < 0) {
+  	warning("trace is less than 0")
+  	tr <- 0
+  } 
+  
   return(acos((tr-1)/2))
 }
 
@@ -802,18 +813,16 @@ genR <- function(r, S = diag(1, 3, 3), space='SO3') {
 is.SO3 <- function(x) {
   
   x <- matrix(x, 3, 3)
+  if (any(is.na(x))) return(FALSE)
   
-  # Does it have determinant 1?
-  if (abs(det(x)- 1)>10e-10) {
-    return(FALSE)
-  }
+## the second check will take care of the determinant  
+#  # Does it have determinant 1?
+#  if (abs(det(x)- 1)>10e-10) {
+#    return(FALSE)
+#  }
   
   # Is its transpose (approximately) its inverse?
-  if (sum(t(x) %*% x - diag(1, 3))>10e-10) {
-    return(FALSE)
-  }
-  
-  return(TRUE)
+  return(all(sum(t(x) %*% x - diag(1, 3))<10e-10)) 
   
 }
 
@@ -859,7 +868,7 @@ exp.skew <- function(A) {
 log.SO3 <- function(R) {
   
   if (!is.SO3(R)) {
-    stop("This the input matrix must be in SO(3).")
+    stop("Input has to be of class SO(3).")
   }
   
   theta <- eangle(R)
@@ -903,9 +912,9 @@ mean.SO3 <- function(Rs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
     stop("type needs to be one of 'projected' or 'intrinsic'.")
   
   R <- project.SO3(matrix(colMeans(Rs), 3, 3))
-  
+
+
   if (type == "intrinsic") {
-    
     n <- nrow(Rs)
     d <- 1
     iter <- 0

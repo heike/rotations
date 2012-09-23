@@ -492,16 +492,16 @@ eangle<-function(Rs){
   # for R in SO(3):
   #  1 + 2 cos(theta) = tr(R)
   
-  ##  trace of a rotation matrix has to be between 0 and 3. If not, this is due
+  ##  trace of a rotation matrix has to be between -1 and 3. If not, this is due
   ## to numerical inconcistencies, that we have to fix here
   tr<-Rs[1]+Rs[5]+Rs[9]
   if (tr > 3) {
   	warning("trace is greater than 3")
   	tr <- 3
   } 
-  if (tr < 0) {
-  	warning("trace is less than 0")
-  	tr <- 0
+  if (tr < -1) {
+  	warning("trace is less than -1")
+  	tr <- -1
   } 
   
   return(acos((tr-1)/2))

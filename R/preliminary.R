@@ -996,7 +996,7 @@ mean.EA <- function(EAs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
   
   Rs<-as.SO3(t(apply(EAs,1,SO3.EA)))
   
-  R<-mean(Rs,type,epsilon,maxIter)
+  R<-mean.SO3(Rs,type,epsilon,maxIter)
   
   return(EA.SO3(R))
 }
@@ -1028,7 +1028,7 @@ median.SO3 <- function(Rs, type = "projected", epsilon = 1e-05, maxIter = 2000) 
   if (type != "projected" & type != "intrinsic") 
     stop("Incorrect usage of type option.  Select from 'projected' or 'intrinsic'.")
   
-  S <- mean(Rs)
+  S <- mean.SO3(Rs)
   d <- 1
   iter <- 1
   delta <- matrix(0, 3, 3)

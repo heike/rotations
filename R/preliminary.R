@@ -489,18 +489,14 @@ EA.SO3 <- function(rot){
 #' @seealso \code{\link{axis}}
 #' @export
 
-angle<-function(Rs){
+angle <- function(Rs){
   ##  trace of a rotation matrix has to be between -1 and 3. If not, this is due
   ## to numerical inconcistencies, that we have to fix here
   tr<-Rs[1]+Rs[5]+Rs[9]
-  if (tr > 3) {
-  	warning("trace is greater than 3")
-  	tr <- 3
-  } 
-  if (tr < -1) {
-  	warning("trace is less than -1")
-  	tr <- -1
-  } 
+  eps <- 10^-6
+  
+  stopifnot(tr<3+eps, tr>-1-eps)
+  tr <- max(min(3, tr), -1)
   
   return(acos((tr-1)/2))
 }

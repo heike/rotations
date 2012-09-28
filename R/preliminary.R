@@ -319,7 +319,7 @@ dist.SO3 <- function(R1, R2=id.SO3, method='projected' , p=1) {
     
   }else if(method=='intrinsic'){
     
-    so3dist<-eangle(t(R1)%*%R2)^p
+    so3dist<-angle(t(R1)%*%R2)^p
     
   }else{
     stop("Incorrect usage of method argument.  Please choose intrinsic or projected.")
@@ -481,17 +481,15 @@ EA.SO3 <- function(rot){
 
 #' Find the angle of rotation R
 #' 
-#' This is a test
-#' This function will find the angle of rotation matrix R.  Used mostly to reparameterize between
-#' quaternions and rotations.
-#' @param R 3-by-3 matrix in SO3 whos angle of rotation is needed
+#' Extract angle from rotation matrix R. The extraction is based on the Rodrigues' Angle Axis representation, which leads us directy to the result that for any rotation matrix, the angle to the identity matrix is given as 
+#  1 + 2 cos(theta) = tr(R)
+#' 
+#' @param R rotation matrix in form of a 3-by-3 matrix in SO3 
 #' @return angle of rotation
-#' @seealso \code{\link{eaxis}}
+#' @seealso \code{\link{axis}}
+#' @export
 
-eangle<-function(Rs){
-  # for R in SO(3):
-  #  1 + 2 cos(theta) = tr(R)
-  
+angle<-function(Rs){
   ##  trace of a rotation matrix has to be between -1 and 3. If not, this is due
   ## to numerical inconcistencies, that we have to fix here
   tr<-Rs[1]+Rs[5]+Rs[9]
@@ -510,13 +508,12 @@ eangle<-function(Rs){
 #' Find the axis of rotation R
 #' 
 #' This function will find the axis of rotation matrix R.  The simple calculation is based on Rodrigues formula
-#' and noticing that R - t(R) can be simplified greatly.  Used mostly to reparameterize between
-#' quaternions and rotations.
-#' @param R 3-by-3 matrix in SO3 whos axis is needed
-#' @return three dimensional axis of length one
-#' @seealso \code{\link{eangle}}
+#' and noticing that R - t(R) can be simplified greatly.  
+#' @param R 3-by-3 matrix in SO3 
+#' @return axis in form of three dimensional vector of length one.
+#' @seealso \code{\link{angle}}
 
-eaxis<-function(R){
+axis<-function(R){
   # based on Rodrigues formula: R - t(R)
   
   R<-matrix(R,3,3)
@@ -871,7 +868,7 @@ log.SO3 <- function(R) {
     stop("Input has to be of class SO(3).")
   }
   
-  theta <- eangle(R)
+  theta <- angle(R)
   
   if (abs(cos(theta)) >= 1) {
     return(diag(0, 3, 3))
@@ -1216,8 +1213,8 @@ SO3.Q4<-function(q){
 
 Q4.SO3 <- function(R) {
   
-  theta <- eangle(R)
-  u <- eaxis(R)
+  theta <- angle(R)
+  u <- axis(R)
   x <- as.Q4(c(cos(theta/2), sin(theta/2) * u))
 
   return(x)

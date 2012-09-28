@@ -5,7 +5,8 @@
   as.SO3(x)
 }
 \arguments{
-  \item{x}{can be anything}
+  \item{x}{matrix of rotations, note that no check is
+  performed}
 }
 \value{
   x with class "SO3"

@@ -622,7 +622,7 @@ eyeBall <- function(Rs, center = id.SO3, column = 1, show_estimates = FALSE, xli
     
     GMean <- as.vector(mean(Rs, type = "intrinsic"))
     GMed <- as.vector(median.SO3(Rs, type = "intrinsic"))
-    PMed <- as.vector(median(Rs))
+    PMed <- as.vector(median.SO3(Rs))
     PMean <- as.vector(mean(Rs))
     ests <- rbind(PMean, GMean, GMed, PMed)
     
@@ -706,7 +706,7 @@ eyeBallwCI <- function(Rs, center = id.SO3, column = 1, show_estimates = FALSE, 
     GMean.sp<-data.frame(as.matrix(GMean.boot[,7:9]) %*% t(matrix(GMean,3,3)) %*% center %*% rot)
     
     GMed <- as.vector(median.SO3(Rs, type = "intrinsic"))
-    PMed <- as.vector(median(Rs))
+    PMed <- as.vector(median.SO3(Rs))
     PMean <- as.vector(mean(Rs))
     ests <- rbind(PMean, GMean, GMed, PMed)
     

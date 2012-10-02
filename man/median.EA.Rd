@@ -35,8 +35,8 @@
 }
 \examples{
 r<-rcayley(50,1)
-EA<-genR(r,space="R3")
-median.R3(EA)
+EA<-genR(r,space="EA")
+median.EA(EA)
 }
 \references{
   Hartley R, Aftab K and Trumpf J (2011). "L1 rotation

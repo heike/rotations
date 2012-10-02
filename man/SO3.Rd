@@ -1,6 +1,6 @@
 \name{SO3}
 \alias{SO3}
-\title{Method for creating a rotation using the angle axis representation}
+\title{Method for creating a rotation in SO3 format using the angle axis representation}
 \usage{
   SO3(U, theta)
 }
@@ -11,7 +11,7 @@
   \item{theta}{angle between -pi and pi}
 }
 \value{
-  Used in \code{\link{eyeBall}} to orient the data properly
+  matrix of rotations in SO3 format
 }
 \description{
   Angle-axis representation based on the Rodrigues formula.

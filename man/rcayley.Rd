@@ -1,6 +1,6 @@
 \name{rcayley}
 \alias{rcayley}
-\title{Simulate misorientation angles from Cayley distribtuion}
+\title{Simulate misorientation angles from Cayley distribution}
 \usage{
   rcayley(n, kappa = 1, nu = NULL)
 }

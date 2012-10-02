@@ -39,8 +39,8 @@
 }
 \examples{
 r<-rvmises(20,0.01)
-EAs<-genR(r,space="R3")
-mean.EA(EAs)
+EAs<-genR(r,space="EA")
+mean(EAs)
 }
 \references{
   Moakher M (2002). "Means and averaging in the group of

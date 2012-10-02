@@ -100,6 +100,7 @@ plot.SO3 <- function(x, center, col=1, toRange=FALSE, show_estimates=FALSE,  ...
   xlimits <- c(-1,1)
   ylimits <- c(-1,1)
   
+  X <- Y <- Est <- NULL
   proj2d <- pointsXY(Rs, center=center, column=col)
   if(toRange) {
     xlimits <- range(proj2d$X)

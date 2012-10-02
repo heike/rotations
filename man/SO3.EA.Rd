@@ -17,7 +17,7 @@
 }
 \examples{
 eaExample<-structure(c(pi/2,3*pi/4,0), class="EA")
-SO3Dat<-SO3(eaExample)
+SO3Dat<-SO3.EA(eaExample)
 is.SO3(SO3Dat)
 }
 \seealso{

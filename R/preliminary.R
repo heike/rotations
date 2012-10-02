@@ -30,14 +30,14 @@ setOldClass("Q4")
 #' @exportClass EA
 setOldClass("EA")
 
-#' Method for creating a rotation using the angle axis representation
+#' Method for creating a rotation in SO3 format using the angle axis representation
 #'
 #' Angle-axis representation based on the Rodrigues formula.
 #'
 #' @export
 #' @param U three-dimensional vector describing the fix axis of the rotation
 #' @param theta angle between -pi and pi
-#' @return Used in \code{\link{eyeBall}} to orient the data properly
+#' @return matrix of rotations in SO3 format
 
 SO3 <- function(U, theta) {
   # based on Rodrigues formula
@@ -137,93 +137,6 @@ as.SO3<-function(x){
 }
 
 
-#' Find confidence interval radius for central orientation estimate
-#' 
-#' Given a sample or rotations and estimator for the central orientation, a confidence interval radius will
-#' be estimated based on a bootstrap procedure.  The level of confidence, bootstrap iterations and bootstrap
-#' sample sizes are all options for the user to set.  The procedure is as follows:
-#'           0) Estimate Shat from (R_1,...,R_n) in Rs
-#'           1) Sample R_1,...,R_m from Rs with replacement
-#'           2) Estimate ShatStar from bootstrap sample
-#'           3) Compute That=d_r(Shat,ShatStar)
-#'           4) Repeat steps 1-3 B times
-#'           5) Report q% percentile of That to be the radius of the confidence 'cone'
-#'  @param Rs sample of size n rotations in matrix format
-#'  @param main The method of central orientation estimation; e.g. mean or median, other methods can be used, but will result in a warning
-#'  @param B bootstrap iterations
-#'  @param m bootstrap sample size
-#'  @param alpha level of confidence
-#'  @param ... additional arguments passed to 'fun' such as 'type' and 'epsilon'
-#'  @return the radius of the confidence cone
-#'  @references bingham10
-#'  @export
-#'  @examples
-#'  Rs<-genR(rvmises(20))
-#'  CIradius(Rs,mean,type='projected')  ## calls CIradius.SO3
-#'  Qs<-genR(rvmises(20),space='Q4')
-#'  CIradius(Qs,mean,type='projected')  ## calls CIradius.Q4
-
-
-CIradius <- function(Rs,main=mean,B=1000,m=nrow(Rs),alpha=0.95,...)
-{
-  UseMethod( "CIradius" )
-}
-
-
-#' @return \code{NULL}
-#'
-#' @rdname CIradius
-#' @method CIradius SO3
-#' @S3method CIradius SO3
-
-CIradius.SO3 <- function(Rs,main=mean,B=1000,m=nrow(Rs),alpha=0.95,...){
-  
-  # This is more conservative than Bingham's method since d_r > max abs angle always
-  args <- as.list(match.call())[-1]
-  fname <- as.character(args$main)
-  
-#  if (!(fname %in% c("mean", "median")))
-#    stop(sprintf("'%s' is not valid function for estimating main direction. Use 'mean' or 'median'.", fname))
-  n<-nrow(Rs)
-  Shat<-main(Rs,...)
-  
-  That <- rep(NA, B)
-  for (i in 1:B) {  
-    samp<-sample(1:n,m,replace=T)
-    ShatStar<-main(as.SO3(Rs[samp,]),...)
-    That[i] <- dist.SO3(Shat,ShatStar,method='intrinsic',p=1)
-  }
-  
-  return(quantile(That,alpha))  
-}
-
-#' @return \code{NULL}
-#'
-#' @rdname CIradius
-#' @method CIradius Q4
-#' @S3method CIradius Q4
-
-CIradius.Q4<-function(Rs,main=mean,B=1000,m=nrow(Rs),alpha=0.95,...){  
-  Rs<-as.SO3(t(apply(Rs,1,SO3.Q4)))
-#  args <- as.list(match.call())[-1]
-#  fname <- as.character(args$main)
-  
-  return(CIradius(Rs,main,B,m,alpha,...))
-}
-
-#' @return \code{NULL}
-#'
-#' @rdname CIradius
-#' @method CIradius EA
-#' @S3method CIradius EA
-
-CIradius.EA<-function(Rs,main=mean,B=1000,m=nrow(Rs),alpha=0.95,...){  
-  Rs<-as.SO3(t(apply(Rs,1,SO3.EA)))
-  #  args <- as.list(match.call())[-1]
-  #  fname <- as.character(args$main)
-  
-  return(CIradius(Rs,main,B,m,alpha,...))
-}
 
 #' Symmetric Cayley distribution for angular data
 #'
@@ -987,8 +900,8 @@ mean.Q4 <- function(x, type = "projected", epsilon = 1e-05, maxIter = 2000) {
 #' @export
 #' @examples
 #' r<-rvmises(20,0.01)
-#' EAs<-genR(r,space="R3")
-#' mean.EA(EAs)
+#' EAs<-genR(r,space="EA")
+#' mean(EAs)
 
 mean.EA <- function(x, type = "projected", epsilon = 1e-05, maxIter = 2000) {
   EAs <- x
@@ -1117,8 +1030,8 @@ median.Q4 <- function(x, type = "projected", epsilon = 1e-05, maxIter = 2000) {
 #' @export
 #' @examples
 #' r<-rcayley(50,1)
-#' EA<-genR(r,space="R3")
-#' median.R3(EA)
+#' EA<-genR(r,space="EA")
+#' median.EA(EA)
 
 median.EA <- function(EAs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
   
@@ -1161,7 +1074,7 @@ project.SO3 <- function(M) {
 #' @export
 #' @examples
 #' eaExample<-structure(c(pi/2,3*pi/4,0), class="EA")
-#' SO3Dat<-SO3(eaExample)
+#' SO3Dat<-SO3.EA(eaExample)
 #' is.SO3(SO3Dat)
 
 SO3.EA <- function(eur) {
@@ -1229,138 +1142,6 @@ Q4.SO3 <- function(R) {
 }
 
 
-#' Sample of size n from target density f
-#'
-#' @author Heike Hofmann
-#' @param n number of sample wanted
-#' @param f target density
-#' @param M maximum number in uniform proposal density
-#' @param ... additional arguments sent to arsample
-#' @return a vector of size n of observations from target density
-
-rar <- function(n, f, M, ...) {
-  res <- vector("numeric", length = n)
-  for (i in 1:n) res[i] <- arsample.unif(f, M, ...)
-  return(res)
-}
-
-
-#' Simulate misorientation angles from Cayley distribtuion
-#'
-#' This function allows the user to simulate \eqn{n} misorientation angles from the Cayley distribution symmetric about 0 on interval \eqn{(-\pi,\pi]}.  The relationship between Cayley and Beta distribution is used.
-#' The symmetric Cayley distribution has a density of the form \deqn{C_\mathrm{C}(r |\kappa)=\frac{1}{\sqrt{\pi}} \frac{\Gamma(\kappa+2)}{\Gamma(\kappa+1/2)}2^{-(\kappa+1)}(1+\cos r)^\kappa(1-\cos r)}.
-#' It was orignally given in the material sciences literature by Schaben 1997 and called the de la Vallee Poussin distribution but was more recently discussed and
-#' introduced in a more general manner by Leon 06.
-#'
-#' @param n sample size
-#' @param kappa The concentration paramter
-#' @param nu An alternative to kappa; circular variance
-#' @return vector of n observations from Cayley(kappa) distribution
-#' @cite Schaeben97 leon06
-#' @seealso \code{\link{dcayley}},\code{\link{rvmises}},\code{\link{rcayley}},\code{\link{rhaar}}
-#' @export
-#' @examples
-#' r<-rcayley(20,0.01)
-
-rcayley <- function(n, kappa = 1, nu = NULL) {
-  
-  if(!is.null(nu))
-    kappa <- cayley_kappa(nu)
-      
-  bet <- rbeta(n, kappa + 0.5, 3/2)
-  theta <- acos(2 * bet - 1) * (1 - 2 * rbinom(n, 1, 0.5))
-  return(theta)
-}
-
-#' Simulate a data set of size \eqn{n} from the matrix Fisher angular distribution
-#'
-#' The symmetric matrix fisher distribution has the density\deqn{C_\mathrm{{F}}(r|\kappa)=\frac{1}{2\pi[\mathrm{I_0}(2\kappa)-\mathrm{I_1}(2\kappa)]}e^{2\kappa\cos(r)}[1-\cos(r)]}
-#' where \eqn{\mathrm{I_p}(\cdot)} denotes the Bessel function of order \eqn{p} defined as  \eqn{\mathrm{I_p}(\kappa)=\frac{1}{2\pi}\int_{-\pi}^{\pi}\cos(pr)e^{\kappa\cos r}dr}.
-#' This function allows for simulation of \eqn{n} random deviates with density \eqn{C_\mathrm{{F}}(r|\kappa)} and \eqn{\kappa} provided by the user.
-#'
-#' @param n sample size
-#' @param kappa the concentration parameter
-#' @param nu An alternative to kappa; circular variance
-#' @return a sample of size \eqn{n} from the matrix Fisher distribution with concentration \eqn{\kappa}
-#' @seealso \code{\link{dfisher}},\code{\link{rvmises}},\code{\link{rcayley}},\code{\link{rhaar}}
-
-
-rfisher <- function(n, kappa = 1, nu = NULL) {
-  
-  if(!is.null(nu))
-    kappa <- fisher_kappa(nu)
-  
-  M <- max(dfisher(seq(-pi, pi, length = 1000), kappa,Haar=F))
-  return(rar(n, dfisher, M, kappa = kappa, Haar=F))
-}
-
-#' Simulate a data set of size \eqn{n} from the uniform distribution on the sphere
-#'
-#' The uniform distribution has the density\deqn{C_\mathrm{{F}}(r|\kappa)=\frac{1}{2\pi}1-\cos(r)}.  The is also 
-#' know as the Haar measure.
-#' 
-#' @param n sample size
-#' @return a sample of size \eqn{n} from the uniform distribution on the sphere
-#' @seealso \code{\link{dhaar}},\code{\link{rfisher}},\code{\link{rvmises}},\code{\link{rcayley}}
-
-
-rhaar<-function(n){
-  return(rar(n, dhaar, 1/pi))
-}
-
-
-#' Generate a vector of angles(r) from the von Mises Circular distribution
-#'
-#' The circular von Mises-based distribution has the density \deqn{C_\mathrm{M}(r|\kappa)=\frac{1}{2\pi \mathrm{I_0}(\kappa)}e^{\kappa\cos(r)}}.  This function allows the use to
-#' simulate \eqn{n} random deviates from \eqn{C_\mathrm{M}(r|\kappa)} given a concentration parameter \eqn{\kappa}.
-#'
-#' @param n The number of angles desired
-#' @param kappa The concentration parameter of the distribution
-#' @param nu An alternative to kappa; circular variance
-#' @return S3 \code{rvmises} object; a vector of n angles following the von Mises Circular distribution with concentration kappa and mean/mode 0
-#' @export
-#' @examples
-#' r<-rvmises(20,0.01)
-
-rvmises <- function(n, kappa = 1, nu = NULL) {
-  
-  if(!is.null(nu))
-    kappa <- vmises_kappa(nu)
-  
-  u <- runif(3, 0, 1)
-  a <- 1 + sqrt(1 + 4 * kappa^2)
-  b <- (a - sqrt(2 * a))/(2 * kappa)
-  r <- (1 + b^2)/(2 * b)
-  theta <- rep(10, n)
-  
-  for (i in 1:n) {
-    
-    while (theta[i] == 10) {
-      # Step 1
-      u <- runif(3, 0, 1)
-      z <- cos(pi * u[1])
-      f <- (1 + r * z)/(r + z)
-      c <- kappa * (r - f)
-      
-      # Step 2
-      u <- runif(3, 0, 1)
-      if ((c * (2 - c) - u[2]) > 0) {
-        
-        theta[i] = sign(u[3] - 0.5) * acos(f)
-        
-      } else {
-        
-        if (log(c/u[2]) + 1 - c < 0) {
-          u <- runif(3, 0, 1)
-        } else {
-          u <- runif(3, 0, 1)
-          theta[i] = sign(u[3] - 0.5) * acos(f)
-        }
-      }
-    }
-  }
-  return(theta)
-}
 
 
 #' Compute the sum of the \eqn{p^{\text{th}}} order distances between Rs and S
@@ -1444,54 +1225,4 @@ id.Q4 <- as.Q4(c(1,0,0,0))
 #' @export
 id.EA <- as.EA(c(0,0,0))
 
-#'  Find kappa for given nu
-#'  
-#'  @param nu The circular variance
-#'  @return the concentration parameter corresponding to nu
-#'  @export
-
-cayley_kappa<-function(nu){
-  (3/nu)-2
-}
-
-fisher_nu_kappa<-function(kappa,nu){
-  (1-(besselI(2*kappa,1)-.5*besselI(2*kappa,2)-.5*besselI(2*kappa,0))/(besselI(2*kappa,0)-besselI(2*kappa,1))-nu)^2
-}
-
-#'  Find kappa for given nu
-#'  
-#'  @param nu The circular variance
-#'  @return the concentration parameter corresponding to nu
-#'  @export
-  
-fisher_kappa<-function(nu){
-  
-  kappa<-rep(0,length(nu))
-  
-  for(i in 1:length(nu))
-    kappa[i]<-optimize(fisher_nu_kappa,interval=c(0,10),tol=.00001,nu=nu[i])$minimum
-  
-  return(kappa)
-}
-
-
-mises_nu_kappa<-function(kappa,nu){
-  (1-besselI(kappa,1)/besselI(kappa,0)-nu)^2
-}
-
-#'  Find kappa for given nu
-#'  
-#'  @param nu The circular variance
-#'  @return the concentration parameter corresponding to nu
-#'  @export
-
-vmises_kappa<-function(nu){
-  
-  kappa<-rep(0,length(nu))
-  
-  for(i in 1:length(nu))
-    kappa[i]<-optimize(mises_nu_kappa,interval=c(0,10),tol=.00001,nu=nu[i])$minimum
-  
-  return(kappa)
-}
 

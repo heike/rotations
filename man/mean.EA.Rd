@@ -2,11 +2,11 @@
 \alias{mean.EA}
 \title{Compute the projected or intrinsic mean estimate of the central direction}
 \usage{
-  mean.EA(EAs, type = "projected", epsilon = 1e-05,
-    maxIter = 2000)
+  \method{mean}{EA} (x, type = "projected",
+    epsilon = 1e-05, maxIter = 2000)
 }
 \arguments{
-  \item{EAs}{A \eqn{n\times 3} matrix where each row
+  \item{x}{A \eqn{n\times 3} matrix where each row
   corresponds to a random rotation in Euler angle form}
 
   \item{type}{String indicating 'projeted' or 'intrinsic'

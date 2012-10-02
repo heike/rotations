@@ -2,11 +2,11 @@
 \alias{mean.SO3}
 \title{Compute the projected or intrinsic mean estimate of the central direction}
 \usage{
-  \method{mean}{SO3} (Rs, type = "projected",
-    epsilon = 1e-05, maxIter = 2000)
+  \method{mean}{SO3} (x, type = "projected",
+    epsilon = 1e-05, maxIter = 2000, ...)
 }
 \arguments{
-  \item{Rs}{A \eqn{n\times 9} matrix where each row
+  \item{x}{A \eqn{n\times 9} matrix where each row
   corresponds to a random rotation in matrix form}
 
   \item{type}{String indicating 'projeted' or 'intrinsic'
@@ -16,6 +16,8 @@
 
   \item{maxIter}{The maximum number of iterations allowed
   before returning most recent estimate}
+
+  \item{...}{only used for consistency with mean.default}
 }
 \value{
   projected or intrinsic mean of the sample

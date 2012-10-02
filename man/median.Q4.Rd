@@ -2,11 +2,11 @@
 \alias{median.Q4}
 \title{Compute the projected or intrinsic median estimate of the central direction}
 \usage{
-  median.Q4(Qs, type = "projected", epsilon = 1e-05,
-    maxIter = 2000)
+  \method{median}{Q4} (x, type = "projected",
+    epsilon = 1e-05, maxIter = 2000)
 }
 \arguments{
-  \item{Qs}{A \eqn{n\times 4} matrix where each row
+  \item{x}{A \eqn{n\times 4} matrix where each row
   corresponds to a random rotation in unit quaternion form}
 
   \item{type}{String indicating 'projeted' or 'intrinsic'

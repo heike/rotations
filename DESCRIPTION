@@ -12,7 +12,8 @@ Description: This package implements tools for working with rotational data: it
     regions for the estimates, and it allows to visualize rotational data.
 License: MIT
 Depends:
-    ggplot2
+    ggplot2,
+    grid
 Collate:
     'help.R'
     'preliminary.R'

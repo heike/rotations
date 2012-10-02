@@ -2,14 +2,15 @@
 \alias{median.SO3}
 \title{Compute the projected or intrinsic median estimate of the central direction}
 \usage{
-  median.SO3(Rs, type = "projected", epsilon = 1e-05,
+  \method{median}{SO3} (x,
+    type = c("projected", "intrinsic"), epsilon = 1e-05,
     maxIter = 2000)
 }
 \arguments{
-  \item{Rs}{A \eqn{n\times 9} matrix where each row
+  \item{x}{A \eqn{n\times 9} matrix where each row
   corresponds to a random rotation in matrix form}
 
-  \item{type}{String indicating 'projeted' or 'intrinsic'
+  \item{type}{String indicating 'projected' or 'intrinsic'
   type mean estimator}
 
   \item{epsilon}{the stopping rule for the iterative

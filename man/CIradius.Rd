@@ -11,11 +11,11 @@
   \method{CIradius}{SO3} (Rs, main = mean, B = 1000,
     m = nrow(Rs), alpha = 0.95, ...)
 
-  \method{CIradius}{Q4} (Qs, main = mean, B = 1000,
-    m = nrow(Qs), alpha = 0.95, ...)
+  \method{CIradius}{Q4} (Rs, main = mean, B = 1000,
+    m = nrow(Rs), alpha = 0.95, ...)
 
-  \method{CIradius}{EA} (EAs, main = mean, B = 1000,
-    m = nrow(EAs), alpha = 0.95, ...)
+  \method{CIradius}{EA} (Rs, main = mean, B = 1000,
+    m = nrow(Rs), alpha = 0.95, ...)
 }
 \arguments{
   \item{Rs}{sample of size n rotations in matrix format}

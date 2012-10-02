@@ -77,21 +77,26 @@ pointsXY <- function(data, center, column=1) {
 #' This function produces a three-dimensional globe onto which  one of the  columns of the provided sample of rotations is drawn.  The data are centered around a provided
 #' matrix and the user can choose to display this center or not.  Based on \code{ggplot2} package by \cite{wickham09}.
 #'
-#' @param Rs the sample of n random rotations
+#' @param x n rotations in SO3 format
 #' @param center point about which to center the observations
-#' @param column integer 1 to 3 indicating which column to display
+#' @param col integer 1 to 3 indicating which column to display
 #' @param toRange show only part of the globe that is in range of the data?
 #' @param show_estimates rather to display the four estimates of the principal direction or not
-#' @return  a ggplot2 object with the data dispalyed on spherical grid
+#' @param ... parameters passed onto the points layer
+#' @return  a ggplot2 object with the data displayed on spherical grid
 #' @cite wickham09
+#' @method plot SO3
+#' @S3method plot SO3
 #' @export
 #' @examples
-#' r<-rvmises(20,1.0)
+#' r<-rvmises(200,1.0)
 #' Rs<-genR(r)
-#' eyeBall(Rs,center=mean(Rs),show_estimates=TRUE,shape=4)
-#' @export
-plot.SO3 <- function(Rs, center, col=1, toRange=FALSE, show_estimates=FALSE) {
-  Rs <- as.SO3(Rs)
+#' plot(Rs,center=mean(Rs),show_estimates=TRUE,shape=4)
+#' # Z is computed internally and contains information on depth
+#' plot(Rs,center=mean(Rs),show_estimates=TRUE) + aes(size=Z, alpha=Z) + scale_size(limits=c(-1,1), range=c(0,2.5))
+
+plot.SO3 <- function(x, center, col=1, toRange=FALSE, show_estimates=FALSE,  ...) {
+  Rs <- as.SO3(x)
   xlimits <- c(-1,1)
   ylimits <- c(-1,1)
   
@@ -119,7 +124,7 @@ plot.SO3 <- function(Rs, center, col=1, toRange=FALSE, show_estimates=FALSE) {
     estimates <- list(geom_point(aes(x=X, y=Y, colour=Est), size=3, data=data.frame(pointsXY(Shats, center=center, column=col), Shats)),
     scale_colour_brewer("Estimates", palette="Paired", labels=labels))
   }
-  base + geom_point(aes(x=X, y=Y), size=2, data=proj2d, colour="grey20") + 
+  base + geom_point(aes(x=X, y=Y), data=proj2d, ...) + 
     estimates+
-    xlim(xlimits) + ylim(ylimits)
+    xlim(xlimits) + ylim(ylimits) 
 }

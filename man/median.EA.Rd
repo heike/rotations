@@ -2,8 +2,8 @@
 \alias{median.EA}
 \title{Compute the projected or intrinsic median estimate of the central direction}
 \usage{
-  \method{median}{EA} (EAs, type = "projected",
-    epsilon = 1e-05, maxIter = 2000)
+  median.EA(x, type = "projected", epsilon = 1e-05,
+    maxIter = 2000, na.rm = FALSE)
 }
 \arguments{
   \item{EAs}{A \eqn{n\times 3} matrix where each row
@@ -17,6 +17,9 @@
 
   \item{maxIter}{integer, the maximum number of iterations
   allowed}
+
+  \item{na.rm}{not used, only there for inconsistency with
+  median.default}
 }
 \value{
   S the vector of Euler angles minimizing the sum of first

@@ -2,7 +2,7 @@
 \alias{plot.SO3}
 \title{Visualizing random rotations.}
 \usage{
-  \method{plot}{SO3} (x, center, col = 1, toRange = FALSE,
+  plot.SO3(x, center, col = 1, toRange = FALSE,
     show_estimates = FALSE, ...)
 }
 \arguments{

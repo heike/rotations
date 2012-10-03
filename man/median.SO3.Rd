@@ -2,9 +2,8 @@
 \alias{median.SO3}
 \title{Compute the projected or intrinsic median estimate of the central direction}
 \usage{
-  \method{median}{SO3} (x,
-    type = c("projected", "intrinsic"), epsilon = 1e-05,
-    maxIter = 2000)
+  median.SO3(x, type = "projected", epsilon = 1e-05,
+    maxIter = 2000, na.rm = FALSE)
 }
 \arguments{
   \item{x}{A \eqn{n\times 9} matrix where each row
@@ -18,6 +17,9 @@
 
   \item{maxIter}{integer, the maximum number of iterations
   allowed}
+
+  \item{na.rm}{not used, only there for inconsistency with
+  median.default}
 }
 \value{
   S the element in SO(3) minimizing the sum of first order

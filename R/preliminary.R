@@ -926,18 +926,17 @@ mean.EA <- function(x, type = "projected", epsilon = 1e-05, maxIter = 2000) {
 #' @param type String indicating 'projected' or 'intrinsic' type mean estimator
 #' @param epsilon the stopping rule for the iterative algorithm
 #' @param maxIter integer, the maximum number of iterations allowed
+#' @param na.rm not used, only there for inconsistency with median.default
 #' @return S the element in SO(3) minimizing  the sum of first order Euclidean or Riemannian distances for sample Rs
 #' @seealso \code{\link{mean.SO3}}
 #' @cite hartley11
-#' @S3method median SO3
-#' @method median SO3
 #' @export
 #' @examples
 #' r<-rcayley(50,1)
 #' Rs<-genR(r)
 #' median(Rs)
 
-median.SO3 <- function(x, type = c("projected", "intrinsic"), epsilon = 1e-05, maxIter = 2000) {
+median.SO3 <- function(x, type = "projected", epsilon = 1e-05, maxIter = 2000, na.rm=FALSE) {
   Rs <- x
   if (!all(apply(Rs, 1, is.SO3))) 
     warning("At least one of the given observations is not in SO(3).  Use result with caution.")
@@ -997,18 +996,17 @@ median.SO3 <- function(x, type = c("projected", "intrinsic"), epsilon = 1e-05, m
 #' @param type String indicating 'projeted' or 'intrinsic' type mean estimator
 #' @param epsilon the stopping rule for the iterative algorithm
 #' @param maxIter integer, the maximum number of iterations allowed
+#' @param na.rm not used, only there for inconsistency with median.default
 #' @return S the unit quaternion minimizing  the sum of first order Euclidean or Riemannian distances for sample Rs
 #' @seealso \code{\link{median.SO3}}
 #' @cite hartley11
-#' @S3method median Q4
-#' @method median Q4
 #' @export
 #' @examples
 #' r<-rcayley(50,1)
 #' Qs<-genR(r,space="Q4")
 #' median(Qs)
 
-median.Q4 <- function(x, type = "projected", epsilon = 1e-05, maxIter = 2000) {
+median.Q4 <- function(x, type = "projected", epsilon = 1e-05, maxIter = 2000, na.rm=FALSE) {
   Qs <- x
   Rs<-t(apply(Qs,1,SO3.Q4))
   
@@ -1016,6 +1014,7 @@ median.Q4 <- function(x, type = "projected", epsilon = 1e-05, maxIter = 2000) {
   
   return(Q4.SO3(R))
 }
+
 
 #' Compute the projected or intrinsic median estimate of the central direction
 #'
@@ -1026,19 +1025,18 @@ median.Q4 <- function(x, type = "projected", epsilon = 1e-05, maxIter = 2000) {
 #' @param type String indicating 'projeted' or 'intrinsic' type mean estimator
 #' @param epsilon the stopping rule for the iterative algorithm
 #' @param maxIter integer, the maximum number of iterations allowed
+#' @param na.rm not used, only there for inconsistency with median.default
 #' @return S the vector of Euler angles minimizing  the sum of first order Euclidean or Riemannian distances for sample Rs
 #' @seealso \code{\link{median.SO3}}
 #' @cite hartley11
-#' @S3method median EA
-#' @method median EA
 #' @export
 #' @examples
 #' r<-rcayley(50,1)
 #' EA<-genR(r,space="EA")
 #' median(EA)
 
-median.EA <- function(EAs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
-  
+median.EA <- function(x, type = "projected", epsilon = 1e-05, maxIter = 2000, na.rm=FALSE) {
+  EAs <- x
   Rs<-t(apply(EAs,1,SO3.EA))
   
   R<-median.SO3(Rs,type,epsilon,maxIter)

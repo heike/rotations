@@ -85,8 +85,6 @@ pointsXY <- function(data, center, column=1) {
 #' @param ... parameters passed onto the points layer
 #' @return  a ggplot2 object with the data displayed on spherical grid
 #' @cite wickham09
-#' @method plot SO3
-#' @S3method plot SO3
 #' @export
 #' @examples
 #' r<-rvmises(200,1.0)

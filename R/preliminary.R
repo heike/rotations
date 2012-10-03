@@ -247,8 +247,8 @@ dist.SO3 <- function(R1, R2=id.SO3, method='projected' , p=1) {
 #' This function will calculate the intrinsic (Riemannian) or projected (Euclidean) distance between two rotations.  If only one rotation is specified
 #' the other will be set to the identity and the distance between the two is returned.
 #'
-#' @param Q1 First rotation in quaternion form
-#' @param Q2 Second rotation in quaternion form, identity by default
+#' @param R1 First rotation in quaternion form
+#' @param R2 Second rotation in quaternion form, identity by default
 #' @param method calculate intrinsic or projected distance
 #' @param p the power of the respective distance
 #' @return the pth power of the intrinsic or projected distance between Q1 and Q2
@@ -259,8 +259,9 @@ dist.SO3 <- function(R1, R2=id.SO3, method='projected' , p=1) {
 #' Qp<-mean(Qs)
 #' dist(Qp)
 
-dist.Q4 <- function(Q1, Q2=id.Q4 ,method='projected', p=1) {
-  
+dist.Q4 <- function(R1, R2=id.Q4 ,method='projected', p=1) {
+  Q1 <- R1
+  Q2 <- R2
   
   if(method=='intrinsic'){
     
@@ -285,7 +286,8 @@ dist.Q4 <- function(Q1, Q2=id.Q4 ,method='projected', p=1) {
 #' This function will calculate the intrinsic (Riemannian) or projected (Euclidean) distance between two rotations.  If only one rotation is specified
 #' the other will be set to the identity and the distance between the two is returned.
 #'
-#' @param s The estimate of the central direction
+#' @param R1 first rotation in Euler Angle form
+#' @param R2 second rotation in Euler Angle form
 #' @param method calculate intrinsic or projected distance
 #' @param p the power of the respective distance
 #' @return the pth power of the projected or intrinsic distance between Q1 and Q2
@@ -296,7 +298,9 @@ dist.Q4 <- function(Q1, Q2=id.Q4 ,method='projected', p=1) {
 #' EAp<-mean(EAs)
 #' dist(EAp)
 
-dist.EA <- function(EA1, EA2=id.EA ,method='projected', p=1) {
+dist.EA <- function(R1, R2=id.EA ,method='projected', p=1) {
+  EA1 <- R1
+  EA2 <- R2
   
   R1<-SO3.EA(EA1)
   
@@ -397,7 +401,7 @@ EA.SO3 <- function(rot){
 #' Extract angle from rotation matrix R. The extraction is based on the Rodrigues' Angle Axis representation, which leads us directy to the result that for any rotation matrix, the angle to the identity matrix is given as 
 #  1 + 2 cos(theta) = tr(R)
 #' 
-#' @param R rotation matrix in form of a 3-by-3 matrix in SO3 
+#' @param Rs rotation matrix in form of a 3-by-3 matrix in SO3 
 #' @return angle of rotation
 #' @seealso \code{\link{axis}}
 #' @export
@@ -1146,6 +1150,7 @@ Q4.SO3 <- function(R) {
 #'
 #' @param Rs a matrix of rotation observations, one row per observation
 #' @param S the individual matrix of interest, usually an estimate of the mean
+#' @param method type of distance used method in 'projected' or 'intrinsic'
 #' @param p the order of the distances to compute
 #' @return the sum of the pth order distance between each sample in Rs and S
 #' @export

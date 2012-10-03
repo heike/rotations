@@ -2,10 +2,12 @@
 \alias{dist.EA}
 \title{Distance Between Two Rotations}
 \usage{
-  dist.EA(EA1, EA2 = id.EA, method = "projected", p = 1)
+  dist.EA(R1, R2 = id.EA, method = "projected", p = 1)
 }
 \arguments{
-  \item{s}{The estimate of the central direction}
+  \item{R1}{first rotation in Euler Angle form}
+
+  \item{R2}{second rotation in Euler Angle form}
 
   \item{method}{calculate intrinsic or projected distance}
 

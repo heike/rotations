@@ -5,7 +5,7 @@
   angle(Rs)
 }
 \arguments{
-  \item{R}{rotation matrix in form of a 3-by-3 matrix in
+  \item{Rs}{rotation matrix in form of a 3-by-3 matrix in
   SO3}
 }
 \value{

@@ -24,6 +24,9 @@
   \item{S}{the individual matrix of interest, usually an
   estimate of the mean}
 
+  \item{method}{type of distance used method in 'projected'
+  or 'intrinsic'}
+
   \item{p}{the order of the distances to compute}
 }
 \value{

@@ -5,15 +5,16 @@
 \alias{sum_dist.SO3}
 \title{Compute the sum of the \eqn{p^{\text{th}}} order distances between Rs and S}
 \usage{
-  sum_dist(Rs, S = id.SO3, method = "projected", p = 1)
-
-  \method{sum_dist}{EA} (EAs, S = id.EA,
-    method = "projected", p = 1)
-
-  \method{sum_dist}{Q4} (Qs, S = id.Q4,
+  sum_dist(Rs, S = genR(0, space = class(Rs)),
     method = "projected", p = 1)
 
   \method{sum_dist}{SO3} (Rs, S = id.SO3,
+    method = "projected", p = 1)
+
+  \method{sum_dist}{EA} (Rs, S = id.EA,
+    method = "projected", p = 1)
+
+  \method{sum_dist}{Q4} (Rs, S = id.Q4,
     method = "projected", p = 1)
 }
 \arguments{
@@ -43,6 +44,6 @@
 r<-rvmises(20,0.01)
 Rs<-genR(r)
 Sp<-mean(Rs)
-sum_dist(Rs,S=Sp,2)
+sum_dist(Rs,S=Sp,p=2)
 }
 

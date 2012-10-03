@@ -474,7 +474,7 @@ eskew <- function(U) {
 #' @examples
 #' r<-rvmises(20,1.0)
 #' Rs<-genR(r)
-#' eyeBall(Rs,center=mean(Rs),show_estimates=TRUE,shape=4)
+#' plot(Rs,center=mean(Rs),show_estimates=TRUE,shape=4)
 
 eyeBall <- function(Rs, center = id.SO3, column = 1, show_estimates = FALSE, xlimits=c(-1,1),ylimits=c(-1,1), ...) {
   
@@ -1031,7 +1031,7 @@ median.Q4 <- function(x, type = "projected", epsilon = 1e-05, maxIter = 2000) {
 #' @examples
 #' r<-rcayley(50,1)
 #' EA<-genR(r,space="EA")
-#' median.EA(EA)
+#' median(EA)
 
 median.EA <- function(EAs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
   
@@ -1142,8 +1142,6 @@ Q4.SO3 <- function(R) {
 }
 
 
-
-
 #' Compute the sum of the \eqn{p^{\text{th}}} order distances between Rs and S
 #'
 #' @param Rs a matrix of rotation observations, one row per observation
@@ -1155,9 +1153,9 @@ Q4.SO3 <- function(R) {
 #' r<-rvmises(20,0.01)
 #' Rs<-genR(r)
 #' Sp<-mean(Rs)
-#' sum_dist(Rs,S=Sp,2)
+#' sum_dist(Rs,S=Sp,p=2)
 
-sum_dist<-function(Rs, S = id.SO3, method='projected', p=1){
+sum_dist<-function(Rs, S = genR(0, space=class(Rs)), method='projected', p=1){
   
   UseMethod( "sum_dist" )
 
@@ -1166,12 +1164,23 @@ sum_dist<-function(Rs, S = id.SO3, method='projected', p=1){
 #' @return \code{NULL}
 #'
 #' @rdname sum_dist
+#' @method sum_dist SO3
+#' @S3method sum_dist SO3
+
+sum_dist.SO3 <- function(Rs, S = id.SO3, method='projected', p=1) {
+
+  return(sum(apply(Rs, 1, dist.SO3 , R2 = S, method=method, p=p)))
+  
+}
+#' @return \code{NULL}
+#'
+#' @rdname sum_dist
 #' @method sum_dist EA
 #' @S3method sum_dist EA
 
-sum_dist.EA <- function(EAs, S = id.EA, method='projected', p=1) {
+sum_dist.EA <- function(Rs, S = id.EA, method='projected', p=1) {
   
-  return(sum(apply(EAs, 1, dist.EA , EA2 = S, method, p)))
+  return(sum(apply(Rs, 1, dist.EA , EA2 = S, method=method, p=p)))
   
 }
 
@@ -1181,24 +1190,13 @@ sum_dist.EA <- function(EAs, S = id.EA, method='projected', p=1) {
 #' @method sum_dist Q4
 #' @S3method sum_dist Q4
 
-sum_dist.Q4 <- function(Qs, S = id.Q4, method='projected', p=1) {
+sum_dist.Q4 <- function(Rs, S = id.Q4, method='projected', p=1) {
   
-  return(sum(apply(Qs, 1, dist.Q4 , Q2 = S, method, p)))
-  
-}
-
-
-#' @return \code{NULL}
-#'
-#' @rdname sum_dist
-#' @method sum_dist SO3
-#' @S3method sum_dist SO3
-
-sum_dist.SO3 <- function(Rs, S = id.SO3, method='projected', p=1) {
-  
-  return(sum(apply(Rs, 1, dist.SO3 , S = S, method, p)))
+  return(sum(apply(Rs, 1, dist.Q4 , Q2 = S, method=method, p=p)))
   
 }
+
+
 
 
 tLogMat <- function(x, S) {

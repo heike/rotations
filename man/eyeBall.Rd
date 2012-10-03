@@ -40,7 +40,7 @@
 \examples{
 r<-rvmises(20,1.0)
 Rs<-genR(r)
-eyeBall(Rs,center=mean(Rs),show_estimates=TRUE,shape=4)
+plot(Rs,center=mean(Rs),show_estimates=TRUE,shape=4)
 }
 \references{
   Wickham H (2009). _ggplot2: elegant graphics for data

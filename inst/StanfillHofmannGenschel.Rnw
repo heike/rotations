@@ -38,15 +38,14 @@ In this article we introduce the \pkg{rotations} package which provides users th
 
 \section{Introduction}
 
-
-The data in form of three-dimensional rotations find application in several scientific areas, such as biomedical engineering, computer visioning, and geological and materials sciences.  A common problem shared by these fields is the estimation of a main or central orientation $\bm S$.  That is, letting the rotation group $SO(3)$ denote the collection of all $3\times 3$ rotation matrices, observations $\bm{R}_1,\ldots,\bm{R}_n \in SO(3)$ can be conceptualized as a random sample from a \textit{location model}
+The data in form of three-dimensional rotations find application in several scientific areas, such as biomedical engineering, computer visioning, and geological and materials sciences.  A common goal shared by these fields is to estimate the main or central orientation, denoted $\bm S$, given a sample of rotations.  That is, letting the rotation group $SO(3)$ denote the collection of all $3\times 3$ rotation matrices, observations $\bm{R}_1,\ldots,\bm{R}_n \in SO(3)$ can be conceptualized as a random sample from a \textit{location model}
 \begin{equation}
 \label{eqn:1}
 \mathbf{R}_i = \bm{S} \bm{E}_i, \quad i=1,\ldots,n,
 \end{equation}
-where $\bm S \in SO(3)$ is the {\it fixed} parameter of interest indicating an orientation of central tendency, and $\bm{E}_1,\ldots,\bm{E}_n \in SO(3)$ denote iid {\it random} rotations which symmetrically perturb $\bm{S}$.
+where $\bm S \in SO(3)$ is the {\it fixed} parameter of interest indicating an orientation of central tendency, and $\bm{E}_1,\ldots,\bm{E}_n \in SO(3)$ denote i.i.d. {\it random} rotations which symmetrically perturb $\bm{S}$.
 
-The \pkg{rotations} package allows users to simulate data from four common choices of symmetric distributions, estimate $\bm{S}$ in \ref{eqn:1} and visualize a sample of rotations.
+The \pkg{rotations} package provides users with the tools necessary to simulate data from four common choices of symmetric distributions, estimate $\bm{S}$ in \ref{eqn:1} and visualize a sample of rotations.  The remainder of this paper is organized as follows.  We will begin with a discussion on how rotation data can be parameterized.  Then we discuss how data generation is possible in this package.  Next we discuss the different estimators used to estimate the central direction.  Finally, visualizations of rotation data is presented.
 
 %For example, \citet{rancourt00} examine rotation matrix data in studying body positions whilst operating machinery. \cite{fletcher09} consider this type of  orientation data in magnetic resonance imaging and in shape analysis; similar examples  can be found in \cite{schwartz05}, \cite{pierrynowski09},  \cite{dai10},  or \cite{hadani11}.  The data in our illustrative example to follow arise from a study in materials science, where $3 \times 3$ rotations represent the orientations of cubic crystals on the micro-surface of a metal specimen as measured through electron backscatter diffraction (EBSD) and ``grains" within metals are composed of crystals which roughly share a common orientation; see \cite{randle03} for details on EBSD data.  
      
@@ -63,11 +62,13 @@ The \pkg{rotations} package allows users to simulate data from four common choic
 
 \section{Rotation Representations}
 
-The variety of applications for rotations is echoed by the number of equivalent ways to parameterize them.  We consider the three of the most popular: $3\times 3$ matrices in $SO(3)$, unit quaternions and Euler angles.  
+The variety of applications for rotations is echoed by the number of equivalent ways to parameterize them.  We consider three of the most popular: matrices in $SO(3)$, unit quaternions and Euler angles.  
 
 \subsection{Matrix Form}
 
-Given the angle, $r$, and axis, $\bm u$, necessary to define a rotation a $3\times 3$ rotation matrix can be formed by
+Three-dimensional rotations can be represented by $3\times3$ orthogonal matrices with determinant one.  All matrices with these characteristics form a group called the {\it special orthogonal group}, or {\it rotation group}, denoted $SO(3)$.  Every element in $SO(3)$ can be described by an angle, $r\in[0,\pi)$ and an axis, $\bm U\in\mathbb{R}^3$ with $||\bm U||=1$. Thus $\bm{R}\in SO(3)$ can be thought of as rotating the coordinate axis, $\bm{I}_{3 \times 3}$, about the axis $\bm{U}$ by the angle $r$.  We adopt the material scientist's terminology in calling $r$ the misorientation angle and $\bm U$ the misorientation axis.
+
+More specifically, given an angle, $r$, and axis, $\bm U$, a $3\times 3$ rotation matrix can be formed by
 \begin{equation}\label{eqn:angleaxis}
  \bm{R} = \bm{R}(r,\bm{u}) = \bm{u}\bm{u}^\top+(\bm{I}_{3\times3}-\bm{u}\bm{u}^\top)\cos(r) +\Phi(\bm{u})\sin(r)
 \end{equation}
@@ -75,9 +76,9 @@ where
 \[
 \Phi(\bm{u}) = \Phi (u_1,u_2,u_3) = \left(\begin{array}{ccc}0 & -u_3 & u_2 \\ u_3 & 0 & -u_1 \\-u_2 & u_1 & 0\end{array}\right).
 \]
-This is called the axis-angle representation of rotation matrices because $\bm{R}$ is represented by rotating the coordinate axis $\bm{I}_{3 \times 3}$ about the axis $\bm{U}\in\mathbb{R}^3$ by the angle $r$.  We adopt the material scientist's terminology in calling $r$ the misorientation angle and $\bm U$ the misorientation axis.
+The function \code{genR} takes angles $r$ as arguments, generates an axis uniformly and returns matrices of this form if the \code{space} options is set to \code{SO3}.  
 
-Given a matrix $\bm R\in SO(3)$ it is also useful to be able to find the angle, $r$, and axis, $\bm u$ that form that matrix.  The angle can be found from the fact that $\cos(r)=\frac{1}{2}[\text{tr}(\bm R)-1]$.  The function \code{eangle} will perform this caluclation.
+Inversely, for $\bm R\in SO(3)$ one can find the angle, $r$, and axis, $\bm U$ that form that matrix.  The angle can be found from the fact that $\cos(r)=\frac{1}{2}[\text{tr}(\bm R)-1]$.  The function \code{eangle} will perform this caluclation.
 
 Next, \ref{eqn:angleaxis} can be used with the following facts to find $\bm u$: $\bm{uu}^\top$ and $(\bm{I}_{3\times3}-\bm{u}\bm{u}^\top)$ are symmetric, $\Phi(\bm u)$ is skew-symmetric implying $\Phi(\bm u)^\top=-\Phi(\bm u)$.  Now form $\bm R-\bm R^\top$:
 \[

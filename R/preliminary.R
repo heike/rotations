@@ -88,7 +88,7 @@ Q4 <- function(U,theta){
 EA <- function(U,theta){
   #See if this can be made more efficient, rotations book
   R<-SO3(U,theta)
-  eur<-EA(R)
+  eur<-EA.SO3(R)
   return(eur)
   
 }
@@ -540,7 +540,7 @@ axis.Q4 <- function(q){
 #' @S3method axis EA
 
 axis.EA <- function(eur){
-  R<-SO3(eur)
+  R<-SO3.EA(eur)
   u<-axis(R)
   return(u)
 }
@@ -1188,20 +1188,10 @@ project.SO3 <- function(M) {
 
 SO3.EA <- function(eur) {
   
-  S <- matrix(NA, 3, 3)
-  S[1, 1] <- cos(eur[1]) * cos(eur[3]) - sin(eur[1]) * sin(eur[3]) * cos(eur[2])
-  S[1, 2] <- sin(eur[1]) * cos(eur[3]) + cos(eur[1]) * sin(eur[3]) * cos(eur[2])
-  S[1, 3] <- sin(eur[3]) * sin(eur[2])
-  
-  S[2, 1] <- -cos(eur[1]) * sin(eur[3]) - sin(eur[1]) * cos(eur[3]) * cos(eur[2])
-  S[2, 2] <- -sin(eur[1]) * sin(eur[3]) + cos(eur[1]) * cos(eur[3]) * cos(eur[2])
-  S[2, 3] <- cos(eur[3]) * sin(eur[2])
-  
-  S[3, 1] <- sin(eur[1]) * sin(eur[2])
-  S[3, 2] <- -cos(eur[1]) * sin(eur[2])
-  S[3, 3] <- cos(eur[2])
-  S <- as.SO3(as.vector(S))
-
+  e1<-c(1,0,0)
+  e3<-c(0,0,1)
+  S<-SO3(e3,eur[3])%*%SO3(e1,eur[2])%*%SO3(e3,eur[1])
+  class(S)<-"SO3"
   return(S)
 }
 

@@ -351,7 +351,7 @@ EA.SO3 <- function(rot){
   
   zeta<-sqrt(1-rot[9]^2)
   
-  #For now deal with singularity this was
+  #For now deal with singularity this way
   if(zeta==0){
     ea<-c(0,0,0)
     class(ea)<-"EA"
@@ -461,7 +461,17 @@ angle.EA<-function(eur){
 #' @return axis in form of three dimensional vector of length one.
 #' @seealso \code{\link{angle}}
 
-axis<-function(R){
+axis <- function(R){
+  UseMethod( "axis" )
+}
+
+#' @return \code{NULL}
+#' 
+#' @rdname axis
+#' @method axis SO3
+#' @S3method axis SO3
+
+axis.SO3<-function(R){
   # based on Rodrigues formula: R - t(R)
   
   R<-matrix(R,3,3)
@@ -471,6 +481,36 @@ axis<-function(R){
   
   return(u/sqrt(sum(u^2))) # will be trouble, if R is symmetric, i.e. id,  .... 
 
+}
+
+#' @return \code{NULL}
+#' 
+#' @rdname axis
+#' @method axis Q4
+#' @S3method axis Q4
+
+axis.Q4 <- function(q){
+  
+  theta<-angle(q)
+  
+  if(theta==0){
+    u <- rep(0,3)
+  }else{
+    u <- q[2:4]/sin(theta/2)
+  }
+  return(u)
+}
+
+#' @return \code{NULL}
+#' 
+#' @rdname axis
+#' @method axis EA
+#' @S3method axis EA
+
+axis.EA <- function(eur){
+  R<-SO3(eur)
+  u<-axis(R)
+  return(u)
 }
 
 #' Directional vector to skew-symmetric Matrix
@@ -1155,11 +1195,8 @@ SO3.Q4<-function(q){
   
   theta<-angle(q)
   
-  if(theta==0){
-    u <- rep(0,3)
-  }else{
-    u <- q[2:4]/sin(theta/2)
-  }
+  u<-axis(q)
+
   return(SO3(u, theta)) 
 }
 

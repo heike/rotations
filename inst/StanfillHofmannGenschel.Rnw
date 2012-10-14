@@ -223,14 +223,14 @@ With limited theory available for estimators of the central orientation, a boots
 A similar procedure was used by \cite{bingham10}, but in place of $d_R$ the maximum absolute angle between all three axis, which they called $\alpha$, was used.  It's easy to show that $\alpha$ is less than or equal to the geodesic distance between any two rotations making our method slightly more conservative.
 
 \section{Visualizations}
-In this section we introduce a method to visualize $SO(3)$ data via the the \pkg{ggplot2} package \citep{wickham09}.  The function \code{eyeBall} takes as input a $n\times 9$ matrix of $SO(3)$ observations and returns a visualization of one of the three columns.  The user can specify which column to use with the \code{column} option, the default is one.
+In this section we introduce a method to visualize $SO(3)$ data via the the \pkg{ggplot2} package \citep{wickham09}.  The function \code{plot} takes as input a $n\times 9$ matrix of $SO(3)$ observations and returns a visualization of one of the three columns.  The user can specify which column to use with the \code{column} option, the default is one.
 
-The four estimates of the central orientation given in the previous section can be plotted by setting \code{estimates.show=TRUE}.  The estimators are indicated by shape.  One can also center the data about any observation in $SO(3)$ by setting \code{center=S}.   Typically take \code{center=arith.mean(os)}.  
+The four estimates of the central orientation given in the previous section can be plotted by setting \code{estimates_show=TRUE}.  The estimators are indicated by shape.  One can also center the data about any observation in $SO(3)$ by setting \code{center=S}.   Typically take \code{center=mean(Rs)}.  
 
 <<eye,fig.width=6,fig.height=6,out.width='0mm',background='white',highlight=FALSE>>=
-rs<-rvmises(50,0.01)
+rs<-rvmises(50,0.001)
 Rs<-genR(rs)
-eyeBall(Rs,show.estimates=T)
+plot(Rs,center=mean(Rs,type='intrinsic'),show_estimates=T)
 @
 
 

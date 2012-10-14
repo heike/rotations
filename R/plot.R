@@ -117,7 +117,7 @@ plot.SO3 <- function(x, center, col=1, toRange=FALSE, show_estimates=FALSE,  ...
     
     Shats<-data.frame(rbind(as.vector(ShatP),as.vector(StildeP),as.vector(ShatG),as.vector(StildeG)),Est=1:4)
     Shats$Est <- factor(Shats$Est)
-    labels <- c(expression(hat(S)[P]), expression(tilde(S)[P]), expression(hat(S)[G]), expression(tilde(S)[G]))
+    labels <- c(expression(hat(S)[E]), expression(tilde(S)[E]), expression(hat(S)[R]), expression(tilde(S)[R]))
     levels(Shats$Est) <- labels
 
     estimates <- list(geom_point(aes(x=X, y=Y, colour=Est), size=3, data=data.frame(pointsXY(Shats, center=center, column=col), Shats)),

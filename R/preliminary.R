@@ -888,7 +888,7 @@ log.SO3 <- function(R) {
     stop("Input has to be of class SO(3).")
   }
   
-  theta <- angle(R)
+  theta <- angle.SO3(R)
   
   if (abs(cos(theta)) >= 1) {
     return(diag(0, 3, 3))

@@ -39,19 +39,19 @@ library(ggplot2)
 @
 
 \abstract{
-In this article we introduce the \pkg{rotations} package which provides users the ability to simulate, analyze and visualize data in $SO(3)$.  No package as complete as this one is currently available.  We offer four distributions from which to simulate data, four estimators of the central orientation and a novel approach to visualizing these data.  All of the above features are available to three different parameterizations of rotations: 3-by-3 matrix form, quaternions and Euler angles.
+In this article we introduce the \pkg{rotations} package which provides users the ability to simulate, analyze and visualize 3-dimensional rotation data.  The \pkg{rotations} package includes four distributions from which to simulate data, four estimators of the central orientation and a novel approach to visualizing these data.  All of the above features are available to three different parameterizations of rotations: 3-by-3 matrix form, quaternions and Euler angles.
 }
 
 \section{Introduction}
 
-The data in form of three-dimensional rotations find application in several scientific areas, such as biomedical engineering, computer visioning, and geological and materials sciences.  A common goal shared by these fields is to estimate the main or central orientation, denoted $\bm S$, given a sample of rotations.  That is, letting the rotation group $SO(3)$ denote the collection of all $3\times 3$ rotation matrices, observations $\bm{R}_1,\ldots,\bm{R}_n \in SO(3)$ can be conceptualized as a random sample from a \textit{location model}
+Data in form of three-dimensional rotations find application in several scientific areas, such as biomedical engineering, computer visioning, and geological and materials sciences.  A common goal shared by these fields is to estimate the main or central orientation for a sample of rotations.  That is, letting the rotation group $SO(3)$ denote the collection of all $3\times 3$ rotation matrices, observations $\bm{R}_1,\ldots,\bm{R}_n \in SO(3)$ can be conceptualized as a random sample from a \textit{location model}
 \begin{equation}
 \label{eqn:1}
 \mathbf{R}_i = \bm{S} \bm{E}_i, \quad i=1,\ldots,n,
 \end{equation}
 where $\bm S \in SO(3)$ is the {\it fixed} parameter of interest indicating an orientation of central tendency, and $\bm{E}_1,\ldots,\bm{E}_n \in SO(3)$ denote i.i.d. {\it random} rotations which symmetrically perturb $\bm{S}$.
 
-The \pkg{rotations} package provides users with the tools necessary to simulate data from four common choices of symmetric distributions, estimate $\bm{S}$ in \ref{eqn:1} and visualize a sample of rotations.  The remainder of this paper is organized as follows.  We will begin with a discussion on how rotation data can be parameterized.  Then we discuss how data generation is possible in this package.  Next we discuss the different estimators used to estimate the central direction.  Finally, visualizations of rotation data is presented.
+The \pkg{rotations} package provides users with the tools necessary to simulate data from four common choices of symmetric distributions, estimate $\bm{S}$ in \eqref{eqn:1} and visualize a sample of rotations.  The remainder of this paper is organized as follows.  We will begin with a discussion on how rotation data can be parameterized.  Then we discuss how data generation is possible in this package.  Next we discuss the different estimators used to estimate the central direction.  Finally, visualizations of rotation data is presented.
 
 %For example, \citet{rancourt00} examine rotation matrix data in studying body positions whilst operating machinery. \cite{fletcher09} consider this type of  orientation data in magnetic resonance imaging and in shape analysis; similar examples  can be found in \cite{schwartz05}, \cite{pierrynowski09},  \cite{dai10},  or \cite{hadani11}.  The data in our illustrative example to follow arise from a study in materials science, where $3 \times 3$ rotations represent the orientations of cubic crystals on the micro-surface of a metal specimen as measured through electron backscatter diffraction (EBSD) and ``grains" within metals are composed of crystals which roughly share a common orientation; see \cite{randle03} for details on EBSD data.  
      
@@ -72,9 +72,9 @@ The variety of applications for rotations is echoed by the number of equivalent 
 
 \subsection{Matrix Form}
 
-Three-dimensional rotations can be represented by $3\times3$ orthogonal matrices with determinant one.  All matrices with these characteristics form a group called the {\it special orthogonal group}, or {\it rotation group}, denoted $SO(3)$.  Every element in $SO(3)$ can be described by an angle, $r\in[0,\pi)$ and an axis, $\bm U\in\mathbb{R}^3$ with $||\bm U||=1$. Thus $\bm{R}\in SO(3)$ can be thought of as rotating the coordinate axis, $\bm{I}_{3 \times 3}$, about the axis $\bm{U}$ by the angle $r$.  We adopt the material scientist's terminology in calling $r$ the misorientation angle and $\bm U$ the misorientation axis.
+Three-dimensional rotations can be represented by $3\times3$ orthogonal matrices with determinant one.  All matrices with these characteristics form a group called the {\it special orthogonal group}, or {\it rotation group}, denoted $SO(3)$.  Every element in $SO(3)$ can be described by an angle, $r\in[0,\pi)$ and an axis, $\bm u\in\mathbb{R}^3$ with $||\bm u||=1$. Thus $\bm{R}\in SO(3)$ can be thought of as rotating the coordinate axis, $\bm{I}_{3 \times 3}$, about the axis $\bm{u}$ by the angle $r$.  We adopt the material scientist's terminology in calling $r$ the misorientation angle and $\bm u$ the misorientation axis.
 
-More specifically, given an angle, $r$, and axis, $\bm U$, a $3\times 3$ rotation matrix can be formed by
+More specifically, given an angle, $r$, and axis, $\bm u$, a $3\times 3$ rotation matrix can be formed by
 \begin{equation}\label{eqn:angleaxis}
  \bm{R} = \bm{R}(r,\bm{u}) = \bm{u}\bm{u}^\top+(\bm{I}_{3\times3}-\bm{u}\bm{u}^\top)\cos(r) +\Phi(\bm{u})\sin(r)
 \end{equation}
@@ -99,9 +99,9 @@ q = x_1 + x_2 i + x_3 j + x_4 k
 \]
 where $i,j,$ and $k$ are square roots of -1, i.e. $i^2 = j^2= k^2 = -1$.  We can write $q=(s,v)$ as tuple of the scalar $s$ for coefficient {\bf 1} and vector $\bm v$ for the imaginary coefficients, i.e. $s=x_1$ and $v= (x_2, x_3, x_4)$.
 
-A rotation around axis $\bm U$ by angle $r$ translates to $q=(s,v)$ with
+A rotation around axis $\bm u$ by angle $r$ translates to $q=(s,v)$ with
 \[
-s = \cos{(r/2)},  \ \ \bm v = \bm U \sin {(r/2)}
+s = \cos{(r/2)},  \ \ \bm v = \bm u \sin {(r/2)}
 \]
 This makes $q$ a unit quaternion.  To form a quaternion given an angle and axis, use the function \code{Q4}.
 
@@ -109,8 +109,9 @@ As with the matrix representation the \code{angle} and \code{axis} functions wil
 
 %This form is popular with mathematicians and others interested in the theory of rotations because their form makes them simple to deal with in certain situations.
 
-\subsection{Euler Angles}
-The final parameterization we consider is \code{Euler angles}.  Euler angles are three dimensional vectors describing a sequence of rotations of some fixed coordinate axis.  There are several versions of Euler angles and we consider the $z-x-z$ formulation.  That is, if $(\alpha,\beta,\gamma)$ is an Euler angle for $\alpha,\gamma\in[0,2\pi]$, and $\beta\in[0,\pi]$, rotate the $z$-axis counterclockwise through $\alpha$ radians, then rotate the $x$-axis through $\beta$ radians and finally rotate the $z$-axis through $\gamma$ radians.
+\subsection{Euler Angle Form}
+
+The final parameterization we consider is {\it Euler angles}.  Euler angles are three dimensional vectors describing a sequence of rotations of some fixed coordinate axis.  There are several versions of Euler angles and we consider the $z-x-z$ formulation.  That is, if $(\alpha,\beta,\gamma)$ is an Euler angle for $\alpha,\gamma\in[0,2\pi]$, and $\beta\in[0,\pi]$, rotate the $z$-axis counterclockwise through $\alpha$ radians, then rotate the $x$-axis through $\beta$ radians and finally rotate the $z$-axis through $\gamma$ radians.
 
 As before the function \code{axis} and \code{angle} will extract the axis and angle of the Euler angle.  One can also translate an Euler angle into a quaternion or matrix by passing an \code{EA} object into \code{Q4} and \code{SO3}, respectively.  One can go the other direction too.
 
@@ -118,7 +119,7 @@ All of the functions in \pkg{rotations} will work with any of these representati
 
 \section{Data generation}
 
-Using \eqref{eqn:1} one can simulate a matrix $\bm{E}_i\in SO(3)$ by picking an axis $\bm U$ uniformly on the sphere then drawing an angle $r$ from a distribution symmetric about $0$ and bounded between $-\pi$ and $\pi$ then applying \eqref{eqn:angleaxis}.  A matrix generated in this fashion is said to belong to the \dfn{uniform-axis random spin}, or UARS, class of distributions \citep{bingham09}.  The choice of angular distribution distinguishes between members of this class.
+Using \eqref{eqn:1} one can simulate a matrix $\bm{E}_i\in SO(3)$ by picking an axis $\bm u$ uniformly on the sphere then drawing an angle $r$ from a distribution symmetric about $0$ and bounded between $-\pi$ and $\pi$ then applying \eqref{eqn:angleaxis}.  A matrix generated in this fashion is said to belong to the \dfn{uniform-axis random spin}, or UARS, class of distributions \citep{bingham09}.  The choice of angular distribution distinguishes between members of this class.
 
 
 The \pkg{rotate} package allows the user access to four members of the UARS class differentiated by the distributional models on $r$: the uniform distribution on the circle, the symmetric matrix Fisher \citep{langevin05, downs72, khatri77, jupp79}, the symmetric Cayley  \citep{Schaeben97, leon06} and a circular-von Mises-based distribution \citep{bingham09}. 
@@ -174,14 +175,14 @@ The choice of geometry results in two different metrics to measure the distance 
 \label{d_E}
 \Edist(\bm{R}_1,\bm{R}_2)=\|\bm{R}_1-\bm{R}_2\|_F, 
 \end{equation}
-where $\|\bm{A}\|_F = \sqrt{\mathbf{tr}({\bm A^\top \bm A})}$ denotes the Frobenius norm of a matrix $\bm A$ and $\mathbf{tr}(\cdot)$ denotes the trace of a matrix.  The Euclidean distance between two rotation matrices corresponds to the shortest cord in $\mathcal{M}(3)$ that connects them.  If $r\in[-\pi,\pi)$ denotes the misorientation angle in the angle-axis representation (\ref{eqn:angleaxis}) of $\bm{R}_1^\top \bm{R}_2 \equiv \bm{R}_1^\top \bm{R}_2(r,\bm{U})$ (so that $\mathbf{tr}(\bm{R}_1^\top \bm{R}_2) =1 +2 \cos r$), then $\Edist(\bm{R}_1,\bm{R}_2) = 2\sqrt{(1-\cos r)}$ holds.
+where $\|\bm{A}\|_F = \sqrt{\mathbf{tr}({\bm A^\top \bm A})}$ denotes the Frobenius norm of a matrix $\bm A$ and $\mathbf{tr}(\cdot)$ denotes the trace of a matrix.  The Euclidean distance between two rotation matrices corresponds to the shortest cord in $\mathcal{M}(3)$ that connects them.  If $r\in[-\pi,\pi)$ denotes the misorientation angle in the angle-axis representation (\ref{eqn:angleaxis}) of $\bm{R}_1^\top \bm{R}_2 \equiv \bm{R}_1^\top \bm{R}_2(r,\bm{u})$ (so that $\mathbf{tr}(\bm{R}_1^\top \bm{R}_2) =1 +2 \cos r$), then $\Edist(\bm{R}_1,\bm{R}_2) = 2\sqrt{(1-\cos r)}$ holds.
 
 By staying in the Riemannian space $SO(3)$ under the intrinsic approach, the natural distance metric becomes the Riemannian (or geodesic) distance, $\Rdist$, by which the distance between two rotations $\bm{R}_1,\bm{R}_2\in SO(3)$  is  defined as 
 \begin{equation}
 \label{d_R}
 \Rdist(\bm{R}_1,\bm{R}_2)=  \frac{1}{\sqrt{2}}||\text{Log}(\bm{R}_1^\top\bm{R}_2)||_F = |r|,
 \end{equation}
-where $\text{Log}(\bm{R})$ denotes the principle logarithm of $\bm{R}$ (i.e., $\text{Log}(\bm{R}) = \text{Log}(\bm{R}(\bm U,r))= \bm \Phi(r\bm U)$ in \eqref{eqn:angleaxis}) and $r\in[-\pi,\pi)$ is the misorientation angle of $\bm{R}_1^\top \bm{R}_2$.  The Riemannian distance corresponds to the length of the shortest path that connects $\bm{R}_1$ and $\bm{R}_2$ {\it within} the space $SO(3)$. For this reason, the Riemannian distance is often considered the more natural metric on $SO(3)$; see \citet{moakher02} for this discussion along with more details on exponential/logarithmic operators related to $SO(3)$.
+where $\text{Log}(\bm{R})$ denotes the principle logarithm of $\bm{R}$ (i.e., $\text{Log}(\bm{R}) = \text{Log}(\bm{R}(\bm u,r))= \bm \Phi(r\bm u)$ in \eqref{eqn:angleaxis}) and $r\in[-\pi,\pi)$ is the misorientation angle of $\bm{R}_1^\top \bm{R}_2$.  The Riemannian distance corresponds to the length of the shortest path that connects $\bm{R}_1$ and $\bm{R}_2$ {\it within} the space $SO(3)$. For this reason, the Riemannian distance is often considered the more natural metric on $SO(3)$; see \citet{moakher02} for this discussion along with more details on exponential/logarithmic operators related to $SO(3)$.
 
 We first consider estimators based on the embedding approach, which we call the projected estimators.  The median-based estimator in this class is
 \begin{equation}\label{est:med}

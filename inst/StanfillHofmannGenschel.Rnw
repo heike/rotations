@@ -76,36 +76,35 @@ where
 \[
 \Phi(\bm{u}) = \Phi (u_1,u_2,u_3) = \left(\begin{array}{ccc}0 & -u_3 & u_2 \\ u_3 & 0 & -u_1 \\-u_2 & u_1 & 0\end{array}\right).
 \]
-The function \code{genR} takes angles $r$ as arguments, generates an axis uniformly and returns matrices of this form if the \code{space} options is set to \code{SO3}.  
 
-Inversely, for $\bm R\in SO(3)$ one can find the angle, $r$, and axis, $\bm U$ that form that matrix.  The angle can be found from the fact that $\cos(r)=\frac{1}{2}[\text{tr}(\bm R)-1]$.  The function \code{eangle} will perform this caluclation.
+The function \code{SO3} will form the rotation matrix corresponding to a given angle and axis of rotation.  One can also go the other direction with the functions \code{angle} and \code{axis}, which will return the angle and axis, respectively, for a given roation matrix.  
 
-Next, \ref{eqn:angleaxis} can be used with the following facts to find $\bm u$: $\bm{uu}^\top$ and $(\bm{I}_{3\times3}-\bm{u}\bm{u}^\top)$ are symmetric, $\Phi(\bm u)$ is skew-symmetric implying $\Phi(\bm u)^\top=-\Phi(\bm u)$.  Now form $\bm R-\bm R^\top$:
-\[
-\bm R-\bm R^\top=\Phi(\bm u)\sin(r)-\Phi(\bm u)^\top\sin(r)=2\sin(r)\Phi(\bm u).
-\]
-Now let $\bm V=2\sin(r)\Phi(\bm u)$ then by the definition of $\Phi(\cdot)$, $u_1=-\bm V_{2,3}/2\sin(r)$, $u_2=\bm V_{1,3}/2\sin(r)$ and $u_3=-\bm V_{1,2}/2\sin(r)$.  The function \code{eaxis} will perform this calculation.
+% Next, \ref{eqn:angleaxis} can be used with the following facts to find $\bm u$: $\bm{uu}^\top$ and $(\bm{I}_{3\times3}-\bm{u}\bm{u}^\top)$ are symmetric, $\Phi(\bm u)$ is skew-symmetric implying $\Phi(\bm u)^\top=-\Phi(\bm u)$.  Now form $\bm R-\bm R^\top$:
+% \[
+% \bm R-\bm R^\top=\Phi(\bm u)\sin(r)-\Phi(\bm u)^\top\sin(r)=2\sin(r)\Phi(\bm u).
+% \]
+% Now let $\bm V=2\sin(r)\Phi(\bm u)$ then by the definition of $\Phi(\cdot)$, $u_1=-\bm V_{2,3}/2\sin(r)$, $u_2=\bm V_{1,3}/2\sin(r)$ and $u_3=-\bm V_{1,2}/2\sin(r)$.  The function \code{axis} will perform this calculation.
 
 \subsection{Quaternion Form}
 
-Quaternions are a form of imaginary numbers with one real entry and a vector of three imaginary parts that can be expressed as
+A second parameterization of rotations is with a {\it quaternion} of unit length.  Quaternions are a form of imaginary numbers with one real entry and a vector of three imaginary parts that can be expressed as
 \[
 q = x_1 + x_2 i + x_3 j + x_4 k
 \]
-where $i,j,$ and $k$ are square roots of -1, i.e. $i^2 = j^2= k^2 = -1$.  We can write $q=(s,v)$ as tuple of the scalar $s$ for coefficient {\bf 1} and vector $v$ for the imaginary coefficients, i.e. $s=x_1$ and $v= (x_2, x_3, x_4)$.
+where $i,j,$ and $k$ are square roots of -1, i.e. $i^2 = j^2= k^2 = -1$.  We can write $q=(s,v)$ as tuple of the scalar $s$ for coefficient {\bf 1} and vector $\bm v$ for the imaginary coefficients, i.e. $s=x_1$ and $v= (x_2, x_3, x_4)$.
 
-A rotation around axis $\bm u$ by angle $r$ translates to $q=(s,v)$ with
+A rotation around axis $\bm U$ by angle $r$ translates to $q=(s,v)$ with
 \[
-s = \cos{(r/2)},  \ \ \bm v = \bm u \sin {(r/2)}
+s = \cos{(r/2)},  \ \ \bm v = \bm U \sin {(r/2)}
 \]
 This makes $q$ a unit quaternion.
 
-The extraction of an axis and angle of rotation from a quaternion is simple based on the above construction.  The function \code{qu} extracts the angle and axis form a rotation matrix then forms a quaternion.
+As with the matrix representation, functions to translate an angle and axis into a quaternion and back again are provided.  One can also translate a matrix directly into a quaternion by giving the function \code{Q4} an object of class \code{SO3}.  Similarly, an object of class \code{Q4} can be made into a rotation matrix by using the \code{SO3} function.
 
-This form is popular with mathematicians and others interested in the theory of rotations because their form makes them simple to deal with in certain situations.
+%This form is popular with mathematicians and others interested in the theory of rotations because their form makes them simple to deal with in certain situations.
 
 \subsection{Euler Angles}
-We haven't decided on our favorite form of Euler angles so I will leave this empty for now.
+The final parameterization we consider is \code{Euler angles}.
 
 All of the functions in \pkg{rotations} will work with any of these representations.  For the remainder of this article, however, we will present our work using the matrix representation.
 

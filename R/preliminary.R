@@ -398,15 +398,24 @@ EA.SO3 <- function(rot){
 
 #' Find the angle of rotation R
 #' 
-#' Extract angle from rotation matrix R. The extraction is based on the Rodrigues' Angle Axis representation, which leads us directy to the result that for any rotation matrix, the angle to the identity matrix is given as 
-#  1 + 2 cos(theta) = tr(R)
+#' Extract angle from rotation.
 #' 
-#' @param Rs rotation matrix in form of a 3-by-3 matrix in SO3 
+#' @param Rs rotation matrix, unit quaternion or Euler angle
 #' @return angle of rotation
 #' @seealso \code{\link{axis}}
 #' @export
 
 angle <- function(Rs){
+  UseMethod( "angle" )
+}
+
+#' @return \code{NULL}
+#'
+#' @rdname angle
+#' @method angle SO3
+#' @S3method angle SO3
+
+angle.SO3 <- function(Rs){
   ##  trace of a rotation matrix has to be between -1 and 3. If not, this is due
   ## to numerical inconcistencies, that we have to fix here
   tr<-Rs[1]+Rs[5]+Rs[9]
@@ -416,6 +425,32 @@ angle <- function(Rs){
   tr <- max(min(3, tr), -1)
   
   return(acos((tr-1)/2))
+}
+
+#' @return \code{NULL}
+#' 
+#' @rdname angle
+#' @method angle Q4
+#' @S3method angle Q4
+
+angle.Q4 <- function(Qs){
+  theta<-2*acos(q[1])
+  return(theta)
+}
+
+#' @return \code{NULL}
+#' 
+#' @rdname angle
+#' @method angle EA
+#' @S3method angle EA
+
+angle.EA<-function(eur){
+  
+  trR <- cos(eur[1]) * cos(eur[3]) - sin(eur[1]) * sin(eur[3]) * cos(eur[2])
+  trR <- trR + (-sin(eur[1]) * sin(eur[3]) + cos(eur[1]) * cos(eur[3]) * cos(eur[2]))
+  trR <- trR+(cos(eur[2]))
+  theta<-acos((trR-1)/2)
+  return(theta)
 }
 
 #' Find the axis of rotation R
@@ -1118,7 +1153,7 @@ SO3.Q4<-function(q){
   }
   
   
-  theta<-2*acos(q[1])
+  theta<-angle(q)
   
   if(theta==0){
     u <- rep(0,3)

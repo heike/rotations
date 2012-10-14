@@ -5,6 +5,12 @@
 \newcommand{\argmin}{\text{argmin}}
 \newcommand{\argmax}{\text{argmax}}
 \newcommand{\tr}{\text{tr}}
+\newcommand{\Edist}{d_E}
+\newcommand{\Rdist}{d_R}
+\newcommand{\ProjMean}{\widehat{\bm S}_E}
+\newcommand{\ProjMedian}{\widetilde{\bm S}_E}
+\newcommand{\GeoMean}{\widehat{\bm S}_R}
+\newcommand{\GeoMedian}{\widetilde{\bm S}_R}
 %% load any required packages here
 
 \begin{document}
@@ -125,7 +131,7 @@ C_\mathrm{{H}}(r)=\frac{1-\cos(r)}{2\pi}
 \end{equation}
 for $r\in(-\pi,\pi]$.  This function also plays the part of a measure on the sphere, called the Haar measure on the sphere.  The function \code{rhaar} with input \code{n} will draw a sample of size $n$ from \ref{eqn:haar} and \code{dhaar} with evaluate the density at a given point.
 
-The following three distributions have only one parameter, $\kappa$, which is the concentration parameter.  As $\kappa$ increases, the distribution becomes more peaked about $0$ and less variable.  If one would prefer to specify the variablility instead, the circular variance denoted $\nu$ can also be set by the user.  For $r\sim F$ where $F$ is a distribution on the circle, the circular variance is defined as $\nu=1-E\cos(r)$, where $E\cos(r)$ is sometimes called the mean resultant length \citep{mardia00}.
+The following three distributions have only one parameter, $\kappa$, which is the concentration parameter.  As $\kappa$ increases, the distribution becomes more peaked about $0$ and less variable.  If one would prefer to specify the variability instead, the circular variance denoted $\nu$ can also be set by the user.  For $r\sim F$ where $F$ is a distribution on the circle, the circular variance is defined as $\nu=1-E\cos(r)$, and $E\cos(r)$ is called the mean resultant length \citep{mardia00}.
 
 The symmetric matrix Fisher distribution is the oldest and also the most difficult to sample from.  It takes on the following distributional form
 \[
@@ -161,47 +167,47 @@ Here \code{rcayley(20,1)} simulates $r_1,\ldots,r_{20}$ from  $C_\mathrm{C}(r |\
 
 \section{$SO(3)$ data analysis\label{section:analysis}}
 
-Given a sample of $n$ observations $\bm R_1,\dots,\bm R_{n}$ generated according to \eqref{eqn:1} we offer four ways to estimate the matrix $\bm S$, i.e. the central orientation.  These estimators are either Riemannian- or Euclidean-based in geometry and either mean- or median-based.
+Given a sample of $n$ observations $\bm R_1,\dots,\bm R_{n}$ generated according to \eqref{eqn:1} we offer four ways to estimate the matrix $\bm S$, i.e. the central orientation.  These estimators are either Riemannian- or Euclidean-based in geometry and either mean- or median-based.  First we discuss how the choice of geometry affects distance.
 
-The choice of geometry results in two different metrics to measure the distance between rotation matrices $\bm{R}_1$ and $\bm{R}_2 \in SO(3)$. Under the embedding approach, the natural distance metric between two random matrices in the Euclidean distance, $d_E$, is induced by the Frobenius norm 
+The choice of geometry results in two different metrics to measure the distance between rotation matrices $\bm{R}_1$ and $\bm{R}_2 \in SO(3)$. Under the embedding approach, the natural distance metric between two random matrices in the Euclidean distance, $\Edist$, is induced by the Frobenius norm 
 \begin{equation}
 \label{d_E}
-d_E(\bm{R}_1,\bm{R}_2)=\|\bm{R}_1-\bm{R}_2\|_F, 
+\Edist(\bm{R}_1,\bm{R}_2)=\|\bm{R}_1-\bm{R}_2\|_F, 
 \end{equation}
-where $\|\bm{A}\|_F = \sqrt{\mathbf{tr}({\bm A^\top \bm A})}$ denotes the Frobenius norm of a matrix $\bm A$ and $\mathbf{tr}(\cdot)$ denotes the trace of a matrix.  The Euclidean distance between two rotation matrices corresponds to the shortest cord in $\mathcal{M}(3)$ that connects them.  If $r\in[0,\pi]$ denotes the misorientation angle in the angle-axis representation (\ref{eqn:angleaxis}) of $\bm{R}_1^\top \bm{R}_2 \equiv \bm{R}_1^\top \bm{R}_2(r,\bm{U})$ (so that $\mathbf{tr}(\bm{R}_1^\top \bm{R}_2) =1 +2 \cos r$), then $d_E(\bm{R}_1,\bm{R}_2) = 2\sqrt{(1-\cos r)}$ holds.
+where $\|\bm{A}\|_F = \sqrt{\mathbf{tr}({\bm A^\top \bm A})}$ denotes the Frobenius norm of a matrix $\bm A$ and $\mathbf{tr}(\cdot)$ denotes the trace of a matrix.  The Euclidean distance between two rotation matrices corresponds to the shortest cord in $\mathcal{M}(3)$ that connects them.  If $r\in[-\pi,\pi)$ denotes the misorientation angle in the angle-axis representation (\ref{eqn:angleaxis}) of $\bm{R}_1^\top \bm{R}_2 \equiv \bm{R}_1^\top \bm{R}_2(r,\bm{U})$ (so that $\mathbf{tr}(\bm{R}_1^\top \bm{R}_2) =1 +2 \cos r$), then $\Edist(\bm{R}_1,\bm{R}_2) = 2\sqrt{(1-\cos r)}$ holds.
 
-By staying in the Riemannian space $SO(3)$ under the intrinsic approach, the natural distance metric becomes the Riemannian (or geodesic) distance, $d_R$, by which the distance between two rotations $\bm{R}_1,\bm{R}_2\in SO(3)$  is  defined as 
+By staying in the Riemannian space $SO(3)$ under the intrinsic approach, the natural distance metric becomes the Riemannian (or geodesic) distance, $\Rdist$, by which the distance between two rotations $\bm{R}_1,\bm{R}_2\in SO(3)$  is  defined as 
 \begin{equation}
 \label{d_R}
-d_G(\bm{R}_1,\bm{R}_2)=  \frac{1}{\sqrt{2}}||\text{Log}(\bm{R}_1^\top\bm{R}_2)||_F = \sin(r),
+\Rdist(\bm{R}_1,\bm{R}_2)=  \frac{1}{\sqrt{2}}||\text{Log}(\bm{R}_1^\top\bm{R}_2)||_F = |r|,
 \end{equation}
-where $\text{Log}(\bm{R})$ denotes the principle logarithm of $\bm{R}$ (i.e., $\text{Log}(\bm{R}) = \text{Log}(\bm{R}(\bm U,r))= \bm \Phi(r\bm U)$ in \eqref{eqn:angleaxis}) and $r\in[0,\pi]$ is the misorientation angle of $\bm{R}_1^\top \bm{R}_2$.  The Riemannian distance corresponds to the length of the shortest path that connects $\bm{R}_1$ and $\bm{R}_2$ {\it within} the space $SO(3)$. For this reason, the Riemannian distance is often considered the more natural metric on $SO(3)$; see \citet{moakher02} for this discussion along with more details on exponential/logarithmic operators related to $SO(3)$.
+where $\text{Log}(\bm{R})$ denotes the principle logarithm of $\bm{R}$ (i.e., $\text{Log}(\bm{R}) = \text{Log}(\bm{R}(\bm U,r))= \bm \Phi(r\bm U)$ in \eqref{eqn:angleaxis}) and $r\in[-\pi,\pi)$ is the misorientation angle of $\bm{R}_1^\top \bm{R}_2$.  The Riemannian distance corresponds to the length of the shortest path that connects $\bm{R}_1$ and $\bm{R}_2$ {\it within} the space $SO(3)$. For this reason, the Riemannian distance is often considered the more natural metric on $SO(3)$; see \citet{moakher02} for this discussion along with more details on exponential/logarithmic operators related to $SO(3)$.
 
-We first consider estimators based on the embedding approach, which we call the projected estimators and denote with a subscript $P$.  The median-based estimator in this class is
+We first consider estimators based on the embedding approach, which we call the projected estimators.  The median-based estimator in this class is
 \begin{equation}\label{est:med}
-\widetilde{\bm{S}}_P=\argmin_{\bm{S}\in
-SO(3)}\sum_{i=1}^nd_E(\bm{R}_i,\bm{S}).
+\ProjMedian=\argmin_{\bm{S}\in
+SO(3)}\sum_{i=1}^n\Edist(\bm{R}_i,\bm{S}).
 \end{equation}
-The function \code{rmedian} approximates $\widetilde{\bm{S}}_P$ and uses an adaptation of the famous Weiszfeld algorithm \citep{weiszfeld37}.  The mean-based estimator is 
+The function \code{median} with option \code{type="projected"} approximates $\ProjMedian$ and uses an adaptation of the famous Weiszfeld algorithm \citep{weiszfeld37}.  The mean-based estimator is 
 \begin{align}\label{est:pam}
-\widehat{\bm{S}}_P&=\argmin_{\bm{S}\in
-SO(3)}\sum_{i=1}^nd_E^2(\bm{R}_i,\bm{S})\nonumber\\
+\ProjMean&=\argmin_{\bm{S}\in
+SO(3)}\sum_{i=1}^n\Edist^2(\bm{R}_i,\bm{S})\nonumber\\
 &=\argmax_{\bm{S}\in
 SO(3)}\tr(\bm{S}^{\top}\bar{\bm{R}})
 \end{align}
-and is computed by the function \code{arith.mean}.  For an in-depth discussion of the algorithm used to compute this value consult \citet{moakher02}.
+and is computed by the function \code{mean} with option \code{type="projected"}.  For an in-depth discussion of the algorithm used to compute this value consult \citet{moakher02}.
 
 The intrinsic estimators are referred to as geometric estimators and minimize the first and second order Riemannian distances.  The \dfn{geometric median} is 
 \begin{equation}\label{est:lone}
-\widetilde{\bm{S}}_{G}=\argmin_{\bm{S}\in
-SO(3)}\sum_{i=1}^nd_G(\bm{R}_i,\bm{S});
+\GeoMedian=\argmin_{\bm{S}\in
+SO(3)}\sum_{i=1}^n\Rdist(\bm{R}_i,\bm{S});
 \end{equation}
-and is computed by the function \code{HartleyL1}, which uses an algorithm proposed by \citet{hartley11}.  The mean-based counterpart is 
+and is computed by the function \code{median} with option \code{type="intrinsic"} and uses the algorithm proposed by \citet{hartley11}.  The mean-based counterpart is 
 \begin{equation}\label{est:ltwo}
-\widehat{\bm{S}}_{G}=\argmin_{\bm{S}\in
-SO(3)}\sum_{i=1}^nd_G^2(\bm{R}_i,\bm{S}).
+\GeoMean=\argmin_{\bm{S}\in
+SO(3)}\sum_{i=1}^n\Rdist^2(\bm{R}_i,\bm{S}).
 \end{equation}
-and is computed using  the function \code{MantonL2} as proposed by \citet{manton04}.
+and is computed using the function \code{mean} with option \code{type="instrinsic"}.  The algorithm we use was first propsed by \citet{manton04}.
 
 \section{Confidence Area Construction}
 

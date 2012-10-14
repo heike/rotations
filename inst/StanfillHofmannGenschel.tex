@@ -603,7 +603,7 @@ and is computed by the function \code{median} with option \code{type="intrinsic"
 \GeoMean=\argmin_{\bm{S}\in
 SO(3)}\sum_{i=1}^n\Rdist^2(\bm{R}_i,\bm{S}).
 \end{equation}
-and is computed using the function \code{mean} with option \code{type="instrinsic"}.  The algorithm we use was first propsed by \citet{manton04}.
+and is computed using the function \code{mean} with option \code{type="intrinsic"}.  The algorithm we use was first proposed by \citet{manton04}.
 
 \section{Confidence Area Construction}
 
@@ -616,39 +616,19 @@ With limited theory available for estimators of the central orientation, a boots
 \item Repeat steps 1-3 B times
 \item Report q\% percentile of $\hat{T}$ to be the radius of the confidence `cone'
 \end{enumerate}
-A similar procedure was used by \cite{bingham10}, but in place of $d_R$ the maximum absolute angle between all three axis, which they called $\alpha$, was used.  It's easy to show that $\alpha$ is less than or equal to the geodesic distance between any two rotations making our method slightly more conservative.
+A similar procedure was used by \cite{bingham10}, but in place of $\Rdist$ the maximum absolute angle between all three axis, which they called $\alpha$, was used.  It's easy to show that $\alpha$ is less than or equal to the geodesic distance between any two rotations making our method slightly more conservative.
 
 \section{Visualizations}
-In this section we introduce a method to visualize $SO(3)$ data via the the \pkg{ggplot2} package \citep{wickham09}.  The function \code{eyeBall} takes as input a $n\times 9$ matrix of $SO(3)$ observations and returns a visualization of one of the three columns.  The user can specify which column to use with the \code{column} option, the default is one.
+In this section we introduce a method to visualize $SO(3)$ data via the the \pkg{ggplot2} package \citep{wickham09}.  The function \code{plot} takes as input a $n\times 9$ matrix of $SO(3)$ observations and returns a visualization of one of the three columns.  The user can specify which column to use with the \code{column} option, the default is one.
 
-The four estimates of the central orientation given in the previous section can be plotted by setting \code{estimates.show=TRUE}.  The estimators are indicated by shape.  One can also center the data about any observation in $SO(3)$ by setting \code{center=S}.   Typically take \code{center=arith.mean(os)}.  
+The four estimates of the central orientation given in the previous section can be plotted by setting \code{estimates show=TRUE}.  The estimators are indicated by shape.  One can also center the data about any observation in $SO(3)$ by setting \code{center=S}.   Typically take \code{center=mean(Rs)}.  
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{1, 1, 1}\color{fgcolor}\begin{kframe}
 \begin{verbatim}
 rs <- rvmises(50, 0.01)
 Rs <- genR(rs)
-eyeBall(Rs, show.estimates = T)
-
-## Warning: 'opts' is deprecated. Use 'theme' instead. See help("Deprecated")
-
-## Warning: 'opts' is deprecated. Use 'theme' instead. See help("Deprecated")
-
-## Warning: 'theme_blank' is deprecated. Use 'element_blank' instead. See help("Deprecated")
-
-## Warning: 'theme_blank' is deprecated. Use 'element_blank' instead. See help("Deprecated")
-
-## Warning: 'theme_blank' is deprecated. Use 'element_blank' instead. See help("Deprecated")
-
-## Warning: 'theme_blank' is deprecated. Use 'element_blank' instead. See help("Deprecated")
-
-## Warning: 'theme_blank' is deprecated. Use 'element_blank' instead. See help("Deprecated")
-
-## Warning: 'theme_blank' is deprecated. Use 'element_blank' instead. See help("Deprecated")
-
-## Warning: 'theme_blank' is deprecated. Use 'element_blank' instead. See help("Deprecated")
-
-## Warning: 'theme_blank' is deprecated. Use 'element_blank' instead. See help("Deprecated")
+plot(Rs, center = mean(Rs), show_estimates = T)
 \end{verbatim}
 \end{kframe}
 
@@ -672,9 +652,7 @@ In figure \ref{figure:eye1} a random sample of 50 matrices following the von Mis
 
 \section{Summary}
 
-This file is only a basic article template. For full details of \emph{The R Journal}
-style and information on how to prepare your article for submission, see the
-\href{http://journal.r-project.org/latex/RJauthorguide.pdf}{Instructions for Authors}.
+The \pkg{rotations} package is introduced and allows the user to create, simulate, analyze and visualize rotation data.  There are three parameterizations possible in this package and four built-in distributions from which data can be simulated.  The four estimators discussed in Stanfill et al. (2012) are each implemented and each can be visualized via \code{ggplot2}.
 
 \bibliography{StanfillHofmannGenschel}
 

@@ -59,6 +59,39 @@ SO3 <- function(U, theta) {
   return(R)
 }
 
+#' Form a unit quaterion
+#' 
+#' Create a unit quaternion representing the rotation of the identity matrix about the 
+#' axis U throught the angle theta
+#' 
+#' @export
+#' @param U three-dimensional vector describing the fix axis of the rotation
+#' @param theta angle between -pi and pi
+#' @return unit quaternion of class "Q4"
+
+Q4 <- function(U,theta){
+  x <- c(cos(theta/2), sin(theta/2) * u)
+  class(x)<-"Q4"
+  return(x)
+}
+
+#' Create Euler angles
+#' 
+#' Create Euler angles representing the rotation of the identity matrix about the 
+#' axis U throught the angle theta
+#' 
+#' @export
+#' @param U three-dimensional vector describing the fix axis of the rotation
+#' @param theta angle between -pi and pi
+#' @return Euler angle of class "EA"
+
+EA <- function(U,theta){
+  #See if this can be made more efficient, rotations book
+  R<-SO3(U,theta)
+  eur<-EA(R)
+  return(eur)
+  
+}
 
 #' Accept/reject algorithm random sampling from angle distributions
 #'
@@ -448,7 +481,7 @@ angle.EA<-function(eur){
   
   trR <- cos(eur[1]) * cos(eur[3]) - sin(eur[1]) * sin(eur[3]) * cos(eur[2])
   trR <- trR + (-sin(eur[1]) * sin(eur[3]) + cos(eur[1]) * cos(eur[3]) * cos(eur[2]))
-  trR <- trR+(cos(eur[2]))
+  trR <- trR + (cos(eur[2]))
   theta<-acos((trR-1)/2)
   return(theta)
 }
@@ -473,7 +506,6 @@ axis <- function(R){
 
 axis.SO3<-function(R){
   # based on Rodrigues formula: R - t(R)
-  
   R<-matrix(R,3,3)
   
   X <- R - t(R)
@@ -1210,7 +1242,7 @@ Q4.SO3 <- function(R) {
   
   theta <- angle(R)
   u <- axis(R)
-  x <- as.Q4(c(cos(theta/2), sin(theta/2) * u))
+  x <- Q4(u,theta)
 
   return(x)
 }

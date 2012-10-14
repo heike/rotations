@@ -46,7 +46,7 @@ $$q=(\cos(r/2),\sin(r/2)u).$$
 It's easy to see that a vector formed in such a fashion has unit length as $q^\top q=\cos(r/2)^2+\sin(r/2)^2(u_1^2+u_2^2+u_3^2)=\cos(r/2)^2+\sin(r/2)^2=1$.
 
 #### Euler angles
-We haven't decided on a favorite version of these yet so their functionality is limited.
+We use the $z-x-z$ forumaltion of Euler angles, i.e. the triplet $r=(\alpha,\beta,\gamma)$ is a $z-x-z$ Euler angle if $\alpha,\gamma\in[0,2\pi]$ and $\beta\in[0,\pi]$ where the rotation $r$ is formed by first rotating the reference coordinate orientation ($S$ from before) counterclockwise about the $z$-axis $\alpha$ radians, then rotate the $x$-axis $\beta$ radians and finally about the $z$-axis again $\gamma$ radians.
 
 ## Central orientation estimation
 For any of the three parameterizations above four estimators of the central orientation are available from the following two functions.  In truth, the algorithms are written for the matrix parameterization so the quaternion and Euler angle versions reparameterize to matrices, find the mean or median then reperamaterize to the original form.
@@ -70,4 +70,4 @@ The procedure used is as follows:
 In place of $d_r$, Bingham et. al. (2009b) used the maximum absolute angle between each axis of $\widehat{S}$ and $\widehat{S}^*$, call this $\alpha$.  Our method is slightly more conservative because $d_r>\alpha$.
 
 ## Visualization
-Based on `ggplot2` by Wickham (2009) we have developed a method for visualizing random rotations in SO(3) in three-dimensions.  The function `eyeBall` plots the data on the sphere along with all four estimators of the central orientation if the option `show.estimates` is set to `TRUE`.  By default the data are centered around  the three-dimensional identity matrix, but any matrix in SO(3) can be used as the center with the `center` option.  Finally, since only one column of the three is displayed at a time the `column` option allows the user to choose which column to display.  Additional options can be passed to the call to `qplot` too.
+Based on `ggplot2` by Wickham (2009) we have developed a method for visualizing random rotations in SO(3) in three-dimensions.  The function `plot` plots the data on the sphere along with all four estimators of the central orientation if the option `show_estimates` is set to `TRUE`.  By default the data are centered around  the three-dimensional identity matrix, but any matrix in SO(3) can be used as the center with the `center` option.  Finally, since only one column of the three is displayed at a time the `column` option allows the user to choose which column to display.  Additional options can be passed to the call to `qplot` too.

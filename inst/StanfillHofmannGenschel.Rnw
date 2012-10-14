@@ -188,7 +188,7 @@ We first consider estimators based on the embedding approach, which we call the 
 \ProjMedian=\argmin_{\bm{S}\in
 SO(3)}\sum_{i=1}^n\Edist(\bm{R}_i,\bm{S}).
 \end{equation}
-The function \code{median} with option \code{type="projected"} approximates $\ProjMedian$ and uses an adaptation of the famous Weiszfeld algorithm \citep{weiszfeld37}.  The mean-based estimator is 
+The function \code{median} with option \code{type="projected"} approximates $\ProjMedian$ and uses an adaptation of the Weiszfeld algorithm \citep{weiszfeld37}.  The mean-based estimator is 
 \begin{align}\label{est:pam}
 \ProjMean&=\argmin_{\bm{S}\in
 SO(3)}\sum_{i=1}^n\Edist^2(\bm{R}_i,\bm{S})\nonumber\\
@@ -197,17 +197,17 @@ SO(3)}\tr(\bm{S}^{\top}\bar{\bm{R}})
 \end{align}
 and is computed by the function \code{mean} with option \code{type="projected"}.  For an in-depth discussion of the algorithm used to compute this value consult \citet{moakher02}.
 
-The intrinsic estimators are referred to as geometric estimators and minimize the first and second order Riemannian distances.  The \dfn{geometric median} is 
+The intrinsic estimators minimize the first and second order Riemannian distances.  The \dfn{geometric median} is 
 \begin{equation}\label{est:lone}
 \GeoMedian=\argmin_{\bm{S}\in
-SO(3)}\sum_{i=1}^n\Rdist(\bm{R}_i,\bm{S});
+SO(3)}\sum_{i=1}^n\Rdist(\bm{R}_i,\bm{S}).
 \end{equation}
-and is computed by the function \code{median} with option \code{type="intrinsic"} and uses the algorithm proposed by \citet{hartley11}.  The mean-based counterpart is 
+An algorithm proposed by \citet{hartley11} is employed by the function \code{median} with option \code{type="intrinsic"}.  The \dfn{geometric mean} is the $L_2$ analog of $\GeoMedian$ given by 
 \begin{equation}\label{est:ltwo}
 \GeoMean=\argmin_{\bm{S}\in
 SO(3)}\sum_{i=1}^n\Rdist^2(\bm{R}_i,\bm{S}).
 \end{equation}
-and is computed using the function \code{mean} with option \code{type="intrinsic"}.  The algorithm we use was first proposed by \citet{manton04}.
+The function \code{mean} with option \code{type="intrinsic"} implements an algorithm first proposed by \citet{manton04} in estimating $\GeoMean$.
 
 \section{Confidence Area Construction}
 

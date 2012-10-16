@@ -52,6 +52,7 @@ rcayley <- function(n, kappa = 1, nu = NULL) {
 #' @param nu An alternative to kappa; circular variance
 #' @return a sample of size \eqn{n} from the matrix Fisher distribution with concentration \eqn{\kappa}
 #' @seealso \code{\link{dfisher}},\code{\link{rvmises}},\code{\link{rcayley}},\code{\link{rhaar}}
+#' @export
 
 
 rfisher <- function(n, kappa = 1, nu = NULL) {
@@ -71,6 +72,7 @@ rfisher <- function(n, kappa = 1, nu = NULL) {
 #' @param n sample size
 #' @return a sample of size \eqn{n} from the uniform distribution on the sphere
 #' @seealso \code{\link{dhaar}},\code{\link{rfisher}},\code{\link{rvmises}},\code{\link{rcayley}}
+#' @export
 
 
 rhaar<-function(n){

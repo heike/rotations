@@ -444,6 +444,16 @@ EA.SO3 <- function(rot){
 #' @seealso \code{\link{axis}}
 #' @export
 
+angle<-function(Rs){
+  UseMethod("angle")
+}
+
+#' @return \code{NULL}
+#'
+#' @rdname angle
+#' @method angle SO3
+#' @S3method angle SO3
+
 angle.SO3 <- function(Rs){
   ##  trace of a rotation matrix has to be between -1 and 3. If not, this is due
   ## to numerical inconcistencies, that we have to fix here
@@ -456,28 +466,22 @@ angle.SO3 <- function(Rs){
   return(acos((tr-1)/2))
 }
 
-#' Find the angle of rotation R
-#' 
-#' Extract angle from rotation.
-#' 
-#' @param Qs unit quaternion
-#' @return angle of rotation
-#' @seealso \code{\link{axis}}
-#' @export
+#' @return \code{NULL}
+#'
+#' @rdname angle
+#' @method angle Q4
+#' @S3method angle Q4
 
 angle.Q4 <- function(Qs){
   theta<-2*acos(q[1])
   return(theta)
 }
 
-#' Find the angle of rotation R
-#' 
-#' Extract angle from rotation.
-#' 
-#' @param eur Euler angles
-#' @return angle of rotation
-#' @seealso \code{\link{axis}}
-#' @export
+#' @return \code{NULL}
+#'
+#' @rdname angle
+#' @method angle EA
+#' @S3method angle EA
 
 angle.EA<-function(eur){
   

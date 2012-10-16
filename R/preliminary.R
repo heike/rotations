@@ -265,7 +265,7 @@ dist.SO3 <- function(R1, R2=id.SO3, method='projected' , p=1) {
     
   }else if(method=='intrinsic'){
     
-    so3dist<-angle(t(R1)%*%R2)^p
+    so3dist<-angle.SO3(t(R1)%*%R2)^p
     
   }else{
     stop("Incorrect usage of method argument.  Please choose intrinsic or projected.")

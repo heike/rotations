@@ -501,6 +501,16 @@ angle.EA<-function(eur){
 #' @return axis in form of three dimensional vector of length one.
 #' @seealso \code{\link{angle}}
 
+axis<-function(R){
+  UseMethod("axis")
+}
+
+#' @return \code{NULL}
+#'
+#' @rdname axis
+#' @method axis SO3
+#' @S3method axis SO3
+
 axis.SO3<-function(R){
   # based on Rodrigues formula: R - t(R)
   R<-matrix(R,3,3)
@@ -512,13 +522,11 @@ axis.SO3<-function(R){
 
 }
 
-#' Find the axis of rotation R
-#' 
-#' This function will find the axis of rotation matrix R.  The simple calculation is based on Rodrigues formula
-#' and noticing that R - t(R) can be simplified greatly.  
-#' @param q unit quaternion 
-#' @return axis in form of three dimensional vector of length one.
-#' @seealso \code{\link{angle}}
+#' @return \code{NULL}
+#'
+#' @rdname axis
+#' @method axis Q4
+#' @S3method axis Q4
 
 axis.Q4 <- function(q){
   
@@ -532,13 +540,11 @@ axis.Q4 <- function(q){
   return(u)
 }
 
-#' Find the axis of rotation R
-#' 
-#' This function will find the axis of rotation matrix R.  The simple calculation is based on Rodrigues formula
-#' and noticing that R - t(R) can be simplified greatly.  
-#' @param eur Euler angle 
-#' @return axis in form of three dimensional vector of length one.
-#' @seealso \code{\link{angle}}
+#' @return \code{NULL}
+#'
+#' @rdname axis
+#' @method axis EA
+#' @S3method axis EA
 
 axis.EA <- function(eur){
   R<-SO3.EA(eur)

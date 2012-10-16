@@ -1230,6 +1230,7 @@ SO3.Q4<-function(q){
 #' The rotation R is taken, the angle and axis of rotation are found and a unit quaternion is formed from the results.
 #' @param R a rotation matrix in SO3
 #' @return a unit quaternion of class Q4
+#' @export
 
 Q4.SO3 <- function(R) {
   
@@ -1278,9 +1279,9 @@ sum_dist.SO3 <- function(Rs, S = id.SO3, method='projected', p=1) {
 #' @method sum_dist EA
 #' @S3method sum_dist EA
 
-sum_dist.EA <- function(Rs, S = id.EA, method='projected', p=1) {
+sum_dist.EA <- function(EAs, S = id.EA, method='projected', p=1) {
   
-  return(sum(apply(Rs, 1, dist.EA , EA2 = S, method=method, p=p)))
+  return(sum(apply(EAs, 1, dist.EA , EA2 = S, method=method, p=p)))
   
 }
 
@@ -1290,9 +1291,9 @@ sum_dist.EA <- function(Rs, S = id.EA, method='projected', p=1) {
 #' @method sum_dist Q4
 #' @S3method sum_dist Q4
 
-sum_dist.Q4 <- function(Rs, S = id.Q4, method='projected', p=1) {
+sum_dist.Q4 <- function(Qs, S = id.Q4, method='projected', p=1) {
   
-  return(sum(apply(Rs, 1, dist.Q4 , Q2 = S, method=method, p=p)))
+  return(sum(apply(Qs, 1, dist.Q4 , Q2 = S, method=method, p=p)))
   
 }
 

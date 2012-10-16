@@ -11,10 +11,10 @@
   \method{sum_dist}{SO3} (Rs, S = id.SO3,
     method = "projected", p = 1)
 
-  \method{sum_dist}{EA} (Rs, S = id.EA,
+  \method{sum_dist}{EA} (EAs, S = id.EA,
     method = "projected", p = 1)
 
-  \method{sum_dist}{Q4} (Rs, S = id.Q4,
+  \method{sum_dist}{Q4} (Qs, S = id.Q4,
     method = "projected", p = 1)
 }
 \arguments{

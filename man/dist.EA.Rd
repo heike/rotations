@@ -2,8 +2,7 @@
 \alias{dist.EA}
 \title{Distance Between Two Rotations}
 \usage{
-  \method{dist}{EA} (R1, R2 = id.EA, method = "projected",
-    p = 1)
+  dist.EA(R1, R2 = id.EA, method = "projected", p = 1)
 }
 \arguments{
   \item{R1}{first rotation in Euler Angle form}

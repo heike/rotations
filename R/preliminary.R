@@ -247,8 +247,6 @@ dhaar <- function(r) return((1 - cos(r))/(2 * pi))
 #' @param method calculate intrinsic or projected distance
 #' @param p the power of the respective distance
 #' @return the pth power of the intrinsic or projected distance
-#' @method dist SO3
-#' @S3method dist SO3
 #' @export
 #' @examples
 #' r<-rvmises(20,0.01)
@@ -287,8 +285,6 @@ dist.SO3 <- function(R1, R2=id.SO3, method='projected' , p=1) {
 #' @param method calculate intrinsic or projected distance
 #' @param p the power of the respective distance
 #' @return the pth power of the intrinsic or projected distance between Q1 and Q2
-#' @method dist Q4
-#' @S3method dist Q4
 #' @export
 #' @examples
 #' r<-rvmises(20,0.01)
@@ -328,8 +324,6 @@ dist.Q4 <- function(R1, R2=id.Q4 ,method='projected', p=1) {
 #' @param method calculate intrinsic or projected distance
 #' @param p the power of the respective distance
 #' @return the pth power of the projected or intrinsic distance between Q1 and Q2
-#' @method dist EA
-#' @S3method dist EA
 #' @export
 #' @examples
 #' r<-rvmises(20,0.01)

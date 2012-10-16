@@ -1,21 +1,33 @@
 \name{angle}
 \alias{angle}
+\alias{angle.EA}
+\alias{angle.Q4}
+\alias{angle.SO3}
 \title{Find the angle of rotation R}
 \usage{
   angle(Rs)
+
+  \method{angle}{SO3} (Rs)
+
+  \method{angle}{Q4} (Qs)
+
+  \method{angle}{EA} (eur)
 }
 \arguments{
-  \item{Rs}{rotation matrix in form of a 3-by-3 matrix in
-  SO3}
+  \item{Rs}{rotation matrix, unit quaternion or Euler
+  angle}
 }
 \value{
   angle of rotation
+
+  \code{NULL}
+
+  \code{NULL}
+
+  \code{NULL}
 }
 \description{
-  Extract angle from rotation matrix R. The extraction is
-  based on the Rodrigues' Angle Axis representation, which
-  leads us directy to the result that for any rotation
-  matrix, the angle to the identity matrix is given as
+  Extract angle from rotation.
 }
 \seealso{
   \code{\link{axis}}

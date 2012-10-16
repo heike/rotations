@@ -258,8 +258,8 @@ dhaar <- function(r) return((1 - cos(r))/(2 * pi))
 
 dist.SO3 <- function(R1, R2=id.SO3, method='projected' , p=1) {
   
-  R1<-matrix(R1,3,3)
-  R2<-matrix(R2,3,3)
+  R1<-as.SO3(matrix(R1,3,3))
+  R2<-as.SO3(matrix(R2,3,3))
   
   if(method=='projected'){
     
@@ -267,7 +267,7 @@ dist.SO3 <- function(R1, R2=id.SO3, method='projected' , p=1) {
     
   }else if(method=='intrinsic'){
     
-    so3dist<-angle.SO3(t(R1)%*%R2)^p
+    so3dist<-angle(as.SO3(t(R1)%*%R2))^p
     
   }else{
     stop("Incorrect usage of method argument.  Please choose intrinsic or projected.")
@@ -343,7 +343,7 @@ dist.EA <- function(R1, R2=id.EA ,method='projected', p=1) {
   
   R1<-SO3.EA(EA1)
   
-  R2<-as.SO3(matrix(SO3.EA(EA2),3,3))
+  R2<-SO3.EA(EA2)
   
   EAdist<-dist.SO3(R1,R2,method,p)
   

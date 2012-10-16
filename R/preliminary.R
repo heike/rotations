@@ -489,9 +489,6 @@ angle.EA<-function(eur){
 }
 
 
-
-
-
 #' Find the axis of rotation R
 #' 
 #' This function will find the axis of rotation matrix R.  The simple calculation is based on Rodrigues formula

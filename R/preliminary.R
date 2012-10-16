@@ -247,6 +247,8 @@ dhaar <- function(r) return((1 - cos(r))/(2 * pi))
 #' @param method calculate intrinsic or projected distance
 #' @param p the power of the respective distance
 #' @return the pth power of the intrinsic or projected distance
+#' @method dist SO3
+#' @S3method dist SO3
 #' @export
 #' @examples
 #' r<-rvmises(20,0.01)
@@ -285,6 +287,8 @@ dist.SO3 <- function(R1, R2=id.SO3, method='projected' , p=1) {
 #' @param method calculate intrinsic or projected distance
 #' @param p the power of the respective distance
 #' @return the pth power of the intrinsic or projected distance between Q1 and Q2
+#' @method dist Q4
+#' @S3method dist Q4
 #' @export
 #' @examples
 #' r<-rvmises(20,0.01)
@@ -324,6 +328,8 @@ dist.Q4 <- function(R1, R2=id.Q4 ,method='projected', p=1) {
 #' @param method calculate intrinsic or projected distance
 #' @param p the power of the respective distance
 #' @return the pth power of the projected or intrinsic distance between Q1 and Q2
+#' @method dist EA
+#' @S3method dist EA
 #' @export
 #' @examples
 #' r<-rvmises(20,0.01)
@@ -1031,6 +1037,8 @@ mean.EA <- function(x, type = "projected", epsilon = 1e-05, maxIter = 2000) {
 #' @return S the element in SO(3) minimizing  the sum of first order Euclidean or Riemannian distances for sample Rs
 #' @seealso \code{\link{mean.SO3}}
 #' @cite hartley11
+#' @S3method median SO3
+#' @method median SO3
 #' @export
 #' @examples
 #' r<-rcayley(50,1)
@@ -1101,6 +1109,8 @@ median.SO3 <- function(x, type = "projected", epsilon = 1e-05, maxIter = 2000, n
 #' @return S the unit quaternion minimizing  the sum of first order Euclidean or Riemannian distances for sample Rs
 #' @seealso \code{\link{median.SO3}}
 #' @cite hartley11
+#' @method median Q4
+#' @S3method median Q4
 #' @export
 #' @examples
 #' r<-rcayley(50,1)
@@ -1130,6 +1140,8 @@ median.Q4 <- function(x, type = "projected", epsilon = 1e-05, maxIter = 2000, na
 #' @return S the vector of Euler angles minimizing  the sum of first order Euclidean or Riemannian distances for sample Rs
 #' @seealso \code{\link{median.SO3}}
 #' @cite hartley11
+#' @method median EA
+#' @S3method median EA
 #' @export
 #' @examples
 #' r<-rcayley(50,1)

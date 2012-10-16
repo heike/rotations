@@ -2,8 +2,8 @@
 \alias{median.SO3}
 \title{Compute the projected or intrinsic median estimate of the central direction}
 \usage{
-  median.SO3(x, type = "projected", epsilon = 1e-05,
-    maxIter = 2000, na.rm = FALSE)
+  \method{median}{SO3} (x, type = "projected",
+    epsilon = 1e-05, maxIter = 2000, na.rm = FALSE)
 }
 \arguments{
   \item{x}{A \eqn{n\times 9} matrix where each row

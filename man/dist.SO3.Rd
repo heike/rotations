@@ -2,7 +2,8 @@
 \alias{dist.SO3}
 \title{Distance Between Two Rotations}
 \usage{
-  dist.SO3(R1, R2 = id.SO3, method = "projected", p = 1)
+  \method{dist}{SO3} (R1, R2 = id.SO3,
+    method = "projected", p = 1)
 }
 \arguments{
   \item{R1}{rotation in SO3 representation}

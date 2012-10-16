@@ -2,8 +2,8 @@
 \alias{median.EA}
 \title{Compute the projected or intrinsic median estimate of the central direction}
 \usage{
-  median.EA(x, type = "projected", epsilon = 1e-05,
-    maxIter = 2000, na.rm = FALSE)
+  \method{median}{EA} (x, type = "projected",
+    epsilon = 1e-05, maxIter = 2000, na.rm = FALSE)
 }
 \arguments{
   \item{EAs}{A \eqn{n\times 3} matrix where each row

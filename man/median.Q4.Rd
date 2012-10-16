@@ -2,8 +2,8 @@
 \alias{median.Q4}
 \title{Compute the projected or intrinsic median estimate of the central direction}
 \usage{
-  median.Q4(x, type = "projected", epsilon = 1e-05,
-    maxIter = 2000, na.rm = FALSE)
+  \method{median}{Q4} (x, type = "projected",
+    epsilon = 1e-05, maxIter = 2000, na.rm = FALSE)
 }
 \arguments{
   \item{x}{A \eqn{n\times 4} matrix where each row

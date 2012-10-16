@@ -2,7 +2,8 @@
 \alias{dist.Q4}
 \title{Distance Between Two Rotations}
 \usage{
-  dist.Q4(R1, R2 = id.Q4, method = "projected", p = 1)
+  \method{dist}{Q4} (R1, R2 = id.Q4, method = "projected",
+    p = 1)
 }
 \arguments{
   \item{R1}{First rotation in quaternion form}

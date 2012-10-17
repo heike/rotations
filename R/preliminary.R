@@ -1,36 +1,3 @@
-#' "SO3" class
-#'
-#' @name SO3-class
-#' @aliases SO3
-#' @family SO3
-#'
-#' @exportClass SO3
-setOldClass("SO3")
-
-
-#' Q4 class
-#'
-#' Class for quaterion representation of rotations
-#' 
-#' @name Q4-class
-#' @aliases Q4
-#' @family Q4
-#'
-#' @exportClass Q4
-setOldClass("Q4")
-
-#' EA class
-#'
-#' Class for Euler angle representation of rotations
-#' 
-#' @name EA-class
-#' @aliases EA
-#' @family EA
-#'
-#' @exportClass EA
-setOldClass("EA")
-
-
 #' Accept/reject algorithm random sampling from angle distributions
 #'
 #' @author Heike Hofmann

@@ -16,9 +16,9 @@ Depends:
     grid
 Collate:
     'help.R'
+    'parameterizations.R'
     'preliminary.R'
     'plot.R'
     'distributions.R'
     'kappa.R'
     'confidence.R'
-    'parameterizations.R'

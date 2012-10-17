@@ -37,10 +37,20 @@ setOldClass("EA")
 #' 
 #' @export
 #' @param U three-dimensional vector describing the fix axis of the rotation
-#' @param theta angle between -pi and pi
+#' @param ... additional arguments 
 #' @return Euler angle of class "EA"
 
-EA <- function(U,theta){
+EA<-function(U,...){
+  UseMethod("EA")
+}
+
+#' @return \code{NULL}
+#' 
+#' @rdname EA
+#' @method EA default
+#' @S3method EA default
+
+EA.default <- function(U,theta){
   #See if this can be made more efficient, rotations book
   R<-SO3(U,theta)
   eur<-EA.SO3(R)
@@ -49,15 +59,13 @@ EA <- function(U,theta){
 }
 
 
-#'Translate from matrix to Euler angle format
-#'
-#'Based on the Z-X-Z definition of Euler angles, this will take a 3x3 rotation matrix and return
-#'the Euler angle reprentation of that rotation.  See \cite{morawiec04} for a full description of this process.
-#'@param rot a rotation matrix in the form of a 3x3 matrix
-#'@return a vector of Euler angles
-#'@cite morawiec04
+#' @return \code{NULL}
+#' 
+#' @rdname EA
+#' @method EA SO3
+#' @S3method EA SO3
 
-EA.SO3 <- function(rot){
+EA.SO3 <- function(R){  
   
   zeta<-sqrt(1-rot[9]^2)
   
@@ -106,6 +114,18 @@ EA.SO3 <- function(rot){
   return(ea)
 }
 
+#' @return \code{NULL}
+#' 
+#' @rdname EA
+#' @method EA Q4
+#' @S3method EA Q4
+
+EA.Q4 <- function(Qs){
+  theta<-angle(Qs)
+  u<-axis2(Qs)
+  return(EA(u,theta))
+}
+
 #' Convert anything into EA class
 #' 
 #' @param x can be anything
@@ -129,7 +149,7 @@ id.EA <- as.EA(c(0,0,0))
 #' 
 #' @export
 #' @param U three-dimensional vector describing the fix axis of the rotation
-#' @param theta angle between -pi and pi
+#' @param ... additional arguments
 #' @return unit quaternion of class "Q4"
 
 Q4<-function(U,...){
@@ -169,7 +189,7 @@ Q4.SO3 <- function(R) {
 #' @method Q4 EA
 #' @S3method Q4 EA
 
-Q4.SO3 <- function(eur) {
+Q4.EA <- function(eur) {
   
   theta <- angle(eur)
   u <- axis2(eur)
@@ -199,10 +219,20 @@ id.Q4 <- as.Q4(c(1,0,0,0))
 #'
 #' @export
 #' @param U three-dimensional vector describing the fix axis of the rotation
-#' @param theta angle between -pi and pi
+#' @param ... additional arguments
 #' @return matrix of rotations in SO3 format
 
-SO3 <- function(U, theta) {
+SO3 <- function(U,...){
+  UseMethod("SO3")
+}
+
+#' @return \code{NULL}
+#' 
+#' @rdname SO3
+#' @method SO3 default
+#' @S3method SO3 default
+
+SO3.default <- function(U, theta) {
   # based on Rodrigues formula
   
   ulen<-sqrt(sum(U^2))
@@ -223,16 +253,11 @@ SO3 <- function(U, theta) {
 }
 
 
-#' A function that will take  a Euler angle and return a rotation matrix in vector format
-#'
-#' @param eur numeric Euler angle representation of an element in SO(3)
-#' @return numeric \eqn{9\times 1} vector of a matrix in SO(3)
-#' @seealso \code{\link{is.SO3}} can be used to check the output of this function
-#' @export
-#' @examples
-#' eaExample<-structure(c(pi/2,3*pi/4,0), class="EA")
-#' SO3Dat<-SO3.EA(eaExample)
-#' is.SO3(SO3Dat)
+#' @return \code{NULL}
+#' 
+#' @rdname SO3
+#' @method SO3 EA
+#' @S3method SO3 EA
 
 SO3.EA <- function(eur) {
   
@@ -243,23 +268,17 @@ SO3.EA <- function(eur) {
   return(S)
 }
 
-#' Translate a unit quaternion to a rotation matrix
-#'
-#' A function to translate from unit quaternion representation to \eqn{SO(3)} representation
-#' of a rotation matrix.  Wikipedia has a good summary of this and other transforms.
-#'
-#' @param q numeric unit vector, i.e. \eqn{q^\top q=1}, representing an element in SO(3)
-#' @return vector representation of a rotation matrix in SO(3)
-#' @seealso \code{\link{is.SO3}} can be used to check the return vector
-#' @export
-#' @examples
-#' is.SO3(SO3.Q4(c(1/sqrt(2),0,0,1/sqrt(2))))
+#' @return \code{NULL}
+#' 
+#' @rdname SO3
+#' @method SO3 Q4
+#' @S3method SO3 Q4
 
 SO3.Q4<-function(q){
   
   if((sum(q^2)-1)>10e-10){
     warning("Unit quaternions required.  Input was normalized.")
-    q<-q/sqrt(sum(q^2))
+    q<-as.Q4(q/sqrt(sum(q^2)))
   }
   
   theta<-angle(q)
@@ -299,13 +318,6 @@ is.SO3 <- function(x) {
   x <- matrix(x, 3, 3)
   if (any(is.na(x))) return(FALSE)
   
-  ## the second check will take care of the determinant  
-  #  # Does it have determinant 1?
-  #  if (abs(det(x)- 1)>10e-10) {
-  #    return(FALSE)
-  #  }
-  
-  # Is its transpose (approximately) its inverse?
   return(all(sum(t(x) %*% x - diag(1, 3))<10e-10)) 
   
 }

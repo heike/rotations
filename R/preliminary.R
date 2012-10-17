@@ -283,7 +283,7 @@ angle.SO3 <- function(Rs){
 #' @S3method angle Q4
 
 angle.Q4 <- function(Qs){
-  theta<-2*acos(q[1])
+  theta<-2*acos(Qs[1])
   return(theta)
 }
 

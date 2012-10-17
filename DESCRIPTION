@@ -21,3 +21,4 @@ Collate:
     'distributions.R'
     'kappa.R'
     'confidence.R'
+    'parameterizations.R'

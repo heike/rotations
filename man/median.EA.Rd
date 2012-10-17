@@ -2,28 +2,24 @@
 \alias{median.EA}
 \title{Compute the projected or intrinsic median estimate of the central direction}
 \usage{
-  \method{median}{EA} (x, type = "projected",
-    epsilon = 1e-05, maxIter = 2000, na.rm = FALSE)
+  median.EA(EAs, type = "projected", epsilon = 1e-05,
+    maxIter = 2000, na.rm = FALSE)
 }
 \arguments{
   \item{EAs}{A \eqn{n\times 3} matrix where each row
   corresponds to a random rotation in Euler angle form}
 
-  \item{type}{String indicating 'projeted' or 'intrinsic'
-  type mean estimator}
+  \item{type}{choice of geometry: intrinsic or projected}
 
   \item{epsilon}{the stopping rule for the iterative
-  algorithm}
+  process}
 
-  \item{maxIter}{integer, the maximum number of iterations
-  allowed}
+  \item{maxIter}{maximum number of iterations to allow}
 
-  \item{na.rm}{not used, only there for inconsistency with
-  median.default}
+  \item{na.rm}{how to handle NAs}
 }
 \value{
-  S the vector of Euler angles minimizing the sum of first
-  order Euclidean or Riemannian distances for sample Rs
+  the median
 }
 \description{
   The median-type estimators are defined as
@@ -36,11 +32,6 @@
   al. (2011)} and the projected case was written by the
   authors.
 }
-\examples{
-r<-rcayley(50,1)
-EA<-genR(r,space="EA")
-median(EA)
-}
 \references{
   Hartley R, Aftab K and Trumpf J (2011). "L1 rotation
   averaging using the Weiszfeld algorithm." In _2011 IEEE
@@ -48,6 +39,6 @@ median(EA)
   (CVPR)_, pp. 3041-3048. IEEE.
 }
 \seealso{
-  \code{\link{median.SO3}}
+  \code{\link{mean.SO3}}
 }
 

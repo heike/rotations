@@ -17,6 +17,7 @@ Depends:
 Collate:
     'help.R'
     'parameterizations.R'
+    'estimators.R'
     'preliminary.R'
     'plot.R'
     'distributions.R'

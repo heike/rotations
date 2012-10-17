@@ -494,6 +494,7 @@ angle.EA<-function(eur){
 #' @param R 3-by-3 matrix in SO3 
 #' @return axis in form of three dimensional vector of length one.
 #' @seealso \code{\link{angle}}
+#' @export
 
 axis2<-function(R){
   UseMethod("axis2")

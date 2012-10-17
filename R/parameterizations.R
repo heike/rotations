@@ -106,10 +106,6 @@ EA.SO3 <- function(rot){
   return(ea)
 }
 
-#' Identity in EA space
-#' @export
-id.EA <- as.EA(c(0,0,0))
-
 #' Convert anything into EA class
 #' 
 #' @param x can be anything
@@ -120,6 +116,10 @@ as.EA<-function(x){
   class(x)<-"EA"
   return(x)
 }
+
+#' Identity in EA space
+#' @export
+id.EA <- as.EA(c(0,0,0))
 
 
 #' Form a unit quaterion
@@ -262,7 +262,6 @@ SO3.Q4<-function(q){
     q<-q/sqrt(sum(q^2))
   }
   
-  
   theta<-angle(q)
   
   u<-axis2(q)
@@ -270,10 +269,6 @@ SO3.Q4<-function(q){
   return(SO3(u, theta)) 
 }
 
-
-#' Identity in SO(3) space
-#' @export
-id.SO3 <- as.SO3(diag(c(1,1,1)))
 
 #' Convert anything into SO3 class
 #' 
@@ -285,6 +280,10 @@ as.SO3<-function(x){
   class(x)<-"SO3"
   return(x)
 }
+
+#' Identity in SO(3) space
+#' @export
+id.SO3 <- as.SO3(diag(c(1,1,1)))
 
 
 #' A function to determine if a given matrix is in \eqn{SO(3)} or not.

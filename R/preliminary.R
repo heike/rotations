@@ -495,17 +495,17 @@ angle.EA<-function(eur){
 #' @return axis in form of three dimensional vector of length one.
 #' @seealso \code{\link{angle}}
 
-axis<-function(R){
-  UseMethod("axis")
+axis2<-function(R){
+  UseMethod("axis2")
 }
 
 #' @return \code{NULL}
 #'
-#' @rdname axis
-#' @method axis SO3
-#' @S3method axis SO3
+#' @rdname axis2
+#' @method axis2 SO3
+#' @S3method axis2 SO3
 
-axis.SO3<-function(R){
+axis2.SO3<-function(R){
   # based on Rodrigues formula: R - t(R)
   R<-matrix(R,3,3)
   
@@ -518,11 +518,11 @@ axis.SO3<-function(R){
 
 #' @return \code{NULL}
 #'
-#' @rdname axis
-#' @method axis Q4
-#' @S3method axis Q4
+#' @rdname axis2
+#' @method axis2 Q4
+#' @S3method axis2 Q4
 
-axis.Q4 <- function(q){
+axis2.Q4 <- function(q){
   
   theta<-angle(q)
   
@@ -536,13 +536,13 @@ axis.Q4 <- function(q){
 
 #' @return \code{NULL}
 #'
-#' @rdname axis
-#' @method axis EA
-#' @S3method axis EA
+#' @rdname axis2
+#' @method axis2 EA
+#' @S3method axis2 EA
 
-axis.EA <- function(eur){
+axis2.EA <- function(eur){
   R<-SO3.EA(eur)
-  u<-axis(R)
+  u<-axis2(R)
   return(u)
 }
 
@@ -1224,7 +1224,7 @@ SO3.Q4<-function(q){
   
   theta<-angle(q)
   
-  u<-axis(q)
+  u<-axis2(q)
 
   return(SO3(u, theta)) 
 }
@@ -1239,7 +1239,7 @@ SO3.Q4<-function(q){
 Q4.SO3 <- function(R) {
   
   theta <- angle(R)
-  u <- axis(R)
+  u <- axis2(R)
   x <- Q4(u,theta)
 
   return(x)

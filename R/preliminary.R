@@ -115,17 +115,20 @@ dhaar <- function(r) return((1 - cos(r))/(2 * pi))
 #' This function will calculate the intrinsic (Riemannian) or projected (Euclidean) distance between two rotations.  If only one rotation is specified
 #' the other will be set to the identity and the distance between the two is returned.
 #'
-#' @param R1 rotation in SO3 representation
-#' @param R2 rotation in SO3 representation
-#' @param method calculate intrinsic or projected distance
-#' @param p the power of the respective distance
-#' @return the pth power of the intrinsic or projected distance
+#' @param x rotation in SO3 representation
+#' @param ... Additional arguments
+#' @return the distance between x and something else
 #' @export
-#' @examples
-#' r<-rvmises(20,0.01)
-#' Rs<-genR(r)
-#' Sp<-mean(Rs)
-#' dist.SO3(Sp)
+
+dist<-function(x,...){
+  UseMethod("dist")
+}
+
+#' @return \code{NULL}
+#' 
+#' @rdname dist
+#' @method dist SO3
+#' @S3method dist SO3
 
 dist.SO3 <- function(R1, R2=id.SO3, method='projected' , p=1) {
   
@@ -148,22 +151,11 @@ dist.SO3 <- function(R1, R2=id.SO3, method='projected' , p=1) {
   
 }
 
-#' Distance Between Two Rotations
-#'
-#' This function will calculate the intrinsic (Riemannian) or projected (Euclidean) distance between two rotations.  If only one rotation is specified
-#' the other will be set to the identity and the distance between the two is returned.
-#'
-#' @param R1 First rotation in quaternion form
-#' @param R2 Second rotation in quaternion form, identity by default
-#' @param method calculate intrinsic or projected distance
-#' @param p the power of the respective distance
-#' @return the pth power of the intrinsic or projected distance between Q1 and Q2
-#' @export
-#' @examples
-#' r<-rvmises(20,0.01)
-#' Qs<-genR(r,space="Q4")
-#' Qp<-mean(Qs)
-#' dist(Qp)
+#' @return \code{NULL}
+#' 
+#' @rdname dist
+#' @method dist Q4
+#' @S3method dist Q4
 
 dist.Q4 <- function(R1, R2=id.Q4 ,method='projected', p=1) {
   Q1 <- R1
@@ -187,22 +179,11 @@ dist.Q4 <- function(R1, R2=id.Q4 ,method='projected', p=1) {
   return(q4dist)
 }
 
-#' Distance Between Two Rotations
-#'
-#' This function will calculate the intrinsic (Riemannian) or projected (Euclidean) distance between two rotations.  If only one rotation is specified
-#' the other will be set to the identity and the distance between the two is returned.
-#'
-#' @param R1 first rotation in Euler Angle form
-#' @param R2 second rotation in Euler Angle form
-#' @param method calculate intrinsic or projected distance
-#' @param p the power of the respective distance
-#' @return the pth power of the projected or intrinsic distance between Q1 and Q2
-#' @export
-#' @examples
-#' r<-rvmises(20,0.01)
-#' EAs<-genR(r,space="EA")
-#' EAp<-mean(EAs)
-#' dist(EAp)
+#' @return \code{NULL}
+#' 
+#' @rdname dist
+#' @method dist EA
+#' @S3method dist EA
 
 dist.EA <- function(R1, R2=id.EA ,method='projected', p=1) {
   EA1 <- R1

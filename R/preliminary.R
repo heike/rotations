@@ -804,28 +804,29 @@ mean.EA <- function(x, type = "projected", epsilon = 1e-05, maxIter = 2000) {
 #' The algorithm used in the intrinsic case is discussed in \cite{hartley11} and the projected case was written by the authors.
 #'
 #' @param x A \eqn{n\times 9} matrix where each row corresponds to a random rotation in matrix form
-#' @param type String indicating 'projected' or 'intrinsic' type mean estimator
-#' @param epsilon the stopping rule for the iterative algorithm
-#' @param maxIter integer, the maximum number of iterations allowed
-#' @param na.rm not used, only there for inconsistency with median.default
-#' @return S the element in SO(3) minimizing  the sum of first order Euclidean or Riemannian distances for sample Rs
+#' @param ... additional arguments
+#' @return the median
 #' @seealso \code{\link{mean.SO3}}
 #' @cite hartley11
 #' @S3method median SO3
 #' @method median SO3
 #' @export
-#' @examples
-#' r<-rcayley(50,1)
-#' Rs<-genR(r)
-#' median(Rs)
 
-median.SO3 <- function(x, type = "projected", epsilon = 1e-05, maxIter = 2000, na.rm=FALSE) {
-  Rs <- x
+median <- function(x,...){
+  UseMethod("median")
+}
+
+#' @return \code{NULL}
+#' 
+#' @rdname median
+#' @method median SO3
+#' @S3method median SO3
+
+median.SO3 <- function(Rs, type = "projected", epsilon = 1e-05, maxIter = 2000, na.rm=FALSE) {
+  
   if (!all(apply(Rs, 1, is.SO3))) 
     warning("At least one of the given observations is not in SO(3).  Use result with caution.")
   
-#  if (type != "projected" & type != "intrinsic") 
-#    stop("Incorrect usage of type option.  Select from 'projected' or 'intrinsic'.")
   stopifnot(type %in% c("projected", "intrinsic"))
   
   S <- mean.SO3(Rs)
@@ -870,26 +871,11 @@ median.SO3 <- function(x, type = "projected", epsilon = 1e-05, maxIter = 2000, n
   return(S)
 }
 
-#' Compute the projected or intrinsic median estimate of the central direction
-#'
-#' The median-type estimators are defined as \deqn{\widetilde{\bm{S}}=\argmin_{\bm{S}\in SO(3)}\sum_{i=1}^nd_D(\bm{R}_i,\bm{S})}.  If the choice of distance metrid, \eqn{d_D}, is Riemannian then the estimator is called the intrinsic, and if the distance metric in Euclidean then it projected.
-#' The algorithm used in the intrinsic case is discussed in \cite{hartley11} and the projected case was written by the authors.
-#'
-#' @param x A \eqn{n\times 4} matrix where each row corresponds to a random rotation in unit quaternion form
-#' @param type String indicating 'projeted' or 'intrinsic' type mean estimator
-#' @param epsilon the stopping rule for the iterative algorithm
-#' @param maxIter integer, the maximum number of iterations allowed
-#' @param na.rm not used, only there for inconsistency with median.default
-#' @return S the unit quaternion minimizing  the sum of first order Euclidean or Riemannian distances for sample Rs
-#' @seealso \code{\link{median.SO3}}
-#' @cite hartley11
+#' @return \code{NULL}
+#' 
+#' @rdname median
 #' @method median Q4
 #' @S3method median Q4
-#' @export
-#' @examples
-#' r<-rcayley(50,1)
-#' Qs<-genR(r,space="Q4")
-#' median(Qs)
 
 median.Q4 <- function(x, type = "projected", epsilon = 1e-05, maxIter = 2000, na.rm=FALSE) {
   Qs <- x
@@ -901,26 +887,11 @@ median.Q4 <- function(x, type = "projected", epsilon = 1e-05, maxIter = 2000, na
 }
 
 
-#' Compute the projected or intrinsic median estimate of the central direction
-#'
-#' The median-type estimators are defined as \deqn{\widetilde{\bm{S}}=\argmin_{\bm{S}\in SO(3)}\sum_{i=1}^nd_D(\bm{R}_i,\bm{S})}.  If the choice of distance metrid, \eqn{d_D}, is Riemannian then the estimator is called the intrinsic, and if the distance metric in Euclidean then it projected.
-#' The algorithm used in the intrinsic case is discussed in \cite{hartley11} and the projected case was written by the authors.
-#'
-#' @param EAs A \eqn{n\times 3} matrix where each row corresponds to a random rotation in Euler angle form
-#' @param type String indicating 'projeted' or 'intrinsic' type mean estimator
-#' @param epsilon the stopping rule for the iterative algorithm
-#' @param maxIter integer, the maximum number of iterations allowed
-#' @param na.rm not used, only there for inconsistency with median.default
-#' @return S the vector of Euler angles minimizing  the sum of first order Euclidean or Riemannian distances for sample Rs
-#' @seealso \code{\link{median.SO3}}
-#' @cite hartley11
+#' @return \code{NULL}
+#' 
+#' @rdname median
 #' @method median EA
 #' @S3method median EA
-#' @export
-#' @examples
-#' r<-rcayley(50,1)
-#' EA<-genR(r,space="EA")
-#' median(EA)
 
 median.EA <- function(x, type = "projected", epsilon = 1e-05, maxIter = 2000, na.rm=FALSE) {
   EAs <- x

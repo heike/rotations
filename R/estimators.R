@@ -127,15 +127,22 @@ mean.EA <- function(x, type = "projected", epsilon = 1e-05, maxIter = 2000) {
 #' The median-type estimators are defined as \deqn{\widetilde{\bm{S}}=\argmin_{\bm{S}\in SO(3)}\sum_{i=1}^nd_D(\bm{R}_i,\bm{S})}.  If the choice of distance metrid, \eqn{d_D}, is Riemannian then the estimator is called the intrinsic, and if the distance metric in Euclidean then it projected.
 #' The algorithm used in the intrinsic case is discussed in \cite{hartley11} and the projected case was written by the authors.
 #'
-#' @param Rs A \eqn{n\times 9} matrix where each row corresponds to a random rotation in matrix form
-#' @param type choice of geometry: intrinsic or projected
-#' @param epsilon the stopping rule for the iterative process
-#' @param maxIter maximum number of iterations to allow
-#' @param na.rm how to handle NAs
+#' @param x A \eqn{n\times 9} matrix where each row corresponds to a random rotation in matrix form
+#' @param ... additional arguments
 #' @return the median
 #' @seealso \code{\link{mean.SO3}}
 #' @cite hartley11
 #' @export
+
+median<-function(x,...){
+  UseMethod("median")
+}
+
+#' @return \code{NULL}
+#' 
+#' @rdname median
+#' @method median SO3
+#' @S3method median SO3
 
 median.SO3 <- function(Rs, type = "projected", epsilon = 1e-05, maxIter = 2000, na.rm=FALSE) {
   
@@ -186,20 +193,11 @@ median.SO3 <- function(Rs, type = "projected", epsilon = 1e-05, maxIter = 2000, 
   return(S)
 }
 
-#' Compute the projected or intrinsic median estimate of the central direction
-#'
-#' The median-type estimators are defined as \deqn{\widetilde{\bm{S}}=\argmin_{\bm{S}\in SO(3)}\sum_{i=1}^nd_D(\bm{R}_i,\bm{S})}.  If the choice of distance metrid, \eqn{d_D}, is Riemannian then the estimator is called the intrinsic, and if the distance metric in Euclidean then it projected.
-#' The algorithm used in the intrinsic case is discussed in \cite{hartley11} and the projected case was written by the authors.
-#'
-#' @param Qs A \eqn{n\times 4} matrix where each row corresponds to a random rotation in quaternion form
-#' @param type choice of geometry: intrinsic or projected
-#' @param epsilon the stopping rule for the iterative process
-#' @param maxIter maximum number of iterations to allow
-#' @param na.rm how to handle NAs
-#' @return the median
-#' @seealso \code{\link{mean.SO3}}
-#' @cite hartley11
-#' @export
+#' @return \code{NULL}
+#' 
+#' @rdname median
+#' @method median Q4
+#' @S3method median Q4
 
 median.Q4 <- function(Qs, type = "projected", epsilon = 1e-05, maxIter = 2000, na.rm=FALSE) {
 
@@ -211,20 +209,11 @@ median.Q4 <- function(Qs, type = "projected", epsilon = 1e-05, maxIter = 2000, n
 }
 
 
-#' Compute the projected or intrinsic median estimate of the central direction
-#'
-#' The median-type estimators are defined as \deqn{\widetilde{\bm{S}}=\argmin_{\bm{S}\in SO(3)}\sum_{i=1}^nd_D(\bm{R}_i,\bm{S})}.  If the choice of distance metrid, \eqn{d_D}, is Riemannian then the estimator is called the intrinsic, and if the distance metric in Euclidean then it projected.
-#' The algorithm used in the intrinsic case is discussed in \cite{hartley11} and the projected case was written by the authors.
-#'
-#' @param EAs A \eqn{n\times 3} matrix where each row corresponds to a random rotation in Euler angle form
-#' @param type choice of geometry: intrinsic or projected
-#' @param epsilon the stopping rule for the iterative process
-#' @param maxIter maximum number of iterations to allow
-#' @param na.rm how to handle NAs
-#' @return the median
-#' @seealso \code{\link{mean.SO3}}
-#' @cite hartley11
-#' @export
+#' @return \code{NULL}
+#' 
+#' @rdname median
+#' @method median EA
+#' @S3method median EA
 
 median.EA <- function(EAs, type = "projected", epsilon = 1e-05, maxIter = 2000, na.rm=FALSE) {
 

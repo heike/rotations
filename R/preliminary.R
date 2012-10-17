@@ -808,8 +808,6 @@ mean.EA <- function(x, type = "projected", epsilon = 1e-05, maxIter = 2000) {
 #' @return the median
 #' @seealso \code{\link{mean.SO3}}
 #' @cite hartley11
-#' @S3method median SO3
-#' @method median SO3
 #' @export
 
 median <- function(x,...){

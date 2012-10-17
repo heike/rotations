@@ -5,7 +5,7 @@
 \alias{median.SO3}
 \title{Compute the projected or intrinsic median estimate of the central direction}
 \usage{
-  \method{median}{SO3} (x, ...)
+  median(x, ...)
 
   \method{median}{SO3} (Rs, type = "projected",
     epsilon = 1e-05, maxIter = 2000, na.rm = FALSE)

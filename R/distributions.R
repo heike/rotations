@@ -14,6 +14,32 @@ rar <- function(n, f, M, ...) {
 }
 
 
+#' Symmetric Cayley distribution for angular data
+#'
+#' The symmetric Cayley distribution has a density of the form \deqn{C_\mathrm{C}(r |\kappa)=\frac{1}{\sqrt{\pi}} \frac{\Gamma(\kappa+2)}{\Gamma(\kappa+1/2)}2^{-(\kappa+1)}(1+\cos r)^\kappa(1-\cos r)}.
+#' It was orignally given in the material sciences literature by Schaben 1997 and called the de la Vallee Poussin distribution but was more recently discussed and
+#' introduced in a more general manner by Leon 06.
+#'
+#' @param r Where the density is being evaluated
+#' @param kappa The concentration paramter, taken to be zero
+#' @param nu The circular variance, can be used in place of kappa
+#' @param Haar logical, if density is evaluated with respect to Haar measure or Lebesgue
+#' @return value of Cayley distribution with concentration \eqn{\kappa} evaluated at r
+#' @seealso \code{\link{rcayley}},\code{\link{dfisher}},\code{\link{dhaar}},\code{\link{dvmises}}
+#' @export
+#' @cite Schaeben97 leon06
+
+dcayley <- function(r, kappa = 1, nu = NULL, Haar = T) {
+  
+  if(!is.null(nu))
+    kappa <- cayley_kappa(nu)
+  
+  den <- 0.5 * gamma(kappa + 2)/(sqrt(pi) * 2^kappa * gamma(kappa + 0.5)) * (1 + cos(r))^kappa * (1 - cos(r))
+  
+  if (Haar) 
+    return(den/(1 - cos(r))) else return(den)
+}
+
 #' Simulate misorientation angles from Cayley distribution
 #'
 #' This function allows the user to simulate \eqn{n} misorientation angles from the Cayley distribution symmetric about 0 on interval \eqn{(-\pi,\pi]}.  The relationship between Cayley and Beta distribution is used.
@@ -41,6 +67,34 @@ rcayley <- function(n, kappa = 1, nu = NULL) {
   return(theta)
 }
 
+#' von Mises-Fisher distribution for angular data
+#'
+#' The symmetric matrix fisher distribution has the density\deqn{C_\mathrm{{F}}(r|\kappa)=\frac{1}{2\pi[\mathrm{I_0}(2\kappa)-\mathrm{I_1}(2\kappa)]}e^{2\kappa\cos(r)}[1-\cos(r)]}
+#' where \eqn{\mathrm{I_p}(\cdot)} denotes the Bessel function of order \eqn{p} defined as  \eqn{\mathrm{I_p}(\kappa)=\frac{1}{2\pi}\int_{-\pi}^{\pi}\cos(pr)e^{\kappa\cos r}dr}.
+#' This function allows the user to evaluate the function \eqn{C_\mathrm{{F}}(r|\kappa)} at \eqn{r} with \eqn{\kappa} provided by the user.
+#'
+#' @param r Where the density is being evaluated
+#' @param kappa The concentration paramter, taken to be zero
+#' @param nu The circular variance, can be used in place of kappa
+#' @param Haar logical, if density is evaluated with respect to Haar measure or Lebesgue
+#' @return value of Fisher matrix distribution with concentration \eqn{\kappa} evaluated at r
+#' @seealso \code{\link{rfisher}}, \code{\link{dhaar}},\code{\link{dvmises}},\code{\link{dcayley}}
+#' @export
+
+dfisher <- function(r, kappa = 1, nu = NULL, Haar = T) {
+  
+  if(!is.null(nu))
+    kappa <- fisher_kappa(nu)
+  
+  den <- exp(2 * kappa * cos(r)) * (1 - cos(r))/(2 * pi * (besselI(2 * kappa, 0) - besselI(2 * kappa, 1)))
+  
+  if (Haar) {
+    return(den/(1 - cos(r)))
+  } else {
+    return(den)
+  }
+}
+
 #' Simulate a data set of size \eqn{n} from the matrix Fisher angular distribution
 #'
 #' The symmetric matrix fisher distribution has the density\deqn{C_\mathrm{{F}}(r|\kappa)=\frac{1}{2\pi[\mathrm{I_0}(2\kappa)-\mathrm{I_1}(2\kappa)]}e^{2\kappa\cos(r)}[1-\cos(r)]}
@@ -64,6 +118,17 @@ rfisher <- function(n, kappa = 1, nu = NULL) {
   return(rar(n, dfisher, M, kappa = kappa, Haar=F))
 }
 
+#' Evaluate the uniform distribution on the circle at \eqn{r}
+#'
+#' The uniform distribution on the sphere is also know as the Haar measure and has the density function \deqn{C_U(r)=\frac{1-cos(r)}{2\pi}}
+#'
+#' @param r Where the density is being evaluated
+#' @return the probability density evaluated at r
+#' @seealso \code{\link{rhaar}}, \code{\link{dfisher}},\code{\link{dvmises}},\code{\link{dcayley}}
+#' @export
+
+dhaar <- function(r) return((1 - cos(r))/(2 * pi))
+
 #' Simulate a data set of size \eqn{n} from the uniform distribution on the sphere
 #'
 #' The uniform distribution has the density\deqn{C_\mathrm{{F}}(r|\kappa)=\frac{1}{2\pi}1-\cos(r)}.  The is also 
@@ -79,6 +144,32 @@ rhaar<-function(n){
   return(rar(n, dhaar, 1/pi))
 }
 
+#'Density function for circular von Mises distribution
+#'
+#' The circular von Mises-based distribution has the density \deqn{C_\mathrm{M}(r|\kappa)=\frac{1}{2\pi \mathrm{I_0}(\kappa)}e^{\kappa\cos(r)}}.  This function allows the use to
+#' evaluate \eqn{C_\mathrm{M}(r|\kappa)} at angle \eqn{r} given a concentration parameter \eqn{\kappa}.
+#'
+#' @param r value at which to evaluate the distribution function
+#' @param kappa concentration paramter
+#' @param nu The circular variance, can be used in place of kappa
+#' @param Haar logical, if density is evaluated with respect to Haar measure or Lebesgue
+#' @export
+#' @return value of circular-von Mises distribution with concentration \eqn{\kappa} evaluated at r
+#' @seealso \code{\link{rvmises}}, \code{\link{dfisher}},\code{\link{dhaar}},\code{\link{dcayley}}
+
+dvmises <- function(r, kappa = 1, nu = NULL, Haar = T) {
+  
+  if(!is.null(nu))
+    kappa <- vmises_kappa(nu)
+  
+  den <- 1/(2 * pi * besselI(kappa, 0)) * exp(kappa * cos(r))
+  
+  if (Haar) {
+    return(den/(1 - cos(r)))
+  } else {
+    return(den)
+  }
+}
 
 #' Generate a vector of angles(r) from the von Mises Circular distribution
 #'

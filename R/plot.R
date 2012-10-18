@@ -111,16 +111,16 @@ plot.SO3 <- function(x, center, col=1, toRange=FALSE, show_estimates=FALSE,  ...
   estimates <- NULL
   if (show_estimates) {
     ShatP<-mean(Rs, type="projected")
-    StildeP<-median.SO3(Rs, type="projected")
+    StildeP<-median(Rs, type="projected")
     ShatG<-mean(Rs, type="intrinsic")
-    StildeG<-median.SO3(Rs, type="intrinsic")
+    StildeG<-median(Rs, type="intrinsic")
     
     Shats<-data.frame(rbind(as.vector(ShatP),as.vector(StildeP),as.vector(ShatG),as.vector(StildeG)),Est=1:4)
     Shats$Est <- factor(Shats$Est)
     labels <- c(expression(hat(S)[E]), expression(tilde(S)[E]), expression(hat(S)[R]), expression(tilde(S)[R]))
     levels(Shats$Est) <- labels
 
-    estimates <- list(geom_point(aes(x=X, y=Y, colour=Est), size=3, data=data.frame(pointsXY(Shats, center=center, column=col), Shats)),
+    estimates <- list(geom_point(aes(x=X, y=Y, colour=Est),..., data=data.frame(pointsXY(Shats, center=center, column=col), Shats)),
     scale_colour_brewer("Estimates", palette="Paired", labels=labels))
   }
   base + geom_point(aes(x=X, y=Y), data=proj2d, ...) + 

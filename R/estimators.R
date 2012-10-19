@@ -173,7 +173,7 @@ median.SO3 <- function(Rs, type = "projected", epsilon = 1e-05, maxIter = 2000, 
       #      S <- exp.skew(delta) %*% S ## needs to be multiplied the other way round
       S <- S %*% exp.skew(delta)
       
-      v <- t(apply(Rs, 1, tLogMat, S = S))
+      v <- t(apply(Rs, 1, tLogMat2, S = S))
       vn <- apply(v, 1, vecNorm, S = diag(0, 3, 3), type = "F")
       
       delta <- matrix(colSums(v/vn)/sum(1/vn), 3, 3)

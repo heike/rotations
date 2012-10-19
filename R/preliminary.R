@@ -671,6 +671,11 @@ tLogMat <- function(x, S) {
   return(as.vector(tra))
 }
 
+tLogMat2 <- function(x, S) {
+  tra <- log.SO3(matrix(x, 3, 3)%*%t(S))
+  return(as.vector(tra))
+}
+
 
 vecNorm <- function(x, S, ...) {
   n <- sqrt(length(x))

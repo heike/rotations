@@ -170,14 +170,16 @@ median.SO3 <- function(Rs, type = "projected", epsilon = 1e-05, maxIter = 2000, 
       
     } else if (type == "intrinsic") {
       
-      S <- exp.skew(delta) %*% S ## needs to be multiplied the other way round
-      #S <- S %*% exp.skew(delta)
+      S <- exp.skew(delta) %*% S 
       
       v <- t(apply(Rs, 1, tLogMat2, S = S))
       vn <- apply(v, 1, vecNorm, S = diag(0, 3, 3), type = "F")
-      
+      vn <- pmax(epsilon, vn) # make sure we don't dividde by zero
+ #     if (iter ==25) browser()
       delta <- matrix(colSums(v/vn)/sum(1/vn), 3, 3)
       d <- norm(delta, type = "F")
+#      print(d)
+#      print(delta)
       
     }
     

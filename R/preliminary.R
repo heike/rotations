@@ -158,9 +158,11 @@ angle.SO3 <- function(Rs){
   ##  trace of a rotation matrix has to be between -1 and 3. If not, this is due
   ## to numerical inconcistencies, that we have to fix here
   tr<-Rs[1]+Rs[5]+Rs[9]
-  eps <- 10^-6
+  eps <- 10^-3
   
-  stopifnot(tr<3+eps, tr>-1-eps)
+if (tr > 3+eps) print(sprintf("Warning: trace too large (> 3.0): %f ", tr))
+  if (tr < -1-eps) print(sprintf("Warning: trace too small (< -1.0): %f ", tr))
+#  stopifnot(tr<3+eps, tr>-1-eps)
   tr <- max(min(3, tr), -1)
   
   return(acos((tr-1)/2))

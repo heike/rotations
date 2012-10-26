@@ -161,14 +161,14 @@ This makes $q$ a unit quaternion.  %To form a quaternion given an angle and axis
 
 \subsection{Euler Angle Form}
 
-The final parameterization we consider is {\it Euler angles}.  Euler angles are three dimensional vectors describing a sequence of rotations of some fixed coordinate axis.  There are several versions of Euler angles and we consider the $z-x-z$ formulation.  That is, if $(\alpha,\beta,\gamma)$ is an Euler angle for $\alpha,\gamma\in[0,2\pi]$, and $\beta\in[0,\pi]$, rotate the $z$-axis counterclockwise through $\alpha$ radians, then rotate the $x$-axis through $\beta$ radians and finally rotate the $z$-axis through $\gamma$ radians.
+The final parameterization we consider is {\it Euler angles}.  Euler angles are three dimensional vectors describing a sequence of rotations of some fixed coordinate axis.  There are several versions of Euler angles and we consider the $z-x-z$ formulation.  That is, the orintation $\bm R\in SO(3)$ can be represented as $\bm e=(\alpha,\beta,\gamma)$  where $\alpha,2\beta,\gamma\in[0,2\pi]$.  This specific formulation of $\bm e$ can form a rotation by rotating the identity about the $z$-axis counterclockwise through $\alpha$ radians, then rotate the $x$-axis through $\beta$ radians and finally rotate the $z$-axis through $\gamma$ radians.
 
 To make this more concrete, we can form the rotation matrix, $\bm R\in SO(3)$ from a vector of Euler angles, $(\alpha,\beta,\gamma)$, as follows.  Let $\bm e_1=\begin{bmatrix} 1&0&0\end{bmatrix}$ and $\bm e_3=\begin{bmatrix} 0&0&1\end{bmatrix}$ then using the notation from \ref{eqn:angleaxis},
 \[
 \bm R=\bm R(\gamma,\bm e_1)\bm R(\beta,\bm e_3)\bm R(\alpha,\bm e_1).
 \]
 
-For each of these parameterizations we have created a class of R objects: \code{SO3} for the matrix representation, \code{Q4} for quaternions and \code{EA} for Euler angles.  The names of these classes  are also functions that will return an object of the class with the same name given an angle and axis, or an object of any other class.  See the below code for an illustration.  First I generate a rotation matrix from an angle, $r$, and an axis, $\bm U$ using the function \code{SO3}.  Next I transform that rotation into quaternions then Euler angles with the funcions \code{Q4} and \code{EA}, respecitvely.
+For each of these parameterizations we have created a class of R objects: \code{SO3} for the matrix representation, \code{Q4} for quaternions and \code{EA} for Euler angles.  The names of these classes  are also functions that will return an object of the class with the same name given an angle and axis, or an object of any other class.  See the below code for an illustration.  First I generate a rotation matrix from an angle, $r$, and an axis, $\bm U$ using the function \code{SO3}.  Next we transform that rotation into quaternions then Euler angles with the funcions \code{Q4} and \code{EA}, respecitvely.  One can also create quaternions or Euler angles directly by feeding the angle and axis into those same functions.
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{1, 1, 1}\color{fgcolor}\begin{kframe}
@@ -182,11 +182,9 @@ ea <- EA(R)
 \end{kframe}
 \end{knitrout}
 
-
-
 %As before the function \code{axis} and \code{angle} will extract the axis and angle of the Euler angle.  One can also translate an Euler angle into a quaternion or matrix by passing an \code{EA} object into \code{Q4} and \code{SO3}, respectively.  One can go the other direction too.
 
-%All of the functions in \pkg{rotations} will work with any of these representations.  For the remainder of this article, however, we will present our work using the matrix representation as the other representations work analogously.
+For the remainder of this article we will present our work using the matrix representation.  All the functions to follow will work with any of  the representations we have discussed above.
 
 \section{Data generation}
 
@@ -272,7 +270,7 @@ The function \code{median} with option \code{type="projected"} approximates $\Pr
 \ProjMean&=\argmin_{\bm{S}\in
 SO(3)}\sum_{i=1}^n\Edist^2(\bm{R}_i,\bm{S})\nonumber\\
 &=\argmax_{\bm{S}\in
-SO(3)}\tr(\bm{S}^{\top}\bar{\bm{R}})
+SO(3)}\tr(\bm{S}^{\top}\overline{\bm{R}})
 \end{align}
 and is computed by the function \code{mean} with option \code{type="projected"}.  For an in-depth discussion of the algorithm used to compute this value consult \citet{moakher02}.
 

@@ -67,7 +67,7 @@ EA.default <- function(U,theta){
 
 EA.SO3 <- function(R){  
   
-  zeta<-sqrt(1-rot[9]^2)
+  zeta<-sqrt(1-R[9]^2)
   
   #For now deal with singularity this way
   if(zeta==0){
@@ -76,33 +76,33 @@ EA.SO3 <- function(R){
     return(ea)
   }
   
-  Salpha <- asin(rot[3]/zeta)
+  Salpha <- asin(R[3]/zeta)
   if(Salpha<0)  Salpha<-Salpha+2*pi
   
-  Calpha <- acos(-rot[6]/zeta)
+  Calpha <- acos(-R[6]/zeta)
   
   if(Calpha<0)  Calpha<-Calpha+2*pi
   
   if(Salpha==Calpha){
     alpha <- Salpha 
-  }else if(sin(Calpha)==rot[3]/zeta){
+  }else if(sin(Calpha)==R[3]/zeta){
     alpha <- Calpha
   }else{
     alpha <- Salpha
   }
   
   
-  beta<-acos(rot[9])
+  beta<-acos(R[9])
   
-  Sgamma <- asin(rot[7]/zeta)
+  Sgamma <- asin(R[7]/zeta)
   if(Sgamma<0) Sgamma<-Sgamma+2*pi
   
-  Cgamma<- acos(rot[8]/zeta)
+  Cgamma<- acos(R[8]/zeta)
   if(Cgamma<0) Cgamma<-Cgamma+2*pi
   
   if(Sgamma==Cgamma){
     gamma <- Sgamma 
-  }else if(sin(Cgamma)==rot[3]/zeta){
+  }else if(sin(Cgamma)==R[3]/zeta){
     gamma <- Cgamma    
   }else{
     gamma <- Sgamma
@@ -243,9 +243,7 @@ SO3.default <- function(U, theta) {
   
   P <- U %*% t(U)
   
-  id <- matrix(0, length(U), length(U))
-  diag(id) <- 1
-  
+  id <- diag(3)
   
   R <- P + (id - P) * cos(theta) + eskew(U) * sin(theta)
   class(R) <- "SO3"

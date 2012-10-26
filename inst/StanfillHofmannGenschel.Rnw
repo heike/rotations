@@ -34,7 +34,6 @@
 opts_chunk$set(fig.path='figures/', fig.align='center', fig.show='hold')
 options(replace.assign=TRUE,width=90)
 library(rotations)
-library(ggplot2)
 @
 
 \abstract{
@@ -110,7 +109,7 @@ This makes $q$ a unit quaternion.  %To form a quaternion given an angle and axis
 
 \subsection{Euler Angle Form}
 
-The final parameterization we consider is {\it Euler angles}.  Euler angles are three dimensional vectors describing a sequence of rotations of some fixed coordinate axis.  There are several versions of Euler angles and we consider the $z-x-z$ formulation.  That is, if $(\alpha,\beta,\gamma)$ is an Euler angle for $\alpha,\gamma\in[0,2\pi]$, and $\beta\in[0,\pi]$, rotate the $z$-axis counterclockwise through $\alpha$ radians, then rotate the $x$-axis through $\beta$ radians and finally rotate the $z$-axis through $\gamma$ radians.
+The final parameterization we consider is {\it Euler angles}.  Euler angles are three dimensional vectors describing a sequence of rotations of some fixed coordinate axis.  There are several versions of Euler angles and we consider the $z-x-z$ formulation.  That is, the orintation $\bm R\in SO(3)$ can be represented as $\bm e=(\alpha,\beta,\gamma)$  where $\alpha,2\beta,\gamma\in[0,2\pi]$.  This specific formulation of $\bm e$ can form a rotation by rotating the identity about the $z$-axis counterclockwise through $\alpha$ radians, then rotate the $x$-axis through $\beta$ radians and finally rotate the $z$-axis through $\gamma$ radians.
 
 To make this more concrete, we can form the rotation matrix, $\bm R\in SO(3)$ from a vector of Euler angles, $(\alpha,\beta,\gamma)$, as follows.  Let $\bm e_1=\begin{bmatrix} 1&0&0\end{bmatrix}$ and $\bm e_3=\begin{bmatrix} 0&0&1\end{bmatrix}$ then using the notation from \ref{eqn:angleaxis},
 \[
@@ -124,7 +123,7 @@ r<-pi/2
 U<-c(1/sqrt(2),1/sqrt(2),0)
 R<-SO3(U,r)
 q<-Q4(R)
-ea<-EA(q)
+ea<-EA(R)
 @
 
 

@@ -27,7 +27,7 @@ rar <- function(n, f, M, ...) {
 #' @param Haar logical; if TRUE density is evaluated with respect to Haar
 #' @param lower.tail logical; if TRUE probabilites are \eqn{P(X\le x)}
 #' @return Cayley density with concentration kappa evaluated at r
-#' @seealso \code{\link{rcayley}},\code{\link{dfisher}},\code{\link{dhaar}},\code{\link{dvmises}}
+#' @seealso \code{\link{dfisher}},\code{\link{dhaar}},\code{\link{dvmises}}
 #' @export
 #' @cite Schaeben97 leon06
 

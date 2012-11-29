@@ -46,8 +46,13 @@ arsample.unif <- function(f, M, ...) {
 
 #' Rotational Distance
 #'
+#' Calculate the Euclidean or Riemannian distance between two rotations
+#'
 #' This function will calculate the intrinsic (Riemannian) or projected (Euclidean) distance between two rotations.  If only one rotation is specified
-#' the other will be set to the identity and the distance between the two is returned.
+#' the other will be set to the identity and the distance between the two is returned.  For rotations \eqn{R_1} and \eqn{R_2}
+#' both in SO(3), the Euclidean distance between them is \deqn{||R_1-R_2||_F} where \eqn{||\cdot||_F} is the Frobenius norm.
+#' The intrinsic distance is defined as \deqn{||Log(R_1^\top R_2)||_F} where \eqn{Log} is the matrix logarithm, and it corresponds
+#' to the misorientation angle of \eqn{R[1]' R[2]}.
 #'
 #' @param x rotation in SO3 representation
 #' @param ... Additional arguments
@@ -137,8 +142,13 @@ dist.EA <- function(R1, R2=id.EA ,method='projected', p=1) {
 
 #' Misorientation Angle
 #' 
-#' Extract angle from rotation.
+#' Find the misorientation angle of a rotation
 #' 
+#' Every rotation can be thought of as some reference coordinate system rotated about an axis through an angle.  These quantites
+#' are referred to as the misorientation axis and misorientation angle, respectively, in the material sciences literature.
+#' This function returns the misorentation angle associated with a rotation assuming the reference coordinate system
+#' is the identity.
+#'  
 #' @param Rs rotation matrix
 #' @return angle of rotation
 #' @seealso \code{\link{axis}}
@@ -197,8 +207,13 @@ angle.EA<-function(eur){
 
 #' Misorientation Axis
 #' 
-#' This function will find the axis of rotation matrix R.  The simple calculation is based on Rodrigues formula
-#' and noticing that R - t(R) can be simplified greatly.  
+#' Find the misorientation axis of a rotation
+#' 
+#' Every rotation can be thought of as some reference coordinate system rotated about an axis through an angle.  These quantites
+#' are referred to as the misorientation axis and misorientation angle, respectively, in the material sciences literature.
+#' This function returns the misorentation axis associated with a rotation assuming the reference coordinate system
+#' is the identity.
+#' 
 #' @param R 3-by-3 matrix in SO3 
 #' @return axis in form of three dimensional vector of length one.
 #' @seealso \code{\link{angle}}
@@ -281,13 +296,17 @@ eskew <- function(U) {
 
 #' Generate Rotations
 #'
-#' A function that generates a random rotation in \eqn{SO(3)} following a Uniform-Axis random roation distribution with central direction S
-#' The exact form of the UARS distribution depends upon the distribution of the roation r
+#' Generate rotations according to the Uniform-Axis Random Spin methodology
 #'
-#' @param r The angle through which all three dimensions are rotated after the axis was picked uniformly on the unit sphere
+#' Given a vector \eqn{u\in\mathbb{R}^2} of length one and angle of rotation r, a rotation can be formed using Rodrigues formula
+#' \deqn{\cos(r)I_{3\times 3}+\sin(r)\Phi(u)+(1-\cos(r))uu^\top} where \eqn{\Phi(u)} is a \eqn{3\times 3} skew-symmetric matirix
+#' with upper triangular elements \eqn{-u_3}, \eqn{u_2} and \eqn{-u_1} in that order.
+#'
+#' @param r vector of angles
 #' @param S The principle direction
 #' @param space Indicates the desired representation: matrix in SO3, quaternion, or Euler angles 
 #' @return a matrix where each row is a sample point in the desired space
+#' @cite bingham09
 #' @export
 #' @examples
 #' r<-rvmises(20,0.01)
@@ -404,7 +423,10 @@ log.SO3 <- function(R) {
 
 #' Projection Procedure
 #'
-#' This function uses the process given in Moakher 2002  to project an arbitrary \eqn{3\times 3} matrix into \eqn{SO(3)}.
+#' Project an arbitrary \eqn{3\times 3} matrix into SO(3)
+#'
+#' This function uses the process given in \ref{moakher02} to project an arbitrary \eqn{3\times 3} matrix into \eqn{SO(3)}.
+#' 
 #' @param M \eqn{3\times 3} matrix to project
 #' @return projection of \eqn{\bm M} into \eqn{SO(3)}
 #' @seealso \code{\link{mean.SO3}}, \code{\link{median.SO3}}

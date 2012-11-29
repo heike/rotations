@@ -31,10 +31,20 @@
   \code{NULL}
 }
 \description{
+  Calculate the Euclidean or Riemannian distance between
+  two rotations
+}
+\details{
   This function will calculate the intrinsic (Riemannian)
   or projected (Euclidean) distance between two rotations.
   If only one rotation is specified the other will be set
   to the identity and the distance between the two is
-  returned.
+  returned.  For rotations \eqn{R_1} and \eqn{R_2} both in
+  SO(3), the Euclidean distance between them is
+  \deqn{||R_1-R_2||_F} where \eqn{||\cdot||_F} is the
+  Frobenius norm. The intrinsic distance is defined as
+  \deqn{||Log(R_1^\top R_2)||_F} where \eqn{Log} is the
+  matrix logarithm, and it corresponds to the
+  misorientation angle of \eqn{R[1]' R[2]}.
 }
 

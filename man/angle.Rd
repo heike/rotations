@@ -26,7 +26,16 @@
   \code{NULL}
 }
 \description{
-  Extract angle from rotation.
+  Find the misorientation angle of a rotation
+}
+\details{
+  Every rotation can be thought of as some reference
+  coordinate system rotated about an axis through an angle.
+  These quantites are referred to as the misorientation
+  axis and misorientation angle, respectively, in the
+  material sciences literature. This function returns the
+  misorentation angle associated with a rotation assuming
+  the reference coordinate system is the identity.
 }
 \seealso{
   \code{\link{axis}}

@@ -8,7 +8,7 @@
   \item{r}{Where the density is being evaluated}
 
   \item{lower.tail}{logical; if TRUE probabilites are
-  \eqn{P(X\leq x)}}
+  \eqn{P(X\le x)}}
 }
 \value{
   the probability density evaluated at r

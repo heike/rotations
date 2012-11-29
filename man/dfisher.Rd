@@ -17,7 +17,7 @@
   respect to Haar}
 
   \item{lower.tail}{logical; if TRUE probabilites are
-  \eqn{P(X\leq x)}}
+  \eqn{P(X\le x)}}
 }
 \value{
   value of Fisher matrix distribution with concentration

@@ -26,9 +26,16 @@
   \code{NULL}
 }
 \description{
-  This function will find the axis of rotation matrix R.
-  The simple calculation is based on Rodrigues formula and
-  noticing that R - t(R) can be simplified greatly.
+  Find the misorientation axis of a rotation
+}
+\details{
+  Every rotation can be thought of as some reference
+  coordinate system rotated about an axis through an angle.
+  These quantites are referred to as the misorientation
+  axis and misorientation angle, respectively, in the
+  material sciences literature. This function returns the
+  misorentation axis associated with a rotation assuming
+  the reference coordinate system is the identity.
 }
 \seealso{
   \code{\link{angle}}

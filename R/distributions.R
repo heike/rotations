@@ -25,7 +25,7 @@ rar <- function(n, f, M, ...) {
 #' @param kappa Concentration paramter
 #' @param nu The circular variance, can be used in place of kappa
 #' @param Haar logical; if TRUE density is evaluated with respect to Haar
-#' @param lower.tail logical; if TRUE probabilites are \eqn{P(X\leq x)}
+#' @param lower.tail logical; if TRUE probabilites are \eqn{P(X\le x)}
 #' @return Cayley density with concentration kappa evaluated at r
 #' @seealso \code{\link{rcayley}},\code{\link{dfisher}},\code{\link{dhaar}},\code{\link{dvmises}}
 #' @export
@@ -85,7 +85,7 @@ rcayley <- function(n, kappa = 1, nu = NULL) {
 #' @param kappa concentration paramter
 #' @param nu circular variance, can be used in place of kappa
 #' @param Haar logical; if TRUE density is evaluated with respect to Haar
-#' @param lower.tail logical; if TRUE probabilites are \eqn{P(X\leq x)}
+#' @param lower.tail logical; if TRUE probabilites are \eqn{P(X\le x)}
 #' @return value of Fisher matrix distribution with concentration \eqn{\kappa} evaluated at r
 #' @seealso \code{\link{rfisher}}, \code{\link{dhaar}},\code{\link{dvmises}},\code{\link{dcayley}}
 #' @export
@@ -143,7 +143,7 @@ rfisher <- function(n, kappa = 1, nu = NULL) {
 #' has the density \deqn{C_U(r)=\frac{1-cos(r)}{2\pi}.}
 #'
 #' @param r Where the density is being evaluated
-#' @param lower.tail logical; if TRUE probabilites are \eqn{P(X\leq x)}
+#' @param lower.tail logical; if TRUE probabilites are \eqn{P(X\le x)}
 #' @return the probability density evaluated at r
 #' @seealso \code{\link{rhaar}}, \code{\link{dfisher}},\code{\link{dvmises}},\code{\link{dcayley}}
 #' @export
@@ -183,7 +183,7 @@ rhaar<-function(n){
 #' @param kappa concentration paramter
 #' @param nu The circular variance, can be used in place of kappa
 #' @param Haar logical; if TRUE density is evaluated with respect to Haar
-#' @param lower.tail logical; if TRUE probabilites are \eqn{P(X\leq x)}
+#' @param lower.tail logical; if TRUE probabilites are \eqn{P(X\le x)}
 #' @export
 #' @return value of circular-von Mises distribution with concentration \eqn{\kappa} evaluated at r
 #' @seealso \code{\link{rvmises}}, \code{\link{dfisher}},\code{\link{dhaar}},\code{\link{dcayley}}

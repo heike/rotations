@@ -11,8 +11,11 @@
   projection of \eqn{\bm M} into \eqn{SO(3)}
 }
 \description{
-  This function uses the process given in Moakher 2002 to
-  project an arbitrary \eqn{3\times 3} matrix into
+  Project an arbitrary \eqn{3\times 3} matrix into SO(3)
+}
+\details{
+  This function uses the process given in \ref{moakher02}
+  to project an arbitrary \eqn{3\times 3} matrix into
   \eqn{SO(3)}.
 }
 \examples{

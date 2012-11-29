@@ -3,7 +3,7 @@
 \alias{SO3.default}
 \alias{SO3.EA}
 \alias{SO3.Q4}
-\title{Method for creating a rotation in SO3 format using the angle axis representation}
+\title{Matrix in SO(3)}
 \usage{
   SO3(U, ...)
 
@@ -29,6 +29,27 @@
   \code{NULL}
 }
 \description{
-  Angle-axis representation based on the Rodrigues formula.
+  Create a rotation matrix
+}
+\details{
+  Create matrix in SO(3) representing the rotation of the
+  identity matrix about the axis U throught the angle
+  theta.  This can be accomplished by providing the axis
+  and angle explicitly or by providing the rotation in some
+  other form, e.g. a vector of Euler angles or unit
+  quaternion.
+}
+\seealso{
+  Other SO3: \code{\link{as.SO3}}, \code{\link{id.SO3}},
+  \code{\link{is.SO3}}, \code{\link{SO3-class}}
+
+  Other SO3: \code{\link{as.SO3}}, \code{\link{id.SO3}},
+  \code{\link{is.SO3}}, \code{\link{SO3-class}}
+
+  Other SO3: \code{\link{as.SO3}}, \code{\link{id.SO3}},
+  \code{\link{is.SO3}}, \code{\link{SO3-class}}
+
+  Other SO3: \code{\link{as.SO3}}, \code{\link{id.SO3}},
+  \code{\link{is.SO3}}, \code{\link{SO3-class}}
 }
 

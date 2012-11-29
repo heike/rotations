@@ -1,6 +1,6 @@
 \name{mean.Q4}
 \alias{mean.Q4}
-\title{Compute the projected or intrinsic mean estimate of the central direction}
+\title{Rotation Median}
 \usage{
   \method{mean}{Q4} (x, type = "projected",
     epsilon = 1e-05, maxIter = 2000)
@@ -21,6 +21,10 @@
   projected or intrinsic mean of the sample
 }
 \description{
+  Compute the projected or intrinsic mean of a sample of
+  rotations
+}
+\details{
   This function takes a sample of n unit quaternions and
   approximates the mean rotation.  If the projected mean is
   called for then the quaternions are turned

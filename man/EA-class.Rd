@@ -6,7 +6,8 @@
   Class for Euler angle representation of rotations
 }
 \seealso{
-  Other res: \code{\link{Q4-class}},
-  \code{\link{SO3-class}}
+  Other EA: \code{\link{as.EA}}, \code{\link{EA}},
+  \code{\link{EA.default}}, \code{\link{EA.Q4}},
+  \code{\link{EA.SO3}}, \code{\link{id.EA}}
 }
 

@@ -3,7 +3,7 @@
 \alias{EA.default}
 \alias{EA.Q4}
 \alias{EA.SO3}
-\title{Create Euler angles}
+\title{Euler Angles}
 \usage{
   EA(U, ...)
 
@@ -29,7 +29,23 @@
   \code{NULL}
 }
 \description{
+  Create a Euler angles
+}
+\details{
   Create Euler angles representing the rotation of the
-  identity matrix about the axis U throught the angle theta
+  identity matrix about the axis U throught the angle
+  theta.  This can be accomplished by providing the axis
+  and angle explicitly or by providing the rotation in some
+  other form, e.g. a matrix in SO(3) or unit quaternion.
+}
+\seealso{
+  Other EA: \code{\link{as.EA}}, \code{\link{EA-class}},
+  \code{\link{id.EA}}
+
+  Other EA: \code{\link{as.EA}}, \code{\link{EA-class}},
+  \code{\link{id.EA}}
+
+  Other EA: \code{\link{as.EA}}, \code{\link{EA-class}},
+  \code{\link{id.EA}}
 }
 

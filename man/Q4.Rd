@@ -3,7 +3,7 @@
 \alias{Q4.default}
 \alias{Q4.EA}
 \alias{Q4.SO3}
-\title{Form a unit quaterion}
+\title{Quaternions}
 \usage{
   Q4(U, ...)
 
@@ -29,7 +29,26 @@
   \code{NULL}
 }
 \description{
-  Create a unit quaternion representing the rotation of the
-  identity matrix about the axis U throught the angle theta
+  Create a unit quaternion
+}
+\details{
+  Create quaternion representing the rotation of the
+  identity matrix about the axis U throught the angle
+  theta.  This can be accomplished by providing the axis
+  and angle explicitly or by providing the rotation in some
+  other form, e.g. a matrix in SO(3) or Euler angles.
+}
+\seealso{
+  Other Q4: \code{\link{as.Q4}}, \code{\link{id.Q4}},
+  \code{\link{Q4-class}}
+
+  Other Q4: \code{\link{as.Q4}}, \code{\link{id.Q4}},
+  \code{\link{Q4-class}}
+
+  Other Q4: \code{\link{as.Q4}}, \code{\link{id.Q4}},
+  \code{\link{Q4-class}}
+
+  Other Q4: \code{\link{as.Q4}}, \code{\link{id.Q4}},
+  \code{\link{Q4-class}}
 }
 

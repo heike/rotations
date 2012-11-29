@@ -6,7 +6,8 @@
   Class for quaterion representation of rotations
 }
 \seealso{
-  Other res: \code{\link{EA-class}},
-  \code{\link{SO3-class}}
+  Other Q4: \code{\link{as.Q4}}, \code{\link{id.Q4}},
+  \code{\link{Q4}}, \code{\link{Q4.default}},
+  \code{\link{Q4.EA}}, \code{\link{Q4.SO3}}
 }
 

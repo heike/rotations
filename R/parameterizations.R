@@ -30,15 +30,19 @@ setOldClass("Q4")
 #' @exportClass EA
 setOldClass("EA")
 
-#' Create Euler angles
+#' Euler Angles
+#' 
+#' Create a Euler angles
 #' 
 #' Create Euler angles representing the rotation of the identity matrix about the 
-#' axis U throught the angle theta
+#' axis U throught the angle theta.  This can be accomplished by providing the axis and angle
+#' explicitly or by providing the rotation in some other form, e.g. a matrix in SO(3) or unit quaternion.
 #' 
 #' @export
 #' @param U three-dimensional vector describing the fix axis of the rotation
 #' @param ... additional arguments 
 #' @return Euler angle of class "EA"
+#' @family EA
 
 EA<-function(U,...){
   UseMethod("EA")
@@ -64,6 +68,7 @@ EA.default <- function(U,theta){
 #' @rdname EA
 #' @method EA SO3
 #' @S3method EA SO3
+#' @family EA
 
 EA.SO3 <- function(R){  
   
@@ -119,6 +124,7 @@ EA.SO3 <- function(R){
 #' @rdname EA
 #' @method EA Q4
 #' @S3method EA Q4
+#' @family EA
 
 EA.Q4 <- function(Qs){
   theta<-angle(Qs)
@@ -130,6 +136,7 @@ EA.Q4 <- function(Qs){
 #' 
 #' @param x can be anything
 #' @return x with class "EA"
+#' @family EA
 #' @export
 
 as.EA<-function(x){
@@ -138,19 +145,24 @@ as.EA<-function(x){
 }
 
 #' Identity in EA space
+#' @family EA
 #' @export
 id.EA <- as.EA(c(0,0,0))
 
 
-#' Form a unit quaterion
+#' Quaternions
 #' 
-#' Create a unit quaternion representing the rotation of the identity matrix about the 
-#' axis U throught the angle theta
+#' Create a unit quaternion
+#' 
+#' Create quaternion representing the rotation of the identity matrix about the 
+#' axis U throught the angle theta.  This can be accomplished by providing the axis and angle
+#' explicitly or by providing the rotation in some other form, e.g. a matrix in SO(3) or Euler angles.
 #' 
 #' @export
 #' @param U three-dimensional vector describing the fix axis of the rotation
 #' @param ... additional arguments
 #' @return unit quaternion of class "Q4"
+#' @family Q4
 
 Q4<-function(U,...){
   UseMethod("Q4")
@@ -161,6 +173,7 @@ Q4<-function(U,...){
 #' @rdname Q4
 #' @method Q4 default
 #' @S3method Q4 default
+#' @family Q4
 
 Q4.default <- function(U,theta){
   x <- c(cos(theta/2), sin(theta/2) * U)
@@ -173,6 +186,7 @@ Q4.default <- function(U,theta){
 #' @rdname Q4
 #' @method Q4 SO3
 #' @S3method Q4 SO3
+#' @family Q4
 
 Q4.SO3 <- function(R) {
   
@@ -188,6 +202,7 @@ Q4.SO3 <- function(R) {
 #' @rdname Q4
 #' @method Q4 EA
 #' @S3method Q4 EA
+#' @family Q4
 
 Q4.EA <- function(eur) {
   
@@ -202,6 +217,7 @@ Q4.EA <- function(eur) {
 #' 
 #' @param x can be anything
 #' @return x with class "Q4"
+#' @family Q4
 #' @export
 
 as.Q4<-function(x){
@@ -210,17 +226,23 @@ as.Q4<-function(x){
 }
 
 #' Identity in Q4 space
+#' @family Q4
 #' @export
 id.Q4 <- as.Q4(c(1,0,0,0))
 
-#' Method for creating a rotation in SO3 format using the angle axis representation
-#'
-#' Angle-axis representation based on the Rodrigues formula.
+#' Matrix in SO(3)
+#' 
+#' Create a rotation matrix
+#' 
+#' Create matrix in SO(3) representing the rotation of the identity matrix about the 
+#' axis U throught the angle theta.  This can be accomplished by providing the axis and angle
+#' explicitly or by providing the rotation in some other form, e.g. a vector of Euler angles or unit quaternion.
 #'
 #' @export
 #' @param U three-dimensional vector describing the fix axis of the rotation
 #' @param ... additional arguments
 #' @return matrix of rotations in SO3 format
+#' @family SO3
 
 SO3 <- function(U,...){
   UseMethod("SO3")
@@ -231,6 +253,7 @@ SO3 <- function(U,...){
 #' @rdname SO3
 #' @method SO3 default
 #' @S3method SO3 default
+#' @family SO3
 
 SO3.default <- function(U, theta) {
   # based on Rodrigues formula
@@ -256,6 +279,7 @@ SO3.default <- function(U, theta) {
 #' @rdname SO3
 #' @method SO3 EA
 #' @S3method SO3 EA
+#' @family SO3
 
 SO3.EA <- function(eur) {
   
@@ -271,6 +295,7 @@ SO3.EA <- function(eur) {
 #' @rdname SO3
 #' @method SO3 Q4
 #' @S3method SO3 Q4
+#' @family SO3
 
 SO3.Q4<-function(q){
   
@@ -291,6 +316,7 @@ SO3.Q4<-function(q){
 #' 
 #' @param x matrix of rotations, note that no check is performed 
 #' @return x with class "SO3"
+#' @family SO3
 #' @export
 
 as.SO3<-function(x){
@@ -299,6 +325,7 @@ as.SO3<-function(x){
 }
 
 #' Identity in SO(3) space
+#' @family SO3
 #' @export
 id.SO3 <- as.SO3(diag(c(1,1,1)))
 
@@ -307,6 +334,7 @@ id.SO3 <- as.SO3(diag(c(1,1,1)))
 #'
 #' @param x numeric \eqn{n \times n} matrix or vector of length \eqn{n^2}
 #' @return logical T if the matrix is in SO(3) and false otherwise
+#' @family SO3
 #' @export
 #' @examples
 #' is.SO3(diag(1,3,3))

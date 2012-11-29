@@ -1,4 +1,6 @@
-#' Compute the projected or intrinsic mean estimate of the central direction
+#' Mean Rotation
+#'
+#' Compute the intrinsic or projected mean of a sample of rotations
 #'
 #' This function takes a sample of \eqn{3\times 3} rotations (in the form of a \eqn{n\times 9} matrix where n is the sample size) and returns the projected arithmetic mean denoted \eqn{\widehat{\bm S}_P} or
 #' intrinsic mean \eqn{\widehat{\bm S}_G} according to the \code{type} option.
@@ -57,7 +59,9 @@ mean.SO3 <- function(x, type = "projected", epsilon = 1e-05, maxIter = 2000, ...
   return(R)
 }
 
-#' Compute the projected or intrinsic mean estimate of the central direction
+#' Rotation Median
+#' 
+#' Compute the projected or intrinsic mean of a sample of rotations
 #'
 #' This function takes a sample of n unit quaternions and approximates the mean rotation.  If the projected mean
 #' is called for then the quaternions are turned reparameterized to matrices and mean.SO3 is called.  If the intrinsic
@@ -90,7 +94,9 @@ mean.Q4 <- function(x, type = "projected", epsilon = 1e-05, maxIter = 2000) {
   
 }
 
-#' Compute the projected or intrinsic mean estimate of the central direction
+#' Rotation Median
+#' 
+#' Compute the projected or intrinsic mean of a sample of rotations
 #'
 #' This function takes a sample of \eqn{3\times 3} rotations (in the form of a \eqn{n\times 9} matrix where n is the sample size) and returns the projected arithmetic mean denoted \eqn{\widehat{\bm S}_P} or
 #' intrinsic mean \eqn{\widehat{\bm S}_G} according to the \code{type} option.
@@ -122,9 +128,11 @@ mean.EA <- function(x, type = "projected", epsilon = 1e-05, maxIter = 2000) {
 }
 
 
-#' Compute the projected or intrinsic median estimate of the central direction
+#' Median Rotation
+#' 
+#' Compute the projected or intrinsic median of a sample of rotations
 #'
-#' The median-type estimators are defined as \deqn{\widetilde{\bm{S}}=\argmin_{\bm{S}\in SO(3)}\sum_{i=1}^nd_D(\bm{R}_i,\bm{S})}.  If the choice of distance metrid, \eqn{d_D}, is Riemannian then the estimator is called the intrinsic, and if the distance metric in Euclidean then it projected.
+#' The median-type estimators are defined as \deqn{\widetilde{\bm{S}}=\argmin_{\bm{S}\in SO(3)}\sum_{i=1}^nd_D(\bm{R}_i,\bm{S}).}  If the choice of distance metrid, \eqn{d_D}, is Riemannian then the estimator is called the intrinsic, and if the distance metric in Euclidean then it projected.
 #' The algorithm used in the intrinsic case is discussed in \cite{hartley11} and the projected case was written by the authors.
 #'
 #' @param x A \eqn{n\times 9} matrix where each row corresponds to a random rotation in matrix form

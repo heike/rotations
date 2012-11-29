@@ -3,7 +3,7 @@
 \alias{median.EA}
 \alias{median.Q4}
 \alias{median.SO3}
-\title{Compute the projected or intrinsic median estimate of the central direction}
+\title{Median Rotation}
 \usage{
   median(x, ...)
 
@@ -32,10 +32,14 @@
   \code{NULL}
 }
 \description{
+  Compute the projected or intrinsic median of a sample of
+  rotations
+}
+\details{
   The median-type estimators are defined as
   \deqn{\widetilde{\bm{S}}=\argmin_{\bm{S}\in
-  SO(3)}\sum_{i=1}^nd_D(\bm{R}_i,\bm{S})}.  If the choice
-  of distance metrid, \eqn{d_D}, is Riemannian then the
+  SO(3)}\sum_{i=1}^nd_D(\bm{R}_i,\bm{S}).} If the choice of
+  distance metrid, \eqn{d_D}, is Riemannian then the
   estimator is called the intrinsic, and if the distance
   metric in Euclidean then it projected. The algorithm used
   in the intrinsic case is discussed in \cite{Hartley et

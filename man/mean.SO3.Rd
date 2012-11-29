@@ -1,6 +1,6 @@
 \name{mean.SO3}
 \alias{mean.SO3}
-\title{Compute the projected or intrinsic mean estimate of the central direction}
+\title{Mean Rotation}
 \usage{
   \method{mean}{SO3} (x, type = "projected",
     epsilon = 1e-05, maxIter = 2000, ...)
@@ -23,6 +23,10 @@
   projected or intrinsic mean of the sample
 }
 \description{
+  Compute the intrinsic or projected mean of a sample of
+  rotations
+}
+\details{
   This function takes a sample of \eqn{3\times 3} rotations
   (in the form of a \eqn{n\times 9} matrix where n is the
   sample size) and returns the projected arithmetic mean

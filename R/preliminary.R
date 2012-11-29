@@ -425,7 +425,7 @@ log.SO3 <- function(R) {
 #'
 #' Project an arbitrary \eqn{3\times 3} matrix into SO(3)
 #'
-#' This function uses the process given in \ref{moakher02} to project an arbitrary \eqn{3\times 3} matrix into \eqn{SO(3)}.
+#' This function uses the process given in \cite{moakher02} to project an arbitrary \eqn{3\times 3} matrix into \eqn{SO(3)}.
 #' 
 #' @param M \eqn{3\times 3} matrix to project
 #' @return projection of \eqn{\bm M} into \eqn{SO(3)}

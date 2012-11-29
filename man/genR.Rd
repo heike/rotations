@@ -1,6 +1,6 @@
 \name{genR}
 \alias{genR}
-\title{Generate rotation matrix given misorientation angle, r}
+\title{Generate Rotations}
 \usage{
   genR(r, S = diag(1, 3, 3), space = "SO3")
 }

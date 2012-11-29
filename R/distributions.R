@@ -14,7 +14,7 @@ rar <- function(n, f, M, ...) {
 }
 
 
-#' Symmetric Cayley distribution for angular data
+#' The Symmetric Cayley Distribution
 #'
 #' The symmetric Cayley distribution has a density of the form \deqn{C_\mathrm{C}(r |\kappa)=\frac{1}{\sqrt{\pi}} \frac{\Gamma(\kappa+2)}{\Gamma(\kappa+1/2)}2^{-(\kappa+1)}(1+\cos r)^\kappa(1-\cos r)}.
 #' It was orignally given in the material sciences literature by Schaben 1997 and called the de la Vallee Poussin distribution but was more recently discussed and
@@ -40,7 +40,7 @@ dcayley <- function(r, kappa = 1, nu = NULL, Haar = T) {
     return(den/(1 - cos(r))) else return(den)
 }
 
-#' Simulate misorientation angles from Cayley distribution
+#' The Symmetric Cayley Distribution
 #'
 #' This function allows the user to simulate \eqn{n} misorientation angles from the Cayley distribution symmetric about 0 on interval \eqn{(-\pi,\pi]}.  The relationship between Cayley and Beta distribution is used.
 #' The symmetric Cayley distribution has a density of the form \deqn{C_\mathrm{C}(r |\kappa)=\frac{1}{\sqrt{\pi}} \frac{\Gamma(\kappa+2)}{\Gamma(\kappa+1/2)}2^{-(\kappa+1)}(1+\cos r)^\kappa(1-\cos r)}.
@@ -67,9 +67,9 @@ rcayley <- function(n, kappa = 1, nu = NULL) {
   return(theta)
 }
 
-#' von Mises-Fisher distribution for angular data
+#' The Matrix Fisher Distribution
 #'
-#' The symmetric matrix fisher distribution has the density\deqn{C_\mathrm{{F}}(r|\kappa)=\frac{1}{2\pi[\mathrm{I_0}(2\kappa)-\mathrm{I_1}(2\kappa)]}e^{2\kappa\cos(r)}[1-\cos(r)]}
+#' The symmetric matrix Fisher distribution has the density \deqn{C_\mathrm{{F}}(r|\kappa)=\frac{1}{2\pi[\mathrm{I_0}(2\kappa)-\mathrm{I_1}(2\kappa)]}e^{2\kappa\cos(r)}[1-\cos(r)]}
 #' where \eqn{\mathrm{I_p}(\cdot)} denotes the Bessel function of order \eqn{p} defined as  \eqn{\mathrm{I_p}(\kappa)=\frac{1}{2\pi}\int_{-\pi}^{\pi}\cos(pr)e^{\kappa\cos r}dr}.
 #' This function allows the user to evaluate the function \eqn{C_\mathrm{{F}}(r|\kappa)} at \eqn{r} with \eqn{\kappa} provided by the user.
 #'
@@ -95,7 +95,7 @@ dfisher <- function(r, kappa = 1, nu = NULL, Haar = T) {
   }
 }
 
-#' Simulate a data set of size \eqn{n} from the matrix Fisher angular distribution
+#' The Matrix Fisher Distribution
 #'
 #' The symmetric matrix fisher distribution has the density\deqn{C_\mathrm{{F}}(r|\kappa)=\frac{1}{2\pi[\mathrm{I_0}(2\kappa)-\mathrm{I_1}(2\kappa)]}e^{2\kappa\cos(r)}[1-\cos(r)]}
 #' where \eqn{\mathrm{I_p}(\cdot)} denotes the Bessel function of order \eqn{p} defined as  \eqn{\mathrm{I_p}(\kappa)=\frac{1}{2\pi}\int_{-\pi}^{\pi}\cos(pr)e^{\kappa\cos r}dr}.
@@ -118,7 +118,7 @@ rfisher <- function(n, kappa = 1, nu = NULL) {
   return(rar(n, dfisher, M, kappa = kappa, Haar=F))
 }
 
-#' Evaluate the uniform distribution on the circle at \eqn{r}
+#' Haar Measure
 #'
 #' The uniform distribution on the sphere is also know as the Haar measure and has the density function \deqn{C_U(r)=\frac{1-cos(r)}{2\pi}}
 #'
@@ -129,7 +129,7 @@ rfisher <- function(n, kappa = 1, nu = NULL) {
 
 dhaar <- function(r) return((1 - cos(r))/(2 * pi))
 
-#' Simulate a data set of size \eqn{n} from the uniform distribution on the sphere
+#' Haar Measure
 #'
 #' The uniform distribution has the density\deqn{C_\mathrm{{F}}(r|\kappa)=\frac{1}{2\pi}1-\cos(r)}.  The is also 
 #' know as the Haar measure.
@@ -144,7 +144,7 @@ rhaar<-function(n){
   return(rar(n, dhaar, 1/pi))
 }
 
-#'Density function for circular von Mises distribution
+#' The circular-von Mises distribution
 #'
 #' The circular von Mises-based distribution has the density \deqn{C_\mathrm{M}(r|\kappa)=\frac{1}{2\pi \mathrm{I_0}(\kappa)}e^{\kappa\cos(r)}}.  This function allows the use to
 #' evaluate \eqn{C_\mathrm{M}(r|\kappa)} at angle \eqn{r} given a concentration parameter \eqn{\kappa}.
@@ -171,7 +171,7 @@ dvmises <- function(r, kappa = 1, nu = NULL, Haar = T) {
   }
 }
 
-#' Generate a vector of angles(r) from the von Mises Circular distribution
+#' The circular-von Mises distribution
 #'
 #' The circular von Mises-based distribution has the density \deqn{C_\mathrm{M}(r|\kappa)=\frac{1}{2\pi \mathrm{I_0}(\kappa)}e^{\kappa\cos(r)}}.  This function allows the use to
 #' simulate \eqn{n} random deviates from \eqn{C_\mathrm{M}(r|\kappa)} given a concentration parameter \eqn{\kappa}.

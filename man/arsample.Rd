@@ -1,6 +1,6 @@
 \name{arsample}
 \alias{arsample}
-\title{Accept/reject algorithm random sampling from angle distributions}
+\title{Accept/Reject Algorithm}
 \usage{
   arsample(f, g, M, kappa, Haar, ...)
 }
@@ -22,8 +22,7 @@
   a random observation from target density
 }
 \description{
-  Accept/reject algorithm random sampling from angle
-  distributions
+  Accept/Reject Algorithm
 }
 \author{
   Heike Hofmann

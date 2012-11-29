@@ -1,6 +1,6 @@
 \name{rvmises}
 \alias{rvmises}
-\title{Generate a vector of angles(r) from the von Mises Circular distribution}
+\title{The circular-von Mises distribution}
 \usage{
   rvmises(n, kappa = 1, nu = NULL)
 }

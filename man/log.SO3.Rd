@@ -1,6 +1,6 @@
 \name{log.SO3}
 \alias{log.SO3}
-\title{This fuction will compute the natural logarithm of a matrix in SO(n).  It uses the special case of the Taylor expansion for SO(n) matrices.}
+\title{Natural Logarithm in SO(3)}
 \usage{
   log.SO3(R)
 }

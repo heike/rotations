@@ -1,6 +1,6 @@
 \name{arsample.unif}
 \alias{arsample.unif}
-\title{Accept/reject algorithm random sampling from angle distributions using uniform envelop}
+\title{Accept/Reject Algorithm}
 \usage{
   arsample.unif(f, M, ...)
 }
@@ -15,8 +15,7 @@
   x an observation from the target density
 }
 \description{
-  Accept/reject algorithm random sampling from angle
-  distributions using uniform envelop
+  Accept/Reject Algorithm
 }
 \author{
   Heike Hofmann

@@ -3,7 +3,7 @@
 \alias{axis2.EA}
 \alias{axis2.Q4}
 \alias{axis2.SO3}
-\title{Find the axis of rotation R}
+\title{Misorientation Axis}
 \usage{
   axis2(R)
 

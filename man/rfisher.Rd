@@ -1,6 +1,6 @@
 \name{rfisher}
 \alias{rfisher}
-\title{Simulate a data set of size \eqn{n} from the matrix Fisher angular distribution}
+\title{The Matrix Fisher Distribution}
 \usage{
   rfisher(n, kappa = 1, nu = NULL)
 }

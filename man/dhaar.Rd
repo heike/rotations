@@ -1,6 +1,6 @@
 \name{dhaar}
 \alias{dhaar}
-\title{Evaluate the uniform distribution on the circle at \eqn{r}}
+\title{Haar Measure}
 \usage{
   dhaar(r)
 }

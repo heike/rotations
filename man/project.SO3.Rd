@@ -1,6 +1,6 @@
 \name{project.SO3}
 \alias{project.SO3}
-\title{The projection of an arbitrary \eqn{3\times 3} matrix into \eqn{SO(3)}}
+\title{Projection Procedure}
 \usage{
   project.SO3(M)
 }

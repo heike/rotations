@@ -1,4 +1,4 @@
-#' Accept/reject algorithm random sampling from angle distributions
+#' Accept/Reject Algorithm
 #'
 #' @author Heike Hofmann
 #' @param f target density
@@ -21,7 +21,7 @@ arsample <- function(f, g, M, kappa, Haar, ...) {
   # arsample(f, g, M, kappa, ...)
 }
 
-#' Accept/reject algorithm random sampling from angle distributions using uniform envelop
+#' Accept/Reject Algorithm
 #'
 #' @author Heike Hofmann
 #' @param f target density
@@ -44,7 +44,7 @@ arsample.unif <- function(f, M, ...) {
 
 
 
-#' Distance Between Two Rotations
+#' Rotational Distance
 #'
 #' This function will calculate the intrinsic (Riemannian) or projected (Euclidean) distance between two rotations.  If only one rotation is specified
 #' the other will be set to the identity and the distance between the two is returned.
@@ -135,7 +135,7 @@ dist.EA <- function(R1, R2=id.EA ,method='projected', p=1) {
 
 
 
-#' Find the angle of rotation R
+#' Misorientation Angle
 #' 
 #' Extract angle from rotation.
 #' 
@@ -195,7 +195,7 @@ angle.EA<-function(eur){
 }
 
 
-#' Find the axis of rotation R
+#' Misorientation Axis
 #' 
 #' This function will find the axis of rotation matrix R.  The simple calculation is based on Rodrigues formula
 #' and noticing that R - t(R) can be simplified greatly.  
@@ -277,192 +277,9 @@ eskew <- function(U) {
   return(res)
 }
 
-#' A novel approach to visualizing random rotations.
-#'
-#' This function produces a three-dimensional globe onto which the on column of the provided sample is drawn.  The data are centered around a provided
-#' matrix and the user can choose to display this center or not.  Based on \code{ggplot2} package by \cite{wickham09}.
-#'
-#' @param Rs the sample of n random rotations
-#' @param center point about which to center the observations
-#' @param column integer 1 to 3 indicating which column to display
-#' @param show_estimates rather to display the four estimates of the principal direction or not
-#' @param xlimits limits for the x-axis, appropriate range is [-1,1]
-#' @param ylimits limits for the y-axis, appropriate range is [-1,1]
-#' @param ... Additional arguments passed to ggplot2
-#' @return  a ggplot2 object with the data dispalyed on a blank sphere
-#' @cite wickham09
-#' @export
-#' @examples
-#' r<-rvmises(20,1.0)
-#' Rs<-genR(r)
-#' plot(Rs,center=mean(Rs),show_estimates=TRUE,shape=4)
-
-eyeBall <- function(Rs, center = id.SO3, column = 1, show_estimates = FALSE, xlimits=c(-1,1),ylimits=c(-1,1), ...) {
-  
-  # construct helper grid lines for sphere
-  
-  theta <- seq(0, pi, by = pi/8)
-  phi <- seq(0, 2 * pi, by = 0.005)
-  df <- data.frame(expand.grid(theta = theta, phi = phi))
-  
-  # qplot(theta,phi, geom='point', data=df) + coord_polar()
-  
-  x <- with(df, sin(theta) * cos(phi))
-  y <- with(df, sin(theta) * sin(phi))
-  z <- with(df, cos(theta))
-  circles <- data.frame(cbind(x, y, z))
-  circles$ID <- as.numeric(factor(df$theta))
-  
-  theta <- seq(0, pi, by = 0.005)
-  phi <- seq(0, 2 * pi, by = pi/8)
-  df <- data.frame(expand.grid(theta = theta, phi = phi))
-  
-  x <- with(df, sin(theta) * cos(phi))
-  y <- with(df, sin(theta) * sin(phi))
-  z <- with(df, cos(theta))
-  circles.2 <- data.frame(cbind(x, y, z))
-  circles.2$ID <- as.numeric(factor(df$phi)) + 9
-  
-  circles <- rbind(circles, circles.2)
-  
-  rot <- SO3(c(1, -1, 0), pi/8)
-  
-  pcircles <- data.frame(as.matrix(circles[, 1:3]) %*% rot)
-  
-  # this is the coordinate system and should be fixed, no matter what column of the rotation matrices is
-  # shown
-  
-  base <- ggplot(aes(x = X1, y = X2), data = pcircles[order(pcircles$X3), ]) + coord_equal() + opts(legend.position = "none") + 
-    geom_point(aes(colour = X3), size = 0.6) + scale_colour_continuous(low = I("white"), high = I("grey50")) + 
-    opts(panel.background = theme_blank(), panel.grid.minor = theme_blank(), panel.grid.major = theme_blank(), 
-         axis.title.x = theme_blank(), axis.title.y = theme_blank(), axis.text.x = theme_blank(), axis.text.y = theme_blank(), 
-         axis.ticks = theme_blank())+xlim(xlimits)+ylim(ylimits)
-  
-  if (column == 1) {
-    cols <- 1:3
-    rot <- SO3(c(0, 1, 0), pi/2) %*% rot
-    
-  } else if (column == 2) {
-    cols <- 4:6
-    rot <- SO3(c(1, 0, 0), -pi/2) %*% rot
-    
-  } else {
-    cols <- 7:9
-  }
-  
-  obs <- data.frame(as.matrix(Rs[, cols]) %*% center %*% rot)
-  
-  if (show_estimates) {
-    
-    GMean <- as.vector(mean(Rs, type = "intrinsic"))
-    GMed <- as.vector(median.SO3(Rs, type = "intrinsic"))
-    PMed <- as.vector(median.SO3(Rs))
-    PMean <- as.vector(mean(Rs))
-    ests <- rbind(PMean, GMean, GMed, PMed)
-    
-    EstsDot <- data.frame(as.matrix(ests[, cols]) %*% center %*% rot)
-    EstsDot$Shape <- as.factor(2:5)
-    EstsDot$names <- labels(EstsDot)[[1]]
-    
-    out <- base + geom_point(aes(x = X1, y = X2, colour = X3), data = obs, ...) + geom_point(aes(x = X1, 
-                                                                                                 y = X2, shape = Shape), data = EstsDot, size = 2, ...)
-    
-    out <- out + geom_text(aes(x = X1, y = X2, label = names), data = EstsDot, hjust = 0, vjust = 0)
-  } else {
-    out <- base + geom_point(aes(x = X1, y = X2, colour = X3), data = obs, ...)
-  }
-  return(out)
-}
 
 
-eyeBallwCI <- function(Rs, center = id.SO3, column = 1, show_estimates = FALSE, xlimits=c(-1,1),ylimits=c(-1,1), ...) {
-  
-  # construct helper grid lines for sphere
-  
-  theta <- seq(0, pi, by = pi/8)
-  phi <- seq(0, 2 * pi, by = 0.005)
-  df <- data.frame(expand.grid(theta = theta, phi = phi))
-  
-  # qplot(theta,phi, geom='point', data=df) + coord_polar()
-  
-  x <- with(df, sin(theta) * cos(phi))
-  y <- with(df, sin(theta) * sin(phi))
-  z <- with(df, cos(theta))
-  circles <- data.frame(cbind(x, y, z))
-  circles$ID <- as.numeric(factor(df$theta))
-  
-  theta <- seq(0, pi, by = 0.005)
-  phi <- seq(0, 2 * pi, by = pi/8)
-  df <- data.frame(expand.grid(theta = theta, phi = phi))
-  
-  x <- with(df, sin(theta) * cos(phi))
-  y <- with(df, sin(theta) * sin(phi))
-  z <- with(df, cos(theta))
-  circles.2 <- data.frame(cbind(x, y, z))
-  circles.2$ID <- as.numeric(factor(df$phi)) + 9
-  
-  circles <- rbind(circles, circles.2)
-  
-  rot <- SO3(c(1, -1, 0), pi/8)
-  
-  pcircles <- data.frame(as.matrix(circles[, 1:3]) %*% rot)
-  
-  # this is the coordinate system and should be fixed, no matter what column of the rotation matrices is
-  # shown
-  
-  base <- ggplot(aes(x = X1, y = X2), data = pcircles[order(pcircles$X3), ]) + coord_equal() + opts(legend.position = "none") + 
-    geom_point(aes(colour = X3), size = 0.6) + scale_colour_continuous(low = I("white"), high = I("grey50")) + 
-    opts(panel.background = theme_blank(), panel.grid.minor = theme_blank(), panel.grid.major = theme_blank(), 
-         axis.title.x = theme_blank(), axis.title.y = theme_blank(), axis.text.x = theme_blank(), axis.text.y = theme_blank(), 
-         axis.ticks = theme_blank())+xlim(xlimits)+ylim(ylimits)
-  
-  if (column == 1) {
-    cols <- 1:3
-    rot <- SO3(c(0, 1, 0), pi/2) %*% rot
-    
-  } else if (column == 2) {
-    cols <- 4:6
-    rot <- SO3(c(1, 0, 0), -pi/2) %*% rot
-    
-  } else {
-    cols <- 7:9
-  }
-  
-  obs <- data.frame(as.matrix(Rs[, cols]) %*% center %*% rot)
-  
-  if (show_estimates) {
-    
-    GMean <- as.vector(mean(Rs, type = "intrinsic"))
-    GMeanRad<-CIradius(Rs)
-    
-    GMean.boot <- t(replicate(2000, SO3(c(runif(2,-1,1),0), GMeanRad),simplify="matrix"))
-    
-    GMean.sp<-data.frame(as.matrix(GMean.boot[,7:9]) %*% t(matrix(GMean,3,3)) %*% center %*% rot)
-    
-    GMed <- as.vector(median.SO3(Rs, type = "intrinsic"))
-    PMed <- as.vector(median.SO3(Rs))
-    PMean <- as.vector(mean(Rs))
-    ests <- rbind(PMean, GMean, GMed, PMed)
-    
-    EstsDot <- data.frame(as.matrix(ests[, cols]) %*% center %*% rot)
-    EstsDot$Shape <- as.factor(2:5)
-    EstsDot$names <- labels(EstsDot)[[1]]
-    
-    out <- base + geom_point(aes(x = X1, y = X2, colour = X3), data = obs, ...) + geom_point(aes(x = X1, 
-                                                                                                 y = X2, shape = Shape), data = EstsDot, size = 2, ...)
-    
-    out <- out + geom_text(aes(x = X1, y = X2, label = names), data = EstsDot, hjust = 0, vjust = 0)
-    out <- out + geom_point(aes(x=X1,y=X2,colour= X3),data=GMean.sp)
-    
-  } else {
-    out <- base + geom_point(aes(x = X1, y = X2, colour = X3), data = obs, ...)
-  }
-  return(out)
-}
-
-
-
-#' Generate rotation matrix given misorientation angle, r
+#' Generate Rotations
 #'
 #' A function that generates a random rotation in \eqn{SO(3)} following a Uniform-Axis random roation distribution with central direction S
 #' The exact form of the UARS distribution depends upon the distribution of the roation r
@@ -559,7 +376,7 @@ exp.skew <- function(A) {
 }
 
 
-#' This fuction will compute the natural logarithm of a matrix in SO(n).  It uses the special case of the Taylor expansion for SO(n) matrices.
+#' Natural Logarithm in SO(3)
 #'
 #' For details see \cite{moakher02}
 #'
@@ -585,7 +402,7 @@ log.SO3 <- function(R) {
   }
 }
 
-#' The projection of an arbitrary \eqn{3\times 3} matrix into \eqn{SO(3)}
+#' Projection Procedure
 #'
 #' This function uses the process given in Moakher 2002  to project an arbitrary \eqn{3\times 3} matrix into \eqn{SO(3)}.
 #' @param M \eqn{3\times 3} matrix to project
@@ -610,6 +427,8 @@ project.SO3 <- function(M) {
 }
 
 
+#' Sample Distance
+#'
 #' Compute the sum of the \eqn{p^{\text{th}}} order distances between Rs and S
 #'
 #' @param Rs a matrix of rotation observations, one row per observation
@@ -664,7 +483,6 @@ sum_dist.Q4 <- function(Qs, S = id.Q4, method='projected', p=1) {
   return(sum(apply(Qs, 1, dist.Q4 , Q2 = S, method=method, p=p)))
   
 }
-
 
 
 

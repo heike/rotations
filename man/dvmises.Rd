@@ -1,6 +1,6 @@
 \name{dvmises}
 \alias{dvmises}
-\title{Density function for circular von Mises distribution}
+\title{The circular-von Mises distribution}
 \usage{
   dvmises(r, kappa = 1, nu = NULL, Haar = T)
 }

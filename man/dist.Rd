@@ -3,7 +3,7 @@
 \alias{dist.EA}
 \alias{dist.Q4}
 \alias{dist.SO3}
-\title{Distance Between Two Rotations}
+\title{Rotational Distance}
 \usage{
   dist(x, ...)
 

@@ -3,7 +3,7 @@
 \alias{sum_dist.EA}
 \alias{sum_dist.Q4}
 \alias{sum_dist.SO3}
-\title{Compute the sum of the \eqn{p^{\text{th}}} order distances between Rs and S}
+\title{Sample Distance}
 \usage{
   sum_dist(Rs, S = genR(0, space = class(Rs)),
     method = "projected", p = 1)

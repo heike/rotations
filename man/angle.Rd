@@ -3,7 +3,7 @@
 \alias{angle.EA}
 \alias{angle.Q4}
 \alias{angle.SO3}
-\title{Find the angle of rotation R}
+\title{Misorientation Angle}
 \usage{
   angle(Rs)
 

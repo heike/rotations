@@ -1,6 +1,6 @@
 \name{dcayley}
 \alias{dcayley}
-\title{Symmetric Cayley distribution for angular data}
+\title{The Symmetric Cayley Distribution}
 \usage{
   dcayley(r, kappa = 1, nu = NULL, Haar = T)
 }

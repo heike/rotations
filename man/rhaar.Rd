@@ -1,6 +1,6 @@
 \name{rhaar}
 \alias{rhaar}
-\title{Simulate a data set of size \eqn{n} from the uniform distribution on the sphere}
+\title{Haar Measure}
 \usage{
   rhaar(n)
 }

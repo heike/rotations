@@ -2,33 +2,39 @@
 \alias{dfisher}
 \title{The Matrix Fisher Distribution}
 \usage{
-  dfisher(r, kappa = 1, nu = NULL, Haar = T)
+  dfisher(r, kappa = 1, nu = NULL, Haar = TRUE,
+    lower.tail = TRUE)
 }
 \arguments{
-  \item{r}{Where the density is being evaluated}
+  \item{r}{vector of quantiles}
 
-  \item{kappa}{The concentration paramter, taken to be
-  zero}
+  \item{kappa}{concentration paramter}
 
-  \item{nu}{The circular variance, can be used in place of
+  \item{nu}{circular variance, can be used in place of
   kappa}
 
-  \item{Haar}{logical, if density is evaluated with respect
-  to Haar measure or Lebesgue}
+  \item{Haar}{logical; if TRUE density is evaluated with
+  respect to Haar}
+
+  \item{lower.tail}{logical; if TRUE probabilites are
+  \eqn{P(X\leq x)}}
 }
 \value{
   value of Fisher matrix distribution with concentration
   \eqn{\kappa} evaluated at r
 }
 \description{
-  The symmetric matrix Fisher distribution has the density
+  Density of the matrix Fisher distribution with
+  concentration kappa
+}
+\details{
+  The matrix Fisher distribution with concentration kappa
+  (or circular variance nu) has density
   \deqn{C_\mathrm{{F}}(r|\kappa)=\frac{1}{2\pi[\mathrm{I_0}(2\kappa)-\mathrm{I_1}(2\kappa)]}e^{2\kappa\cos(r)}[1-\cos(r)]}
   where \eqn{\mathrm{I_p}(\cdot)} denotes the Bessel
   function of order \eqn{p} defined as
   \eqn{\mathrm{I_p}(\kappa)=\frac{1}{2\pi}\int_{-\pi}^{\pi}\cos(pr)e^{\kappa\cos
-  r}dr}. This function allows the user to evaluate the
-  function \eqn{C_\mathrm{{F}}(r|\kappa)} at \eqn{r} with
-  \eqn{\kappa} provided by the user.
+  r}dr}.
 }
 \seealso{
   \code{\link{rfisher}},

@@ -12,9 +12,12 @@
   the sphere
 }
 \description{
-  The uniform distribution has the
-  density\deqn{C_\mathrm{{F}}(r|\kappa)=\frac{1}{2\pi}1-\cos(r)}.
-  The is also know as the Haar measure.
+  Random generation from the circle
+}
+\details{
+  The uniform density on the circle (also referred to as
+  Haar measure) has the density
+  \deqn{C_U(r)=\frac{1-cos(r)}{2\pi}.}
 }
 \seealso{
   \code{\link{dhaar}},\code{\link{rfisher}},\code{\link{rvmises}},\code{\link{rcayley}}

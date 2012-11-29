@@ -2,18 +2,24 @@
 \alias{dhaar}
 \title{Haar Measure}
 \usage{
-  dhaar(r)
+  dhaar(r, lower.tail = TRUE)
 }
 \arguments{
   \item{r}{Where the density is being evaluated}
+
+  \item{lower.tail}{logical; if TRUE probabilites are
+  \eqn{P(X\leq x)}}
 }
 \value{
   the probability density evaluated at r
 }
 \description{
-  The uniform distribution on the sphere is also know as
-  the Haar measure and has the density function
-  \deqn{C_U(r)=\frac{1-cos(r)}{2\pi}}
+  Uniform density on the circle
+}
+\details{
+  The uniform density on the circle (also referred to as
+  Haar measure) has the density
+  \deqn{C_U(r)=\frac{1-cos(r)}{2\pi}.}
 }
 \seealso{
   \code{\link{rhaar}},

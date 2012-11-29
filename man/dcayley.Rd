@@ -2,33 +2,36 @@
 \alias{dcayley}
 \title{The Symmetric Cayley Distribution}
 \usage{
-  dcayley(r, kappa = 1, nu = NULL, Haar = T)
+  dcayley(r, kappa = 1, nu = NULL, Haar = TRUE,
+    lower.tail = TRUE)
 }
 \arguments{
-  \item{r}{Where the density is being evaluated}
+  \item{r}{vector of quantiles}
 
-  \item{kappa}{The concentration paramter, taken to be
-  zero}
+  \item{kappa}{Concentration paramter}
 
   \item{nu}{The circular variance, can be used in place of
   kappa}
 
-  \item{Haar}{logical, if density is evaluated with respect
-  to Haar measure or Lebesgue}
+  \item{Haar}{logical; if TRUE density is evaluated with
+  respect to Haar}
+
+  \item{lower.tail}{logical; if TRUE probabilites are
+  \eqn{P(X\leq x)}}
 }
 \value{
-  value of Cayley distribution with concentration
-  \eqn{\kappa} evaluated at r
+  Cayley density with concentration kappa evaluated at r
 }
 \description{
-  The symmetric Cayley distribution has a density of the
-  form \deqn{C_\mathrm{C}(r |\kappa)=\frac{1}{\sqrt{\pi}}
+  Density of the symmetric Cayley distribution with
+  concentration kappa
+}
+\details{
+  The symmetric Cayley distribution with concentration
+  kappa (or circular variance nu) had density
+  \deqn{C_\mathrm{C}(r |\kappa)=\frac{1}{\sqrt{\pi}}
   \frac{\Gamma(\kappa+2)}{\Gamma(\kappa+1/2)}2^{-(\kappa+1)}(1+\cos
-  r)^\kappa(1-\cos r)}. It was orignally given in the
-  material sciences literature by Schaben 1997 and called
-  the de la Vallee Poussin distribution but was more
-  recently discussed and introduced in a more general
-  manner by Leon 06.
+  r)^\kappa(1-\cos r).}
 }
 \references{
   Schaeben H (1997). "A Simple Standard Orientation Density

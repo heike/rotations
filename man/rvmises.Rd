@@ -18,12 +18,13 @@
   kappa and mean/mode 0
 }
 \description{
+  Random generation for the the circular von Mises-based
+  distribution with concentration kappa
+}
+\details{
   The circular von Mises-based distribution has the density
   \deqn{C_\mathrm{M}(r|\kappa)=\frac{1}{2\pi
-  \mathrm{I_0}(\kappa)}e^{\kappa\cos(r)}}.  This function
-  allows the use to simulate \eqn{n} random deviates from
-  \eqn{C_\mathrm{M}(r|\kappa)} given a concentration
-  parameter \eqn{\kappa}.
+  \mathrm{I_0}(\kappa)}e^{\kappa\cos(r)}}.
 }
 \examples{
 r<-rvmises(20,0.01)

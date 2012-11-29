@@ -12,22 +12,19 @@
   \item{nu}{An alternative to kappa; circular variance}
 }
 \value{
-  vector of n observations from Cayley(kappa) distribution
+  random deviates from Cayley distribution with
+  concentration kappa
 }
 \description{
-  This function allows the user to simulate \eqn{n}
-  misorientation angles from the Cayley distribution
-  symmetric about 0 on interval \eqn{(-\pi,\pi]}.  The
-  relationship between Cayley and Beta distribution is
-  used. The symmetric Cayley distribution has a density of
-  the form \deqn{C_\mathrm{C}(r
-  |\kappa)=\frac{1}{\sqrt{\pi}}
+  Random generation from the symmetric Cayley distribution
+  with concentration kappa (or circular variance nu)
+}
+\details{
+  The symmetric Cayley distribution with concentration
+  kappa (or circular variance nu) has density
+  \deqn{C_\mathrm{C}(r |\kappa)=\frac{1}{\sqrt{\pi}}
   \frac{\Gamma(\kappa+2)}{\Gamma(\kappa+1/2)}2^{-(\kappa+1)}(1+\cos
-  r)^\kappa(1-\cos r)}. It was orignally given in the
-  material sciences literature by Schaben 1997 and called
-  the de la Vallee Poussin distribution but was more
-  recently discussed and introduced in a more general
-  manner by Leon 06.
+  r)^\kappa(1-\cos r).}
 }
 \examples{
 r<-rcayley(20,0.01)

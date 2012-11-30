@@ -1,12 +1,18 @@
-\name{dcayley}
+\name{Cayley}
+\alias{Cayley}
 \alias{dcayley}
+\alias{rcayley}
 \title{The Symmetric Cayley Distribution}
 \usage{
   dcayley(r, kappa = 1, nu = NULL, Haar = TRUE,
     lower.tail = TRUE)
+
+  rcayley(n, kappa = 1, nu = NULL)
 }
 \arguments{
   \item{r}{vector of quantiles}
+
+  \item{n}{number of observations}
 
   \item{kappa}{Concentration paramter}
 
@@ -20,11 +26,12 @@
   \eqn{P(X\le x)}}
 }
 \value{
-  Cayley density with concentration kappa evaluated at r
+  \code{dcayley} gives the density, \code{rcayley}
+  generates random deviates
 }
 \description{
-  Density of the symmetric Cayley distribution with
-  concentration kappa
+  Density and random generation for the Cayley distribution
+  with concentration kappa
 }
 \details{
   The symmetric Cayley distribution with concentration

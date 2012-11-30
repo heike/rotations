@@ -16,20 +16,31 @@ rar <- function(n, f, M, ...) {
 
 #' The Symmetric Cayley Distribution
 #'
-#' Density of the symmetric Cayley distribution with concentration kappa
+#' Density and random generation for the Cayley distribution with concentration kappa
 #'
 #' The symmetric Cayley distribution with concentration kappa (or circular variance nu) had density 
 #' \deqn{C_\mathrm{C}(r |\kappa)=\frac{1}{\sqrt{\pi}} \frac{\Gamma(\kappa+2)}{\Gamma(\kappa+1/2)}2^{-(\kappa+1)}(1+\cos r)^\kappa(1-\cos r).}
 #'
+#' @name Cayley
+#' @aliases Cayley rcayley dcayley
+#' @usage dcayley(r, kappa = 1, nu = NULL, Haar = TRUE, lower.tail=TRUE)
+#' @usage rcayley(n, kappa = 1, nu = NULL)
 #' @param r vector of quantiles
+#' @param n number of observations
 #' @param kappa Concentration paramter
 #' @param nu The circular variance, can be used in place of kappa
 #' @param Haar logical; if TRUE density is evaluated with respect to Haar
 #' @param lower.tail logical; if TRUE probabilites are \eqn{P(X\le x)}
-#' @return Cayley density with concentration kappa evaluated at r
-#' @seealso \code{\link{dfisher}},\code{\link{dhaar}},\code{\link{dvmises}}
-#' @export
+#' @return \code{dcayley} gives the density, \code{rcayley} generates random deviates
+#' @family angdists
 #' @cite Schaeben97 leon06
+
+NULL
+
+
+#' @rdname Cayley
+#' @aliases Cayley rcayley dcayley
+#' @export
 
 dcayley <- function(r, kappa = 1, nu = NULL, Haar = TRUE, lower.tail=TRUE) {
   
@@ -45,22 +56,10 @@ dcayley <- function(r, kappa = 1, nu = NULL, Haar = TRUE, lower.tail=TRUE) {
     return(den/(1 - cos(r))) else return(den)
 }
 
-#' The Symmetric Cayley Distribution
-#'
-#' Random generation from the symmetric Cayley distribution with concentration kappa (or circular variance nu)
-#' 
-#' The symmetric Cayley distribution with concentration kappa (or circular variance nu) has density 
-#' \deqn{C_\mathrm{C}(r |\kappa)=\frac{1}{\sqrt{\pi}} \frac{\Gamma(\kappa+2)}{\Gamma(\kappa+1/2)}2^{-(\kappa+1)}(1+\cos r)^\kappa(1-\cos r).}
-#'
-#' @param n sample size
-#' @param kappa The concentration paramter
-#' @param nu An alternative to kappa; circular variance
-#' @return random deviates from Cayley distribution with concentration kappa
-#' @cite Schaeben97 leon06
-#' @seealso \code{\link{dcayley}},\code{\link{rvmises}},\code{\link{rcayley}},\code{\link{rhaar}}
+
+#' @rdname Cayley
+#' @aliases Cayley rcayley dcayley
 #' @export
-#' @examples
-#' r<-rcayley(20,0.01)
 
 rcayley <- function(n, kappa = 1, nu = NULL) {
   
@@ -74,20 +73,30 @@ rcayley <- function(n, kappa = 1, nu = NULL) {
 
 #' The Matrix Fisher Distribution
 #'
-#' Density of the matrix Fisher distribution with concentration kappa
+#' Density and random generation for the matrix Fisher distribution with concentration kappa
 #'
 #' The matrix Fisher distribution with concentration kappa (or circular variance nu) has density
 #' \deqn{C_\mathrm{{F}}(r|\kappa)=\frac{1}{2\pi[\mathrm{I_0}(2\kappa)-\mathrm{I_1}(2\kappa)]}e^{2\kappa\cos(r)}[1-\cos(r)]}
 #' where \eqn{\mathrm{I_p}(\cdot)} denotes the Bessel function of order \eqn{p} defined as  
 #' \eqn{\mathrm{I_p}(\kappa)=\frac{1}{2\pi}\int_{-\pi}^{\pi}\cos(pr)e^{\kappa\cos r}dr}.
 #'
+#' @name Fisher
+#' @aliases Fisher dfisher rfisher
+#' @usage dfisher(r, kappa = 1, nu = NULL, Haar = TRUE, lower.tail=TRUE)
+#' @usage rfisher(n, kappa = 1, nu = NULL)
 #' @param r vector of quantiles
+#' @param n number of observations
 #' @param kappa concentration paramter
 #' @param nu circular variance, can be used in place of kappa
 #' @param Haar logical; if TRUE density is evaluated with respect to Haar
 #' @param lower.tail logical; if TRUE probabilites are \eqn{P(X\le x)}
-#' @return value of Fisher matrix distribution with concentration \eqn{\kappa} evaluated at r
-#' @seealso \code{\link{rfisher}}, \code{\link{dhaar}},\code{\link{dvmises}},\code{\link{dcayley}}
+#' @return \code{dfisher} gives the density, \code{rfisher} generates random deviates
+#' @family angdists
+
+NULL
+
+#' @rdname Fisher
+#' @aliases Fisher dfisher rfisher
 #' @export
 
 dfisher <- function(r, kappa = 1, nu = NULL, Haar = TRUE, lower.tail=TRUE) {
@@ -109,20 +118,8 @@ dfisher <- function(r, kappa = 1, nu = NULL, Haar = TRUE, lower.tail=TRUE) {
   
 }
 
-#' The Matrix Fisher Distribution
-#'
-#' Random generation for the matrix Fisher distribution with concentration kappa (or circular variance nu)
-#' 
-#' The matrix Fisher distribution with concentration kappa (or circular variance nu) has density
-#' \deqn{C_\mathrm{{F}}(r|\kappa)=\frac{1}{2\pi[\mathrm{I_0}(2\kappa)-\mathrm{I_1}(2\kappa)]}e^{2\kappa\cos(r)}[1-\cos(r)]}
-#' where \eqn{\mathrm{I_p}(\cdot)} denotes the Bessel function of order \eqn{p} defined as  
-#' \eqn{\mathrm{I_p}(\kappa)=\frac{1}{2\pi}\int_{-\pi}^{\pi}\cos(pr)e^{\kappa\cos r}dr}.
-#'
-#' @param n sample size
-#' @param kappa the concentration parameter
-#' @param nu An alternative to kappa; circular variance
-#' @return a sample of size \eqn{n} from the matrix Fisher distribution with concentration \eqn{\kappa}
-#' @seealso \code{\link{dfisher}},\code{\link{rvmises}},\code{\link{rcayley}},\code{\link{rhaar}}
+#' @rdname Fisher
+#' @aliases Fisher dfisher rfisher
 #' @export
 
 
@@ -142,10 +139,20 @@ rfisher <- function(n, kappa = 1, nu = NULL) {
 #' The uniform density on the circle  (also referred to as Haar measure)
 #' has the density \deqn{C_U(r)=\frac{1-cos(r)}{2\pi}.}
 #'
+#' @name Haar
+#' @aliases Haar dhaar rhaar
+#' @usage dhaar(r, lower.tail=TRUE)
+#' @usage rhaar(n)
 #' @param r Where the density is being evaluated
+#' @param n number of obervations
 #' @param lower.tail logical; if TRUE probabilites are \eqn{P(X\le x)}
-#' @return the probability density evaluated at r
-#' @seealso \code{\link{rhaar}}, \code{\link{dfisher}},\code{\link{dvmises}},\code{\link{dcayley}}
+#' @return \code{dhaar} gives the density, \code{rhaar} generates random deviates
+#' @family angdists
+
+NULL
+
+#' @rdname Haar
+#' @aliases Haar dhaar rhaar
 #' @export
 
 dhaar <- function(r, lower.tail = TRUE){
@@ -155,16 +162,8 @@ dhaar <- function(r, lower.tail = TRUE){
 	if(lower.tail) return(den) else return(1-den)
 } 
 
-#' Haar Measure
-#'
-#' Random generation from the circle
-#' 
-#' The uniform density on the circle  (also referred to as Haar measure)
-#' has the density \deqn{C_U(r)=\frac{1-cos(r)}{2\pi}.}
-#' 
-#' @param n sample size
-#' @return a sample of size \eqn{n} from the uniform distribution on the sphere
-#' @seealso \code{\link{dhaar}},\code{\link{rfisher}},\code{\link{rvmises}},\code{\link{rcayley}}
+#' @rdname Haar
+#' @aliases Haar dhaar rhaar
 #' @export
 
 
@@ -179,14 +178,24 @@ rhaar<-function(n){
 #' The circular von Mises-based distribution has the density
 #' \deqn{C_\mathrm{M}(r|\kappa)=\frac{1}{2\pi \mathrm{I_0}(\kappa)}e^{\kappa\cos(r)}}.
 #'
+#' @name Mises
+#' @aliases Mises dvmises rvmises
+#' @usage dvmises(r, kappa = 1, nu = NULL, Haar = TRUE, lower.tail=TRUE)
+#' @usage rvmises(n, kappa = 1, nu = NULL)
 #' @param r vector of quantiles
+#' @param n number of observations
 #' @param kappa concentration paramter
 #' @param nu The circular variance, can be used in place of kappa
 #' @param Haar logical; if TRUE density is evaluated with respect to Haar
 #' @param lower.tail logical; if TRUE probabilites are \eqn{P(X\le x)}
+#' @return \code{dvmises} gives the density, \code{rvmises} generates random deviates
+#' @family angdists
+
+NULL
+
+#' @rdname Mises
+#' @aliases Mises dvmises rvmises
 #' @export
-#' @return value of circular-von Mises distribution with concentration \eqn{\kappa} evaluated at r
-#' @seealso \code{\link{rvmises}}, \code{\link{dfisher}},\code{\link{dhaar}},\code{\link{dcayley}}
 
 dvmises <- function(r, kappa = 1, nu = NULL, Haar = T, lower.tail=TRUE) {
   
@@ -205,20 +214,7 @@ dvmises <- function(r, kappa = 1, nu = NULL, Haar = T, lower.tail=TRUE) {
   }
 }
 
-#' The circular-von Mises distribution
-#'
-#' Random generation for the the circular von Mises-based distribution with concentration kappa
-#' 
-#' The circular von Mises-based distribution has the density
-#' \deqn{C_\mathrm{M}(r|\kappa)=\frac{1}{2\pi \mathrm{I_0}(\kappa)}e^{\kappa\cos(r)}}.
-#'
-#' @param n The number of angles desired
-#' @param kappa The concentration parameter of the distribution
-#' @param nu An alternative to kappa; circular variance
-#' @return S3 \code{rvmises} object; a vector of n angles following the von Mises Circular distribution with concentration kappa and mean/mode 0
-#' @export
-#' @examples
-#' r<-rvmises(20,0.01)
+v
 
 rvmises <- function(n, kappa = 1, nu = NULL) {
   

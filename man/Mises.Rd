@@ -12,7 +12,8 @@
 \arguments{
   \item{r}{vector of quantiles}
 
-  \item{n}{number of observations}
+  \item{n}{number of observations.  If \code{length(n)>1},
+  the length is taken to be the number required}
 
   \item{kappa}{concentration paramter}
 

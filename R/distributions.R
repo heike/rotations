@@ -39,7 +39,7 @@ rar <- function(n, f, M, ...) {
 #' @usage dcayley(r, kappa = 1, nu = NULL, Haar = TRUE, lower.tail=TRUE)
 #' @usage rcayley(n, kappa = 1, nu = NULL)
 #' @param r vector of quantiles
-#' @param n number of observations
+#' @param n number of observations.  If \code{length(n)>1}, the length is taken to be the number required
 #' @param kappa Concentration paramter
 #' @param nu The circular variance, can be used in place of kappa
 #' @param Haar logical; if TRUE density is evaluated with respect to Haar
@@ -79,6 +79,10 @@ rcayley <- function(n, kappa = 1, nu = NULL) {
   if(!is.null(nu))
     kappa <- cayley_kappa(nu)
   
+  lenn<-length(n)
+  if(lenn>1)
+  	n<-lenn
+  
   bet <- rbeta(n, kappa + 0.5, 3/2)
   theta <- acos(2 * bet - 1) * (1 - 2 * rbinom(n, 1, 0.5))
   return(theta)
@@ -98,7 +102,7 @@ rcayley <- function(n, kappa = 1, nu = NULL) {
 #' @usage dfisher(r, kappa = 1, nu = NULL, Haar = TRUE, lower.tail=TRUE)
 #' @usage rfisher(n, kappa = 1, nu = NULL)
 #' @param r vector of quantiles
-#' @param n number of observations
+#' @param n number of observations.  If \code{length(n)>1}, the length is taken to be the number required
 #' @param kappa concentration paramter
 #' @param nu circular variance, can be used in place of kappa
 #' @param Haar logical; if TRUE density is evaluated with respect to Haar
@@ -120,8 +124,7 @@ dfisher <- function(r, kappa = 1, nu = NULL, Haar = TRUE, lower.tail=TRUE) {
   n<-length(r)
   den<-rep(0,n)
   
-  for(i in 1:n)
-  	den[i] <- exp(2 * kappa * cos(r[i])) * (1 - cos(r))/(2 * pi * (besselI(2 * kappa, 0) - besselI(2 * kappa, 1)))
+ 	den <- exp(2 * kappa * cos(r)) * (1 - cos(r))/(2 * pi * (besselI(2 * kappa, 0) - besselI(2 * kappa, 1)))
   
   if(!lower.tail)
   	den<-1-den
@@ -141,6 +144,10 @@ rfisher <- function(n, kappa = 1, nu = NULL) {
   if(!is.null(nu))
     kappa <- fisher_kappa(nu)
   
+  lenn<-length(n)
+  if(lenn>1)
+  	n<-lenn
+  
   M <- max(dfisher(seq(-pi, pi, length = 1000), kappa,Haar=F))
   return(rar(n, dfisher, M, kappa = kappa, Haar=F))
 }
@@ -157,7 +164,7 @@ rfisher <- function(n, kappa = 1, nu = NULL) {
 #' @usage dhaar(r, lower.tail=TRUE)
 #' @usage rhaar(n)
 #' @param r Where the density is being evaluated
-#' @param n number of obervations
+#' @param n number of observations.  If \code{length(n)>1}, the length is taken to be the number required
 #' @param lower.tail logical; if TRUE probabilites are \eqn{P(X\le x)}
 #' @return \code{dhaar} gives the density, \code{rhaar} generates random deviates
 #' @seealso \link{Angular-distributions} for other distributions in the rotations package
@@ -181,6 +188,11 @@ dhaar <- function(r, lower.tail = TRUE){
 
 
 rhaar<-function(n){
+	
+	lenn<-length(n)
+	if(lenn>1)
+		n<-lenn
+	
   return(rar(n, dhaar, 1/pi))
 }
 
@@ -196,7 +208,7 @@ rhaar<-function(n){
 #' @usage dvmises(r, kappa = 1, nu = NULL, Haar = TRUE, lower.tail=TRUE)
 #' @usage rvmises(n, kappa = 1, nu = NULL)
 #' @param r vector of quantiles
-#' @param n number of observations
+#' @param n number of observations.  If \code{length(n)>1}, the length is taken to be the number required
 #' @param kappa concentration paramter
 #' @param nu The circular variance, can be used in place of kappa
 #' @param Haar logical; if TRUE density is evaluated with respect to Haar
@@ -235,6 +247,10 @@ rvmises <- function(n, kappa = 1, nu = NULL) {
   
   if(!is.null(nu))
     kappa <- vmises_kappa(nu)
+  
+  lenn<-length(n)
+  if(lenn>1)
+  	n<-lenn
   
   u <- runif(3, 0, 1)
   a <- 1 + sqrt(1 + 4 * kappa^2)

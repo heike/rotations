@@ -11,7 +11,8 @@
 \arguments{
   \item{r}{Where the density is being evaluated}
 
-  \item{n}{number of obervations}
+  \item{n}{number of observations.  If \code{length(n)>1},
+  the length is taken to be the number required}
 
   \item{lower.tail}{logical; if TRUE probabilites are
   \eqn{P(X\le x)}}

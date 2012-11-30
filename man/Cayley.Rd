@@ -50,6 +50,7 @@
   Analysis_, *97*(2), pp. 412-430.
 }
 \seealso{
-  \code{\link{dfisher}},\code{\link{dhaar}},\code{\link{dvmises}}
+  \link{Angular-distributions} for other distributions in
+  the rotations package
 }
 

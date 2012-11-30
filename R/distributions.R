@@ -1,3 +1,16 @@
+#' Angular distributions in the rotations packages
+#' 
+#' Density and random variate generation for symmetric probability distributions in the rotations package
+#' 
+#' The functions for the density function and random variate generation are named in the usual form dxxxx and rxxxx 
+#' respectively.  See \code{\link{dcayley}} for the Cayley distribution.  See \code{\link{dvmises}} for the
+#' von Mises-Fisher distribution.  See \code{\link{dhaar}} for the uniform distribution on the circle.  See \code{\link{dfisher}}
+#' for the matrix Fisher distribution.
+#' 
+#' @name Angular-distributions
+
+NULL
+
 #' Sample of size n from target density f
 #'
 #' @author Heike Hofmann
@@ -32,7 +45,7 @@ rar <- function(n, f, M, ...) {
 #' @param Haar logical; if TRUE density is evaluated with respect to Haar
 #' @param lower.tail logical; if TRUE probabilites are \eqn{P(X\le x)}
 #' @return \code{dcayley} gives the density, \code{rcayley} generates random deviates
-#' @family angdists
+#' @seealso \link{Angular-distributions} for other distributions in the rotations package
 #' @cite Schaeben97 leon06
 
 NULL
@@ -91,7 +104,7 @@ rcayley <- function(n, kappa = 1, nu = NULL) {
 #' @param Haar logical; if TRUE density is evaluated with respect to Haar
 #' @param lower.tail logical; if TRUE probabilites are \eqn{P(X\le x)}
 #' @return \code{dfisher} gives the density, \code{rfisher} generates random deviates
-#' @family angdists
+#' @seealso \link{Angular-distributions} for other distributions in the rotations package
 
 NULL
 
@@ -147,7 +160,7 @@ rfisher <- function(n, kappa = 1, nu = NULL) {
 #' @param n number of obervations
 #' @param lower.tail logical; if TRUE probabilites are \eqn{P(X\le x)}
 #' @return \code{dhaar} gives the density, \code{rhaar} generates random deviates
-#' @family angdists
+#' @seealso \link{Angular-distributions} for other distributions in the rotations package
 
 NULL
 
@@ -176,7 +189,7 @@ rhaar<-function(n){
 #' Density for the the circular von Mises-based distribution with concentration kappa
 #' 
 #' The circular von Mises-based distribution has the density
-#' \deqn{C_\mathrm{M}(r|\kappa)=\frac{1}{2\pi \mathrm{I_0}(\kappa)}e^{\kappa\cos(r)}}.
+#' \deqn{C_\mathrm{M}(r|\kappa)=\frac{1}{2\pi \mathrm{I_0}(\kappa)}e^{\kappa cos(r)}.}
 #'
 #' @name Mises
 #' @aliases Mises dvmises rvmises
@@ -189,7 +202,7 @@ rhaar<-function(n){
 #' @param Haar logical; if TRUE density is evaluated with respect to Haar
 #' @param lower.tail logical; if TRUE probabilites are \eqn{P(X\le x)}
 #' @return \code{dvmises} gives the density, \code{rvmises} generates random deviates
-#' @family angdists
+#' @seealso \link{Angular-distributions} for other distributions in the rotations package
 
 NULL
 
@@ -214,7 +227,9 @@ dvmises <- function(r, kappa = 1, nu = NULL, Haar = T, lower.tail=TRUE) {
   }
 }
 
-v
+#' @rdname Mises
+#' @aliases Mises dvmises rvmises
+#' @export
 
 rvmises <- function(n, kappa = 1, nu = NULL) {
   

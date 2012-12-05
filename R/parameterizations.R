@@ -302,6 +302,8 @@ SO3.Q4<-function(q){
   if((sum(q^2)-1)>10e-10){
     warning("Unit quaternions required.  Input was normalized.")
     q<-as.Q4(q/sqrt(sum(q^2)))
+  }else{
+  	q<-as.Q4(q)
   }
   
   theta<-angle(q)
@@ -332,7 +334,7 @@ id.SO3 <- as.SO3(diag(c(1,1,1)))
 
 #' A function to determine if a given matrix is in \eqn{SO(3)} or not.
 #'
-#' @param x numeric \eqn{n \times n} matrix or vector of length \eqn{n^2}
+#' @param x numeric 3-by-3 matrix or vector of length 9
 #' @return logical T if the matrix is in SO(3) and false otherwise
 #' @family SO3
 #' @export

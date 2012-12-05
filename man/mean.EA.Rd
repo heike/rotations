@@ -2,11 +2,11 @@
 \alias{mean.EA}
 \title{Rotation Median}
 \usage{
-  \method{mean}{EA} (x, type = "projected",
+  \method{mean}{EA} (EAs, type = "projected",
     epsilon = 1e-05, maxIter = 2000)
 }
 \arguments{
-  \item{x}{A \eqn{n\times 3} matrix where each row
+  \item{EAs}{A \eqn{n\times 3} matrix where each row
   corresponds to a random rotation in Euler angle form}
 
   \item{type}{String indicating 'projeted' or 'intrinsic'

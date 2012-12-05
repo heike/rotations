@@ -2,12 +2,12 @@
 #'
 #' Compute the intrinsic or projected mean of a sample of rotations
 #'
-#' This function takes a sample of \eqn{3\times 3} rotations (in the form of a \eqn{n\times 9} matrix where n is the sample size) and returns the projected arithmetic mean denoted \eqn{\widehat{\bm S}_P} or
+#' This function takes a sample of \eqn{3\times 3} rotations (in the form of a n-by-9 matrix where n>1 is the sample size) and returns the projected arithmetic mean denoted \eqn{\widehat{\bm S}_P} or
 #' intrinsic mean \eqn{\widehat{\bm S}_G} according to the \code{type} option.
 #' For a sample of \eqn{n} random rotations \eqn{\bm{R}_i\in SO(3)$, $i=1,2,\dots,n}, the mean-type estimator is defined as \deqn{\widehat{\bm{S}}=\argmin_{\bm{S}\in SO(3)}\sum_{i=1}^nd_D^2(\bm{R}_i,\bm{S})} where \eqn{\bar{\bm{R}}=\frac{1}{n}\sum_{i=1}^n\bm{R}_i} and the distance metric \eqn{d_D}
 #' is the Riemannian or Euclidean.  For more on the projected mean see \cite{moakher02} and for the intrinsic mean see \cite{manton04}.
 #'
-#' @param x A \eqn{n\times 9} matrix where each row corresponds to a random rotation in matrix form
+#' @param Rs A n-by-9 matrix where each row corresponds to a random rotation in matrix form
 #' @param type String indicating 'projeted' or 'intrinsic' type mean estimator
 #' @param epsilon Stopping rule for the intrinsic method
 #' @param maxIter The maximum number of iterations allowed before returning most recent estimate
@@ -22,18 +22,22 @@
 #' Rs<-genR(r)
 #' mean(Rs)
 
-mean.SO3 <- function(x, type = "projected", epsilon = 1e-05, maxIter = 2000, ...) {
-  if (!all(apply(x, 1, is.SO3))) 
+mean.SO3 <- function(Rs, type = "projected", epsilon = 1e-05, maxIter = 2000, ...) {
+	
+	if(ncol(Rs)<9 || nrow(Rs)==1)
+		stop("Input must be a n-by-9 SO3 object with n>1")
+	
+  if (!all(apply(Rs, 1, is.SO3))) 
     warning("At least one of the observations is not in SO(3).  Use result with caution.")
   
   if (!(type %in% c("projected", "intrinsic")))
     stop("type needs to be one of 'projected' or 'intrinsic'.")
   
-  R <- project.SO3(matrix(colMeans(x), 3, 3))
+  R <- project.SO3(matrix(colMeans(Rs), 3, 3))
   
   
   if (type == "intrinsic") {
-    n <- nrow(x)
+    n <- nrow(Rs)
     d <- 1
     iter <- 0
     s <- matrix(0, 3, 3)
@@ -42,7 +46,7 @@ mean.SO3 <- function(x, type = "projected", epsilon = 1e-05, maxIter = 2000, ...
       
       R <- R %*% exp.skew(s)
       
-      s <- matrix(colMeans(t(apply(x, 1, tLogMat, S = R))), 3, 3)
+      s <- matrix(colMeans(t(apply(Rs, 1, tLogMat, S = R))), 3, 3)
       
       d <- norm(s, type = "F")
       
@@ -69,7 +73,7 @@ mean.SO3 <- function(x, type = "projected", epsilon = 1e-05, maxIter = 2000, ...
 #' and normalizing.  Our simulations don't match this claim.
 #'
 #' 
-#' @param x A \eqn{n\times 4} matrix where each row corresponds to a random rotation in unit quaternion
+#' @param Qs A \eqn{n\times 4} matrix where each row corresponds to a random rotation in unit quaternion
 #' @param type String indicating 'projeted' or 'intrinsic' type mean estimator
 #' @param epsilon Stopping rule for the intrinsic method
 #' @param maxIter The maximum number of iterations allowed before returning most recent estimate
@@ -84,11 +88,14 @@ mean.SO3 <- function(x, type = "projected", epsilon = 1e-05, maxIter = 2000, ...
 #' Qs<-genR(r,space="Q4")
 #' mean(Qs,type='intrinsic')
 
-mean.Q4 <- function(x, type = "projected", epsilon = 1e-05, maxIter = 2000) {
-  Qs <- x
-  Rs<-t(apply(Qs,1,SO3.Q4))
+mean.Q4 <- function(Qs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
+	
+	if(ncol(Qs)<4 || nrow(Qs)==1)
+		stop("Input must be a n-by-9 Q4 object with n>1")
+	
+  Rs<-as.SO3(t(apply(Qs,1,SO3.Q4)))
   
-  R<-mean.SO3(Rs,type,epsilon,maxIter)
+  R<-mean(Rs,type,epsilon,maxIter)
   
   return(Q4.SO3(R))
   
@@ -103,7 +110,7 @@ mean.Q4 <- function(x, type = "projected", epsilon = 1e-05, maxIter = 2000) {
 #' For a sample of \eqn{n} random rotations \eqn{\bm{R}_i\in SO(3)$, $i=1,2,\dots,n}, the mean-type estimator is defined as \deqn{\widehat{\bm{S}}=\argmin_{\bm{S}\in SO(3)}\sum_{i=1}^nd_D^2(\bm{R}_i,\bm{S})} where \eqn{\bar{\bm{R}}=\frac{1}{n}\sum_{i=1}^n\bm{R}_i} and the distance metric \eqn{d_D}
 #' is the Riemannian or Euclidean.  For more on the projected mean see \cite{moakher02} and for the intrinsic mean see \cite{manton04}.
 #'
-#' @param x A \eqn{n\times 3} matrix where each row corresponds to a random rotation in Euler angle form
+#' @param EAs A \eqn{n\times 3} matrix where each row corresponds to a random rotation in Euler angle form
 #' @param type String indicating 'projeted' or 'intrinsic' type mean estimator
 #' @param epsilon Stopping rule for the intrinsic method
 #' @param maxIter The maximum number of iterations allowed before returning most recent estimate
@@ -118,11 +125,14 @@ mean.Q4 <- function(x, type = "projected", epsilon = 1e-05, maxIter = 2000) {
 #' EAs<-genR(r,space="EA")
 #' mean(EAs)
 
-mean.EA <- function(x, type = "projected", epsilon = 1e-05, maxIter = 2000) {
-  EAs <- x
+mean.EA <- function(EAs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
+	
+	if(ncol(EAs)<3 || nrow(EAs)==1)
+		stop("Input must be a n-by-9 EA object with n>1")
+	
   Rs<-as.SO3(t(apply(EAs,1,SO3.EA)))
   
-  R<-mean.SO3(Rs,type,epsilon,maxIter)
+  R<-mean(Rs,type,epsilon,maxIter)
   
   return(EA.SO3(R))
 }
@@ -154,6 +164,9 @@ median<-function(x,...){
 
 median.SO3 <- function(Rs, type = "projected", epsilon = 1e-05, maxIter = 2000, na.rm=FALSE) {
   
+	if(ncol(Rs)<9 || nrow(Rs)==1)
+		stop("Input must be a n-by-9 SO3 object with n>1")
+	
   if (!all(apply(Rs, 1, is.SO3))) 
     warning("At least one of the given observations is not in SO(3).  Use result with caution.")
   
@@ -210,6 +223,9 @@ median.SO3 <- function(Rs, type = "projected", epsilon = 1e-05, maxIter = 2000, 
 #' @S3method median Q4
 
 median.Q4 <- function(Qs, type = "projected", epsilon = 1e-05, maxIter = 2000, na.rm=FALSE) {
+	
+	if(ncol(Qs)<4 || nrow(Qs)==1)
+		stop("Input must be a n-by-9 Q4 object with n>1")
 
   Rs<-t(apply(Qs,1,SO3.Q4))
   
@@ -227,6 +243,9 @@ median.Q4 <- function(Qs, type = "projected", epsilon = 1e-05, maxIter = 2000, n
 
 median.EA <- function(EAs, type = "projected", epsilon = 1e-05, maxIter = 2000, na.rm=FALSE) {
 
+	if(ncol(EAs)<3 || nrow(EAs)==1)
+		stop("Input must be a n-by-9 EA object with n>1")
+	
   Rs<-t(apply(EAs,1,SO3.EA))
   
   R<-median.SO3(Rs,type,epsilon,maxIter)

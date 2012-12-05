@@ -2,12 +2,12 @@
 \alias{mean.SO3}
 \title{Mean Rotation}
 \usage{
-  \method{mean}{SO3} (x, type = "projected",
+  \method{mean}{SO3} (Rs, type = "projected",
     epsilon = 1e-05, maxIter = 2000, ...)
 }
 \arguments{
-  \item{x}{A \eqn{n\times 9} matrix where each row
-  corresponds to a random rotation in matrix form}
+  \item{Rs}{A n-by-9 matrix where each row corresponds to a
+  random rotation in matrix form}
 
   \item{type}{String indicating 'projeted' or 'intrinsic'
   type mean estimator}
@@ -28,9 +28,9 @@
 }
 \details{
   This function takes a sample of \eqn{3\times 3} rotations
-  (in the form of a \eqn{n\times 9} matrix where n is the
-  sample size) and returns the projected arithmetic mean
-  denoted \eqn{\widehat{\bm S}_P} or intrinsic mean
+  (in the form of a n-by-9 matrix where n>1 is the sample
+  size) and returns the projected arithmetic mean denoted
+  \eqn{\widehat{\bm S}_P} or intrinsic mean
   \eqn{\widehat{\bm S}_G} according to the \code{type}
   option. For a sample of \eqn{n} random rotations
   \eqn{\bm{R}_i\in SO(3)$, $i=1,2,\dots,n}, the mean-type

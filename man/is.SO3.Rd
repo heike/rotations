@@ -5,8 +5,7 @@
   is.SO3(x)
 }
 \arguments{
-  \item{x}{numeric \eqn{n \times n} matrix or vector of
-  length \eqn{n^2}}
+  \item{x}{numeric 3-by-3 matrix or vector of length 9}
 }
 \value{
   logical T if the matrix is in SO(3) and false otherwise

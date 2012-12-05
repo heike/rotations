@@ -72,7 +72,9 @@ EA.default <- function(U,theta){
 
 EA.SO3 <- function(R){  
   
-  zeta<-sqrt(1-R[9]^2)
+	R<-matrix(R,3,3)
+	
+  zeta<-sqrt(1-R[3,3]^2)
   
   #For now deal with singularity this way
   if(zeta==0){
@@ -81,40 +83,44 @@ EA.SO3 <- function(R){
     return(ea)
   }
   
-  Salpha <- asin(R[3]/zeta)
+  Salpha <- asin(R[3,1]/zeta)
   if(Salpha<0)  Salpha<-Salpha+2*pi
   
-  Calpha <- acos(-R[6]/zeta)
+  Calpha <- acos(-R[3,2]/zeta)
   
   if(Calpha<0)  Calpha<-Calpha+2*pi
   
   if(Salpha==Calpha){
     alpha <- Salpha 
-  }else if(sin(Calpha)==R[3]/zeta){
+  }else if(sin(Calpha)==R[3,1]/zeta){
     alpha <- Calpha
   }else{
     alpha <- Salpha
   }
   
+  beta<-acos(R[3,3])
   
-  beta<-acos(R[9])
-  
-  Sgamma <- asin(R[7]/zeta)
+  Sgamma <- asin(R[1,3]/zeta)
   if(Sgamma<0) Sgamma<-Sgamma+2*pi
   
-  Cgamma<- acos(R[8]/zeta)
+  Cgamma<- acos(R[2,3]/zeta)
   if(Cgamma<0) Cgamma<-Cgamma+2*pi
   
   if(Sgamma==Cgamma){
     gamma <- Sgamma 
-  }else if(sin(Cgamma)==R[3]/zeta){
+  }else if(sin(Cgamma)==R[1,3]/zeta){
     gamma <- Cgamma    
   }else{
     gamma <- Sgamma
-    
   }
   
   ea<-c(alpha,beta,gamma)
+	
+	#if(any(ea<0)){
+	#	ea[c(1,3)]<-ea[c(1,3)]+pi
+	#	ea[2]<-2*pi-ea[2]
+	#}
+	
   class(ea)<-"EA"
   return(ea)
 }

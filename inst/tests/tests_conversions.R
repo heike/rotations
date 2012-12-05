@@ -1,7 +1,3 @@
-#library(testthat)
-library(rotations)
-
-
 theta <- acos(runif(1, -1, 1))
 phi <- runif(1, -pi, pi)
 u<- c(sin(theta) * cos(phi), sin(theta) * sin(phi), cos(theta))

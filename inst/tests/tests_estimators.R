@@ -1,7 +1,3 @@
-#library(testthat)
-#library(rotations)
-
-
 rs<-rvmises(20)
 Rs<-genR(rs)
 Qs<-genR(rs,space='Q4')

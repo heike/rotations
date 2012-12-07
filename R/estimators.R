@@ -258,7 +258,7 @@ median.Q4 <- function(Qs, type = "projected", epsilon = 1e-05, maxIter = 2000, n
 
 median.EA <- function(EAs, type = "projected", epsilon = 1e-05, maxIter = 2000, na.rm=FALSE) {
 
-	if(ncol(EAs)<9)
+	if(ncol(EAs)<3)
 		stop("Input must be a n-by-3 EA object")
 	
 	if(nrow(EAs)==1)

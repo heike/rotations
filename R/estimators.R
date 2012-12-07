@@ -24,8 +24,11 @@
 
 mean.SO3 <- function(Rs, type = "projected", epsilon = 1e-05, maxIter = 2000, ...) {
 	
-	if(ncol(Rs)<9 || nrow(Rs)==1)
-		stop("Input must be a n-by-9 SO3 object with n>1")
+	if(ncol(Rs)<9)
+		stop("Input must be a n-by-9 SO3 object")
+	
+	if(nrow(Rs)==1)
+		return(Rs)
 	
   if (!all(apply(Rs, 1, is.SO3))) 
     warning("At least one of the observations is not in SO(3).  Use result with caution.")
@@ -90,8 +93,11 @@ mean.SO3 <- function(Rs, type = "projected", epsilon = 1e-05, maxIter = 2000, ..
 
 mean.Q4 <- function(Qs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
 	
-	if(ncol(Qs)<4 || nrow(Qs)==1)
-		stop("Input must be a n-by-9 Q4 object with n>1")
+	if(ncol(Qs)<4)
+		stop("Input must be a n-by-4 Q4 object")
+	
+	if(nrow(Qs)==1)
+		return(Qs)
 	
   Rs<-as.SO3(t(apply(Qs,1,SO3.Q4)))
   
@@ -127,8 +133,11 @@ mean.Q4 <- function(Qs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
 
 mean.EA <- function(EAs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
 	
-	if(ncol(EAs)<3 || nrow(EAs)==1)
-		stop("Input must be a n-by-9 EA object with n>1")
+	if(ncol(EAs)<3)
+		stop("Input must be a n-by-3 EA object")
+	
+	if(nrow(EAs)==1)
+		return(EAs)
 	
   Rs<-as.SO3(t(apply(EAs,1,SO3.EA)))
   
@@ -164,8 +173,11 @@ median<-function(x,...){
 
 median.SO3 <- function(Rs, type = "projected", epsilon = 1e-05, maxIter = 2000, na.rm=FALSE) {
   
-	if(ncol(Rs)<9 || nrow(Rs)==1)
-		stop("Input must be a n-by-9 SO3 object with n>1")
+	if(ncol(Rs)<9)
+		stop("Input must be a n-by-9 SO3 object")
+	
+	if(nrow(Rs)==1)
+		return(Rs)
 	
   if (!all(apply(Rs, 1, is.SO3))) 
     warning("At least one of the given observations is not in SO(3).  Use result with caution.")
@@ -224,8 +236,11 @@ median.SO3 <- function(Rs, type = "projected", epsilon = 1e-05, maxIter = 2000, 
 
 median.Q4 <- function(Qs, type = "projected", epsilon = 1e-05, maxIter = 2000, na.rm=FALSE) {
 	
-	if(ncol(Qs)<4 || nrow(Qs)==1)
-		stop("Input must be a n-by-9 Q4 object with n>1")
+	if(ncol(Qs)<4)
+		stop("Input must be a n-by-4 Q4 object")
+	
+	if(nrow(Qs)==1)
+		return(Rs)
 
   Rs<-t(apply(Qs,1,SO3.Q4))
   
@@ -243,8 +258,11 @@ median.Q4 <- function(Qs, type = "projected", epsilon = 1e-05, maxIter = 2000, n
 
 median.EA <- function(EAs, type = "projected", epsilon = 1e-05, maxIter = 2000, na.rm=FALSE) {
 
-	if(ncol(EAs)<3 || nrow(EAs)==1)
-		stop("Input must be a n-by-9 EA object with n>1")
+	if(ncol(EAs)<9)
+		stop("Input must be a n-by-3 EA object")
+	
+	if(nrow(EAs)==1)
+		return(EAs)
 	
   Rs<-t(apply(EAs,1,SO3.EA))
   

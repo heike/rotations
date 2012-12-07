@@ -73,7 +73,7 @@ EA.default <- function(U,theta){
 EA.SO3 <- function(R){  
   
 	R<-matrix(R,3,3)
-	
+	trouble<-FALSE
   zeta<-sqrt(1-R[3,3]^2)
   
   #For now deal with singularity this way
@@ -87,15 +87,17 @@ EA.SO3 <- function(R){
   if(Salpha<0)  Salpha<-Salpha+2*pi
   
   Calpha <- acos(-R[3,2]/zeta)
-  
   if(Calpha<0)  Calpha<-Calpha+2*pi
   
   if(Salpha==Calpha){
     alpha <- Salpha 
-  }else if(sin(Calpha)==R[3,1]/zeta){
+  }else if((sin(Calpha)-(R[3,1]/zeta))<10e-5){
     alpha <- Calpha
-  }else{
+  }else if((cos(Salpha)+R[3,2]/zeta)<10e-5){
     alpha <- Salpha
+  }else{
+    alpha<-Salpha
+    trouble<-TRUE
   }
   
   beta<-acos(R[3,3])
@@ -108,14 +110,20 @@ EA.SO3 <- function(R){
   
   if(Sgamma==Cgamma){
     gamma <- Sgamma 
-  }else if(sin(Cgamma)==R[1,3]/zeta){
+  }else if((sin(Cgamma)-R[1,3]/zeta)<10e-5){
     gamma <- Cgamma    
-  }else{
+  }else if((cos(Sgamma)-R[2,3]/zeta)<10e-5){
     gamma <- Sgamma
+  }else{
+    gamma<-Sgamma
+    trouble<-TRUE
   }
-  
+    
   ea<-c(alpha,beta,gamma)
 	
+	if(trouble)
+    ea[c(1,3)]<-(ea[c(1,3)]+pi)%%(2*pi)
+  
 	#if(any(ea<0)){
 	#	ea[c(1,3)]<-ea[c(1,3)]+pi
 	#	ea[2]<-2*pi-ea[2]
@@ -289,7 +297,6 @@ SO3.default <- function(U, theta) {
 
 SO3.EA <- function(eur) {
   
-
   S1<-S2<-S3<-diag(3)
   S1[1,1]<-cos(eur[3])
   S1[1,2]<-sin(eur[3])

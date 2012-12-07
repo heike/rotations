@@ -289,9 +289,24 @@ SO3.default <- function(U, theta) {
 
 SO3.EA <- function(eur) {
   
-  e1<-c(1,0,0)
-  e3<-c(0,0,1)
-  S<-SO3(e3,eur[3])%*%SO3(e1,eur[2])%*%SO3(e3,eur[1])
+
+  S1<-S2<-S3<-diag(3)
+  S1[1,1]<-cos(eur[3])
+  S1[1,2]<-sin(eur[3])
+  S1[2,1]<--sin(eur[3])
+  S1[2,2]<-cos(eur[3])
+  
+  S2[2,2]<-cos(eur[2])
+  S2[2,3]<-sin(eur[2])
+  S2[3,2]<--sin(eur[2])
+  S2[3,3]<-cos(eur[2])
+  
+  S3[1,1]<-cos(eur[1])
+  S3[1,2]<-sin(eur[1])
+  S3[2,1]<--sin(eur[1])
+  S3[2,2]<-cos(eur[1])
+  
+  S<-S1%*%S2%*%S3
   class(S)<-"SO3"
   return(S)
 }

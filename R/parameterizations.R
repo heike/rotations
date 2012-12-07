@@ -269,10 +269,13 @@ SO3 <- function(U,...){
 #' @S3method SO3 default
 #' @family SO3
 
-SO3.default <- function(U, theta) {
+SO3.default <- function(U, theta=NULL) {
   # based on Rodrigues formula
   
+	
   ulen<-sqrt(sum(U^2))
+  
+  if(theta==NULL) theta<-ulen
   
   if(ulen!=0){
     U <- U/ulen

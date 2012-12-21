@@ -275,8 +275,11 @@ SO3.default <- function(U, theta=NULL) {
 	
   ulen<-sqrt(sum(U^2))
   
-  if(is.null(theta)) 
-  	theta<-ulen
+  if(is.null(theta)){ 
+  	theta<-ulen%%2*pi
+  	if(theta>pi)
+  		theta<-2*pi-theta
+  }
   
   if(ulen!=0){
     U <- U/ulen

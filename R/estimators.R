@@ -349,3 +349,46 @@ weighted.mean.SO3 <- function(Rs, w, type = "projected", epsilon = 1e-05, maxIte
 	
 	return(R)
 }
+
+#' Weighted Rotation Median
+#' 
+#' Compute the weighted projected or intrinsic mean of a sample of rotations
+#'
+#' This function takes a sample of n unit quaternions and approximates the mean rotation.  If the projected mean
+#' is called for then the quaternions are turned reparameterized to matrices and mean.SO3 is called.  If the intrinsic
+#' mean is called then according to \cite{gramkow01} a better approximation is achieved by taking average quaternion
+#' and normalizing.  Our simulations don't match this claim.
+#'
+#' 
+#' @param Qs A \eqn{n\times 4} matrix where each row corresponds to a random rotation in unit quaternion
+#' @param w a numerical vector of weights the same length as Rs giving the weights to use for elements of Rs
+#' @param type String indicating 'projeted' or 'intrinsic' type mean estimator
+#' @param epsilon Stopping rule for the intrinsic method
+#' @param maxIter The maximum number of iterations allowed before returning most recent estimate
+#' @return weighted projected or intrinsic mean of the sample
+#' @seealso \code{\link{mean.SO3}}
+#' @cite moakher02, manton04
+#' @S3method weighted.mean Q4
+#' @method weighted.mean Q4
+#' @export
+#' @examples
+#' r<-rvmises(20,0.01)
+#' wt<-abs(1/r)
+#' Qs<-genR(r,space="Q4")
+#' weighted.mean(Qs,wt)
+
+weighted.mean.Q4 <- function(Qs, w, type = "projected", epsilon = 1e-05, maxIter = 2000) {
+	
+	if(ncol(Qs)<4)
+		stop("Input must be a n-by-4 Q4 object")
+	
+	if(nrow(Qs)==1)
+		return(Qs)
+	
+	Rs<-as.SO3(t(apply(Qs,1,SO3.Q4)))
+	
+	R<-weighted.mean(Rs,w,type,epsilon,maxIter)
+	
+	return(Q4.SO3(R))
+	
+}

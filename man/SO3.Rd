@@ -7,7 +7,7 @@
 \usage{
   SO3(U, ...)
 
-  \method{SO3}{default} (U, theta)
+  \method{SO3}{default} (U, theta = NULL)
 
   \method{SO3}{EA} (eur)
 

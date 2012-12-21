@@ -270,3 +270,51 @@ median.EA <- function(EAs, type = "projected", epsilon = 1e-05, maxIter = 2000, 
   
   return(EA.SO3(R))
 }
+
+#' Weighted Mean Rotation
+#'
+#' Compute the weighted projected mean of a sample of rotations
+#'
+#' This function takes a sample of \eqn{3\times 3} rotations (in the form of a n-by-9 matrix where n>1 is the sample size) and returns the weighted projected arithmetic mean denoted \eqn{\widehat{\bm S}_P}.
+#' For a sample of \eqn{n} random rotations \eqn{\bm{R}_i\in SO(3)$, $i=1,2,\dots,n}, the mean-type estimator is defined as \deqn{\widehat{\bm{S}}=\argmin_{\bm{S}\in SO(3)}\sum_{i=1}^nd_D^2(\bm{R}_i,\bm{S})} where \eqn{\bar{\bm{R}}=\sum_{i=1}^nw_i\bm{R}_i} and the distance metric \eqn{d_D}
+#' is the Euclidean.  For more on the projected mean see \cite{moakher02}.
+#'
+#' @param Rs A n-by-9 matrix where each row corresponds to a random rotation in matrix form
+#' @param w a numerical vector of weights the same length as Rs giving the weights to use for elements of Rs
+#' @param ... only used for consistency with mean.default
+#' @return weighted projected mean of the sample
+#' @seealso \code{\link{median.SO3}} \code{\link{mean.SO3}}
+#' @cite moakher02
+#' @S3method weighted.mean SO3
+#' @method weighted.mean SO3
+#' @examples
+#' r<-rvmises(20,0.01)
+#' Rs<-genR(r)
+#' wt<-1:20
+#' weighted.mean(Rs,wt)
+
+weighted.mean.SO3 <- function(Rs, w , ...) {
+	
+	if(ncol(Rs)<9)
+		stop("Input must be a n-by-9 SO3 object")
+	
+	if(nrow(Rs)==1)
+		return(Rs)
+	
+	if(length(w)!=nrow(Rs))
+		stop("'Rs' and 'w' must have same length")
+	
+	if (!all(apply(Rs, 1, is.SO3))) 
+		warning("At least one of the observations is not in SO(3).  Use result with caution.")
+	
+	if(any(w<0))
+		warning("Negative weights were given.  Their absolute value is used.")
+	
+	w<-abs(w/sum(w))
+	
+	wRs<-w*Rs
+	
+	R <- as.SO3(project.SO3(matrix(colSums(wRs), 3, 3)))
+	
+	return(R)
+}

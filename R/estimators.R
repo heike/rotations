@@ -273,14 +273,18 @@ median.EA <- function(EAs, type = "projected", epsilon = 1e-05, maxIter = 2000, 
 
 #' Weighted Mean Rotation
 #'
-#' Compute the weighted projected mean of a sample of rotations
+#' Compute the weighted intrinsic or projected mean of a sample of rotations
 #'
-#' This function takes a sample of \eqn{3\times 3} rotations (in the form of a n-by-9 matrix where n>1 is the sample size) and returns the weighted projected arithmetic mean denoted \eqn{\widehat{\bm S}_P}.
-#' For a sample of \eqn{n} random rotations \eqn{\bm{R}_i\in SO(3)$, $i=1,2,\dots,n}, the mean-type estimator is defined as \deqn{\widehat{\bm{S}}=\argmin_{\bm{S}\in SO(3)}\sum_{i=1}^nd_D^2(\bm{R}_i,\bm{S})} where \eqn{\bar{\bm{R}}=\sum_{i=1}^nw_i\bm{R}_i} and the distance metric \eqn{d_D}
-#' is the Euclidean.  For more on the projected mean see \cite{moakher02}.
+#' This function takes a sample of \eqn{3\times 3} rotations (in the form of a n-by-9 matrix where n>1 is the sample size) and returns the weighted projected arithmetic mean denoted \eqn{\widehat{\bm S}_P} or
+#' intrinsic mean \eqn{\widehat{\bm S}_G} according to the \code{type} option.
+#' For a sample of \eqn{n} random rotations \eqn{\bm{R}_i\in SO(3)$, $i=1,2,\dots,n}, the mean-type estimator is defined as \deqn{\widehat{\bm{S}}=\argmin_{\bm{S}\in SO(3)}\sum_{i=1}^nd_D^2(\bm{R}_i,\bm{S})} where \eqn{\bar{\bm{R}}=\frac{1}{n}\sum_{i=1}^n\bm{R}_i} and the distance metric \eqn{d_D}
+#' is the Riemannian or Euclidean.  For more on the projected mean see \cite{moakher02} and for the intrinsic mean see \cite{manton04}.
 #'
 #' @param Rs A n-by-9 matrix where each row corresponds to a random rotation in matrix form
 #' @param w a numerical vector of weights the same length as Rs giving the weights to use for elements of Rs
+#' @param type String indicating 'projeted' or 'intrinsic' type mean estimator
+#' @param epsilon Stopping rule for the intrinsic method
+#' @param maxIter The maximum number of iterations allowed before returning most recent estimate
 #' @param ... only used for consistency with mean.default
 #' @return weighted projected mean of the sample
 #' @seealso \code{\link{median.SO3}} \code{\link{mean.SO3}}
@@ -290,10 +294,10 @@ median.EA <- function(EAs, type = "projected", epsilon = 1e-05, maxIter = 2000, 
 #' @examples
 #' r<-rvmises(20,0.01)
 #' Rs<-genR(r)
-#' wt<-1:20
+#' wt<-abs(1/r)
 #' weighted.mean(Rs,wt)
 
-weighted.mean.SO3 <- function(Rs, w , ...) {
+weighted.mean.SO3 <- function(Rs, w, type = "projected", epsilon = 1e-05, maxIter = 2000, ...) {
 	
 	if(ncol(Rs)<9)
 		stop("Input must be a n-by-9 SO3 object")
@@ -307,6 +311,9 @@ weighted.mean.SO3 <- function(Rs, w , ...) {
 	if (!all(apply(Rs, 1, is.SO3))) 
 		warning("At least one of the observations is not in SO(3).  Use result with caution.")
 	
+	if (!(type %in% c("projected", "intrinsic")))
+		stop("type needs to be one of 'projected' or 'intrinsic'.")
+	
 	if(any(w<0))
 		warning("Negative weights were given.  Their absolute value is used.")
 	
@@ -315,6 +322,30 @@ weighted.mean.SO3 <- function(Rs, w , ...) {
 	wRs<-w*Rs
 	
 	R <- as.SO3(project.SO3(matrix(colSums(wRs), 3, 3)))
+	
+	if (type == "intrinsic") {
+		n <- nrow(Rs)
+		d <- 1
+		iter <- 0
+		s <- matrix(0, 3, 3)
+		
+		while (d >= epsilon) {
+			
+			R <- R %*% exp.skew(s)
+			
+			s <- matrix(colSums(w*t(apply(Rs, 1, tLogMat, S = R))), 3, 3)
+			
+			d <- norm(s, type = "F")
+			
+			iter <- iter + 1
+			
+			if (iter >= maxIter) {
+				warning(paste("No convergence in ", iter, " iterations."))
+				return(as.SO3(R))
+			}
+		}
+		R<-as.SO3(R)	
+	}
 	
 	return(R)
 }

@@ -1,15 +1,18 @@
 \name{Mises}
 \alias{Mises}
 \alias{dvmises}
+\alias{pvmises}
 \alias{rvmises}
 \title{The circular-von Mises distribution}
 \usage{
   dvmises(r, kappa = 1, nu = NULL, Haar = T)
 
+  pvmises(q, kappa = 1, nu = NULL, lower.tail = TRUE)
+
   rvmises(n, kappa = 1, nu = NULL)
 }
 \arguments{
-  \item{r}{vector of quantiles}
+  \item{r,q}{vector of quantiles}
 
   \item{n}{number of observations.  If \code{length(n)>1},
   the length is taken to be the number required}
@@ -21,10 +24,14 @@
 
   \item{Haar}{logical; if TRUE density is evaluated with
   respect to Haar}
+
+  \item{lower.tail}{logica; if TRUE probabilites are
+  \eqn{P(X\le x)} otherwise, \eqn{P(X>x)}}
 }
 \value{
-  \code{dvmises} gives the density, \code{rvmises}
-  generates random deviates
+  \code{dvmises} gives the density, \code{pvmises} gives
+  the distribution function, \code{rvmises} generates
+  random deviates
 }
 \description{
   Density for the the circular von Mises-based distribution

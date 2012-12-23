@@ -1,15 +1,18 @@
 \name{Fisher}
 \alias{Fisher}
 \alias{dfisher}
+\alias{pfisher}
 \alias{rfisher}
 \title{The Matrix Fisher Distribution}
 \usage{
   dfisher(r, kappa = 1, nu = NULL, Haar = TRUE)
 
+  pfisher(q, kappa = 1, nu = NULL, lower.tail = TRUE)
+
   rfisher(n, kappa = 1, nu = NULL)
 }
 \arguments{
-  \item{r}{vector of quantiles}
+  \item{r,q}{vector of quantiles}
 
   \item{n}{number of observations.  If \code{length(n)>1},
   the length is taken to be the number required}
@@ -23,8 +26,9 @@
   respect to Haar}
 }
 \value{
-  \code{dfisher} gives the density, \code{rfisher}
-  generates random deviates
+  \code{dfisher} gives the density, \code{pfisher} gives
+  the distribution function, \code{rfisher} generates
+  random deviates
 }
 \description{
   Density and random generation for the matrix Fisher

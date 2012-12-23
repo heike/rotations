@@ -1,22 +1,26 @@
 \name{Haar}
 \alias{Haar}
 \alias{dhaar}
+\alias{phaar}
 \alias{rhaar}
 \title{Haar Measure}
 \usage{
   dhaar(r)
 
+  phaar(q, lower.tail = TRUE)
+
   rhaar(n)
 }
 \arguments{
-  \item{r}{Where the density is being evaluated}
+  \item{r,q}{vector of quantiles}
 
   \item{n}{number of observations.  If \code{length(n)>1},
   the length is taken to be the number required}
 }
 \value{
-  \code{dhaar} gives the density, \code{rhaar} generates
-  random deviates
+  \code{dhaar} gives the density, \code{phaar} gives the
+  distribution function, \code{rhaar} generates random
+  deviates
 }
 \description{
   Uniform density on the circle

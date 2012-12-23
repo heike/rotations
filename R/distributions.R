@@ -42,12 +42,12 @@ rar <- function(n, f, M, ...) {
 #' @aliases Cayley rcayley dcayley
 #' @usage dcayley(r, kappa = 1, nu = NULL, Haar = TRUE, lower.tail=TRUE)
 #' @usage rcayley(n, kappa = 1, nu = NULL)
-#' @param r vector of quantiles
+#' @param r,q vector of quantiles
 #' @param n number of observations.  If \code{length(n)>1}, the length is taken to be the number required
 #' @param kappa Concentration paramter
 #' @param nu The circular variance, can be used in place of kappa
 #' @param Haar logical; if TRUE density is evaluated with respect to Haar
-#' @return \code{dcayley} gives the density, \code{rcayley} generates random deviates
+#' @return \code{dcayley} gives the density,\code{pcayley} gives the distribution function, \code{rcayley} generates random deviates
 #' @seealso \link{Angular-distributions} for other distributions in the rotations package
 #' @cite Schaeben97 leon06
 
@@ -55,7 +55,7 @@ NULL
 
 
 #' @rdname Cayley
-#' @aliases Cayley rcayley dcayley
+#' @aliases Cayley dcayley pcayley rcayley
 #' @export
 
 dcayley <- function(r, kappa = 1, nu = NULL, Haar = TRUE) {
@@ -72,9 +72,24 @@ dcayley <- function(r, kappa = 1, nu = NULL, Haar = TRUE) {
     return(den/(1 - cos(r))) else return(den)
 }
 
+#' @rdname Cayley
+#' @aliases Cayley dcayley pcayley rcayley
+#' @export
+
+pcayley<-function(q,kappa=1,nu=NULL,lower.tail=TRUE){
+  
+  n<-length(q)
+  cdf<-rep(NA,n)
+  
+  for(i in 1:n)
+    cdf[i]<-max(min(integrate(dcayley,-pi,q[i],kappa,nu,Haar=F)$value,1),0)
+  
+  if(lower.tail) 
+    return(cdf) else return((1-cdf))
+}
 
 #' @rdname Cayley
-#' @aliases Cayley rcayley dcayley
+#' @aliases Cayley dcayley pcayley rcayley
 #' @export
 
 rcayley <- function(n, kappa = 1, nu = NULL) {
@@ -102,20 +117,21 @@ rcayley <- function(n, kappa = 1, nu = NULL) {
 #'
 #' @name Fisher
 #' @aliases Fisher dfisher rfisher
-#' @usage dfisher(r, kappa = 1, nu = NULL, Haar = TRUE, lower.tail=TRUE)
+#' @usage dfisher(r, kappa = 1, nu = NULL, Haar = TRUE)
+#' @usage pfisher(r, kappa = 1, nu = NULL, lower.tail=TRUE)
 #' @usage rfisher(n, kappa = 1, nu = NULL)
-#' @param r vector of quantiles
+#' @param r,q vector of quantiles
 #' @param n number of observations.  If \code{length(n)>1}, the length is taken to be the number required
 #' @param kappa concentration paramter
 #' @param nu circular variance, can be used in place of kappa
 #' @param Haar logical; if TRUE density is evaluated with respect to Haar
-#' @return \code{dfisher} gives the density, \code{rfisher} generates random deviates
+#' @return \code{dfisher} gives the density, \code{pfisher} gives the distribution function, \code{rfisher} generates random deviates
 #' @seealso \link{Angular-distributions} for other distributions in the rotations package
 
 NULL
 
 #' @rdname Fisher
-#' @aliases Fisher dfisher rfisher
+#' @aliases Fisher dfisher pfisher rfisher
 #' @export
 
 dfisher <- function(r, kappa = 1, nu = NULL, Haar = TRUE) {
@@ -137,7 +153,23 @@ dfisher <- function(r, kappa = 1, nu = NULL, Haar = TRUE) {
 }
 
 #' @rdname Fisher
-#' @aliases Fisher dfisher rfisher
+#' @aliases Fisher dfisher pfisher rfisher
+#' @export
+
+pfisher<-function(q,kappa=1, nu= NULL, lower.tail=TRUE){
+  
+  n<-length(q)
+  cdf<-rep(NA,n)
+  
+  for(i in 1:n)
+    cdf[i]<-max(min(integrate(dfisher,-pi,q[i],kappa,nu,Haar=F)$value,1),0)
+  
+  if(lower.tail)
+    return(cdf) else return((1-cdf))
+}
+
+#' @rdname Fisher
+#' @aliases Fisher dfisher pfisher rfisher
 #' @export
 
 
@@ -162,18 +194,19 @@ rfisher <- function(n, kappa = 1, nu = NULL) {
 #' has the density \deqn{C_U(r)=\frac{1-cos(r)}{2\pi}.}
 #'
 #' @name Haar
-#' @aliases Haar dhaar rhaar
-#' @usage dhaar(r, lower.tail=TRUE)
+#' @aliases Haar dhaar phaar rhaar
+#' @usage dhaar(r)
+#' @usage phaar(q, lower.tail=T)
 #' @usage rhaar(n)
-#' @param r Where the density is being evaluated
+#' @param r,q vector of quantiles
 #' @param n number of observations.  If \code{length(n)>1}, the length is taken to be the number required
-#' @return \code{dhaar} gives the density, \code{rhaar} generates random deviates
+#' @return \code{dhaar} gives the density, \code{phaar} gives the distribution function, \code{rhaar} generates random deviates
 #' @seealso \link{Angular-distributions} for other distributions in the rotations package
 
 NULL
 
 #' @rdname Haar
-#' @aliases Haar dhaar rhaar
+#' @aliases Haar dhaar phaar rhaar
 #' @export
 
 dhaar <- function(r){
@@ -184,7 +217,25 @@ dhaar <- function(r){
 } 
 
 #' @rdname Haar
-#' @aliases Haar dhaar rhaar
+#' @aliases Haar dhaar phaar rhaar
+#' @export
+
+phaar<-function(q,lower.tail=TRUE){
+  
+  cdf<-(q-sin(q)+pi)/(2*pi)
+  
+  ind<-which(cdf>1)
+  cdf[ind]<-1
+  
+  ind2<-which(cdf<0)
+  cdf[ind2]<-0
+  
+  if(lower.tail)
+    return(cdf) else return((1-cdf))
+}
+
+#' @rdname Haar
+#' @aliases Haar dhaar phaar rhaar
 #' @export
 
 
@@ -206,20 +257,22 @@ rhaar<-function(n){
 #'
 #' @name Mises
 #' @aliases Mises dvmises rvmises
-#' @usage dvmises(r, kappa = 1, nu = NULL, Haar = TRUE, lower.tail=TRUE)
+#' @usage dvmises(r, kappa = 1, nu = NULL, Haar = TRUE)
+#' @usage pvmises(q, kappa = 1, nu = NULL, lower.tail=TRUE)
 #' @usage rvmises(n, kappa = 1, nu = NULL)
-#' @param r vector of quantiles
+#' @param r,q vector of quantiles
 #' @param n number of observations.  If \code{length(n)>1}, the length is taken to be the number required
 #' @param kappa concentration paramter
 #' @param nu The circular variance, can be used in place of kappa
 #' @param Haar logical; if TRUE density is evaluated with respect to Haar
-#' @return \code{dvmises} gives the density, \code{rvmises} generates random deviates
+#' @param lower.tail logica; if TRUE probabilites are \eqn{P(X\le x)} otherwise, \eqn{P(X>x)}
+#' @return \code{dvmises} gives the density, \code{pvmises} gives the distribution function, \code{rvmises} generates random deviates
 #' @seealso \link{Angular-distributions} for other distributions in the rotations package
 
 NULL
 
 #' @rdname Mises
-#' @aliases Mises dvmises rvmises
+#' @aliases Mises dvmises pvmises rvmises
 #' @export
 
 dvmises <- function(r, kappa = 1, nu = NULL, Haar = T) {
@@ -240,7 +293,23 @@ dvmises <- function(r, kappa = 1, nu = NULL, Haar = T) {
 }
 
 #' @rdname Mises
-#' @aliases Mises dvmises rvmises
+#' @aliases Mises dvmises pvmises rvmises
+#' @export
+
+pvmises<-function(q,kappa=1,nu=NULL,lower.tail=TRUE){
+  
+  n<-length(q)
+  cdf<-rep(NA,n)
+  
+  for(i in 1:n)
+    cdf[i]<-max(min(integrate(dvmises,-pi,q[i],kappa,nu,Haar=F)$value,1),0)
+  
+  if(lower.tail) 
+    return(cdf) else return((1-cdf))
+}
+
+#' @rdname Mises
+#' @aliases Mises dvmises pvmises rvmises
 #' @export
 
 rvmises <- function(n, kappa = 1, nu = NULL) {

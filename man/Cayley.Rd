@@ -1,15 +1,18 @@
 \name{Cayley}
 \alias{Cayley}
 \alias{dcayley}
+\alias{pcayley}
 \alias{rcayley}
 \title{The Symmetric Cayley Distribution}
 \usage{
   dcayley(r, kappa = 1, nu = NULL, Haar = TRUE)
 
+  pcayley(q, kappa = 1, nu = NULL, lower.tail = TRUE)
+
   rcayley(n, kappa = 1, nu = NULL)
 }
 \arguments{
-  \item{r}{vector of quantiles}
+  \item{r,q}{vector of quantiles}
 
   \item{n}{number of observations.  If \code{length(n)>1},
   the length is taken to be the number required}
@@ -23,8 +26,9 @@
   respect to Haar}
 }
 \value{
-  \code{dcayley} gives the density, \code{rcayley}
-  generates random deviates
+  \code{dcayley} gives the density,\code{pcayley} gives the
+  distribution function, \code{rcayley} generates random
+  deviates
 }
 \description{
   Density and random generation for the Cayley distribution

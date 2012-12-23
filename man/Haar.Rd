@@ -4,7 +4,7 @@
 \alias{rhaar}
 \title{Haar Measure}
 \usage{
-  dhaar(r, lower.tail = TRUE)
+  dhaar(r)
 
   rhaar(n)
 }
@@ -13,9 +13,6 @@
 
   \item{n}{number of observations.  If \code{length(n)>1},
   the length is taken to be the number required}
-
-  \item{lower.tail}{logical; if TRUE probabilites are
-  \eqn{P(X\le x)}}
 }
 \value{
   \code{dhaar} gives the density, \code{rhaar} generates

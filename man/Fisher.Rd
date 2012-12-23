@@ -4,8 +4,7 @@
 \alias{rfisher}
 \title{The Matrix Fisher Distribution}
 \usage{
-  dfisher(r, kappa = 1, nu = NULL, Haar = TRUE,
-    lower.tail = TRUE)
+  dfisher(r, kappa = 1, nu = NULL, Haar = TRUE)
 
   rfisher(n, kappa = 1, nu = NULL)
 }
@@ -22,9 +21,6 @@
 
   \item{Haar}{logical; if TRUE density is evaluated with
   respect to Haar}
-
-  \item{lower.tail}{logical; if TRUE probabilites are
-  \eqn{P(X\le x)}}
 }
 \value{
   \code{dfisher} gives the density, \code{rfisher}

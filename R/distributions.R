@@ -47,7 +47,6 @@ rar <- function(n, f, M, ...) {
 #' @param kappa Concentration paramter
 #' @param nu The circular variance, can be used in place of kappa
 #' @param Haar logical; if TRUE density is evaluated with respect to Haar
-#' @param lower.tail logical; if TRUE probabilites are \eqn{P(X\le x)}
 #' @return \code{dcayley} gives the density, \code{rcayley} generates random deviates
 #' @seealso \link{Angular-distributions} for other distributions in the rotations package
 #' @cite Schaeben97 leon06
@@ -59,15 +58,15 @@ NULL
 #' @aliases Cayley rcayley dcayley
 #' @export
 
-dcayley <- function(r, kappa = 1, nu = NULL, Haar = TRUE, lower.tail=TRUE) {
+dcayley <- function(r, kappa = 1, nu = NULL, Haar = TRUE) {
   
   if(!is.null(nu))
     kappa <- cayley_kappa(nu)
   
  	den <- 0.5 * gamma(kappa + 2)/(sqrt(pi) * 2^kappa * gamma(kappa + 0.5)) * (1 + cos(r))^kappa * (1 - cos(r))
   
-  if(!lower.tail)
-  	den<-1-den
+  #if(!lower.tail)
+  #	den<-1-den
   
   if (Haar) 
     return(den/(1 - cos(r))) else return(den)
@@ -110,7 +109,6 @@ rcayley <- function(n, kappa = 1, nu = NULL) {
 #' @param kappa concentration paramter
 #' @param nu circular variance, can be used in place of kappa
 #' @param Haar logical; if TRUE density is evaluated with respect to Haar
-#' @param lower.tail logical; if TRUE probabilites are \eqn{P(X\le x)}
 #' @return \code{dfisher} gives the density, \code{rfisher} generates random deviates
 #' @seealso \link{Angular-distributions} for other distributions in the rotations package
 
@@ -120,7 +118,7 @@ NULL
 #' @aliases Fisher dfisher rfisher
 #' @export
 
-dfisher <- function(r, kappa = 1, nu = NULL, Haar = TRUE, lower.tail=TRUE) {
+dfisher <- function(r, kappa = 1, nu = NULL, Haar = TRUE) {
   
   if(!is.null(nu))
     kappa <- fisher_kappa(nu)
@@ -130,8 +128,8 @@ dfisher <- function(r, kappa = 1, nu = NULL, Haar = TRUE, lower.tail=TRUE) {
   
  	den <- exp(2 * kappa * cos(r)) * (1 - cos(r))/(2 * pi * (besselI(2 * kappa, 0) - besselI(2 * kappa, 1)))
   
-  if(!lower.tail)
-  	den<-1-den
+  #if(!lower.tail)
+  #	den<-1-den
   
   if (Haar) 
     return(den/(1 - cos(r))) else return(den)
@@ -169,7 +167,6 @@ rfisher <- function(n, kappa = 1, nu = NULL) {
 #' @usage rhaar(n)
 #' @param r Where the density is being evaluated
 #' @param n number of observations.  If \code{length(n)>1}, the length is taken to be the number required
-#' @param lower.tail logical; if TRUE probabilites are \eqn{P(X\le x)}
 #' @return \code{dhaar} gives the density, \code{rhaar} generates random deviates
 #' @seealso \link{Angular-distributions} for other distributions in the rotations package
 
@@ -179,11 +176,11 @@ NULL
 #' @aliases Haar dhaar rhaar
 #' @export
 
-dhaar <- function(r, lower.tail = TRUE){
+dhaar <- function(r){
 	
 	den <-(1 - cos(r))/(2 * pi)
 	
-	if(lower.tail) return(den) else return(1-den)
+	return(den)
 } 
 
 #' @rdname Haar
@@ -216,7 +213,6 @@ rhaar<-function(n){
 #' @param kappa concentration paramter
 #' @param nu The circular variance, can be used in place of kappa
 #' @param Haar logical; if TRUE density is evaluated with respect to Haar
-#' @param lower.tail logical; if TRUE probabilites are \eqn{P(X\le x)}
 #' @return \code{dvmises} gives the density, \code{rvmises} generates random deviates
 #' @seealso \link{Angular-distributions} for other distributions in the rotations package
 
@@ -226,15 +222,15 @@ NULL
 #' @aliases Mises dvmises rvmises
 #' @export
 
-dvmises <- function(r, kappa = 1, nu = NULL, Haar = T, lower.tail=TRUE) {
+dvmises <- function(r, kappa = 1, nu = NULL, Haar = T) {
   
   if(!is.null(nu))
     kappa <- vmises_kappa(nu)
   
   den <- 1/(2 * pi * besselI(kappa, 0)) * exp(kappa * cos(r))
   
-  if(!lower.tail)
-  	den<-1-den
+  #if(!lower.tail)
+  #	den<-1-den
   
   if (Haar) {
     return(den/(1 - cos(r)))
@@ -289,4 +285,27 @@ rvmises <- function(n, kappa = 1, nu = NULL) {
     }
   }
   return(theta)
+}
+
+
+
+#' UARS density function
+#' 
+#' Evaluate the UARS density with a given angular distribution.
+#' 
+#' @param o Value at which to evaluate the UARS density
+#' @param S principal direction of the distribution
+#' @param kappa concentration of the distribution
+#' @param c Circular distribution, choices: 'dcayley', 'dfisher', 'dhaar' and 'dvmises'
+#' @return density value at o
+#' @export
+
+duars<-function(o,S=diag(3),kappa,c,...){
+	
+	o<-matrix(o,3,3)
+	trStO<-sum(diag(t(S)%*%o))
+	r<-acos(.5*(trStO-1))
+	cr<-c(r,kappa,...)
+	den<-4*pi*cr/(3-trStO)
+	return(den)
 }

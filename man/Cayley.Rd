@@ -4,8 +4,7 @@
 \alias{rcayley}
 \title{The Symmetric Cayley Distribution}
 \usage{
-  dcayley(r, kappa = 1, nu = NULL, Haar = TRUE,
-    lower.tail = TRUE)
+  dcayley(r, kappa = 1, nu = NULL, Haar = TRUE)
 
   rcayley(n, kappa = 1, nu = NULL)
 }
@@ -22,9 +21,6 @@
 
   \item{Haar}{logical; if TRUE density is evaluated with
   respect to Haar}
-
-  \item{lower.tail}{logical; if TRUE probabilites are
-  \eqn{P(X\le x)}}
 }
 \value{
   \code{dcayley} gives the density, \code{rcayley}

@@ -296,16 +296,38 @@ rvmises <- function(n, kappa = 1, nu = NULL) {
 #' @param o Value at which to evaluate the UARS density
 #' @param S principal direction of the distribution
 #' @param kappa concentration of the distribution
-#' @param c Circular distribution, choices: 'dcayley', 'dfisher', 'dhaar' and 'dvmises'
+#' @param dangle The function to evaulate the angles from: e.g. dcayley, dvmises, dfisher, dhaar
+#' @param ... additional arguments passed to the angular distribution
 #' @return density value at o
 #' @export
 
-duars<-function(o,S=diag(3),kappa,c,...){
+duars<-function(o,S=diag(3),kappa=1,dangle,...){
 	
 	o<-matrix(o,3,3)
 	trStO<-sum(diag(t(S)%*%o))
 	r<-acos(.5*(trStO-1))
-	cr<-c(r,kappa,...)
+	cr<-dangle(r,kappa,...)
 	den<-4*pi*cr/(3-trStO)
 	return(den)
+}
+
+#' UARS random deviates
+#' 
+#' Produce random deviates from a chosen UARS distribution.
+#' 
+#' @param n number of observations. If \code{length(n)>1}, the length is taken to be n
+#' @param S principal direction of the distribution
+#' @param kappa concentration of the distribution
+#' @param rangle The function from which to simulate angles: e.g. rcayley, rvmises, rhaar, rfisher
+#' @param space Indicates the desired representation: matrix (SO3), quaternion (Q4) or Euler angles (EA)
+#' @param ... additional arguments passed to the angular function
+#' @return random deviates from the specified UARS distribution
+#' @export
+
+ruars<-function(n,S=diag(3),kappa=1,rangle,space="SO3",...){
+  
+  r<-rangle(n,kappa,...)
+  Rs<-genR(r,S,space)
+  
+  return(Rs)
 }

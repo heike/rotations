@@ -2,7 +2,7 @@
 \alias{genR}
 \title{Generate Rotations}
 \usage{
-  genR(r, S = diag(1, 3, 3), space = "SO3")
+  genR(r, S = diag(3), space = "SO3")
 }
 \arguments{
   \item{r}{vector of angles}

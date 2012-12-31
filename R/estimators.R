@@ -99,7 +99,7 @@ mean.Q4 <- function(Qs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
 	if(nrow(Qs)==1)
 		return(Qs)
 	
-  Rs<-as.SO3(t(apply(Qs,1,SO3.Q4)))
+	Rs<-SO3(Qs)
   
   R<-mean(Rs,type,epsilon,maxIter)
   
@@ -139,7 +139,7 @@ mean.EA <- function(EAs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
 	if(nrow(EAs)==1)
 		return(EAs)
 	
-  Rs<-as.SO3(t(apply(EAs,1,SO3.EA)))
+  Rs<-SO3(EAs)
   
   R<-mean(Rs,type,epsilon,maxIter)
   
@@ -236,13 +236,13 @@ median.SO3 <- function(Rs, type = "projected", epsilon = 1e-05, maxIter = 2000, 
 
 median.Q4 <- function(Qs, type = "projected", epsilon = 1e-05, maxIter = 2000, na.rm=FALSE) {
 	
-	if(ncol(Qs)<4)
+	if((length(Qs)/4)%%1!=0)
 		stop("Input must be a n-by-4 Q4 object")
 	
-	if(nrow(Qs)==1)
-		return(Rs)
+	if(length(Qs)==4)
+		return(Qs)
 
-  Rs<-t(apply(Qs,1,SO3.Q4))
+  Rs<-SO3(Qs)
   
   R<-median.SO3(Rs,type,epsilon,maxIter)
   

@@ -266,11 +266,13 @@ axis2.Q4 <- function(q){
   
   theta<-angle(q)
   
-  if(theta==0){
-    u <- rep(0,3)
-  }else{
-    u <- q[2:4]/sin(theta/2)
-  }
+  u <- q[,2:4]/sin(theta/2)
+
+	if(any(is.infinite(u))){
+		infs<-which(is.infinite(u))
+		u[infs]<-0
+	}  
+  
   return(u)
 }
 

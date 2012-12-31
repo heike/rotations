@@ -72,7 +72,7 @@ EA.default <- function(U,theta){
 
 EA.SO3 <- function(R){  
   
-	R<-matrix(R,3,3)
+	R<-formatSO3(R)
 	trouble<-FALSE
   zeta<-sqrt(1-R[3,3]^2)
   
@@ -351,9 +351,10 @@ SO3.EA <- function(eur) {
 
 SO3.Q4<-function(q){
   
-  if((sum(q^2)-1)>10e-10){
+  if(any((rowSums(q^2)-1)>10e-10)){
     warning("Unit quaternions required.  Input was normalized.")
-    q<-as.Q4(q/sqrt(sum(q^2)))
+    nonq<-which((rowSums(q^2)-1)>10e-10)
+    q[nonq,]<-as.Q4(q[nonq,]/sqrt(rowSums(q[nonq,]^2)))
   }else{
   	q<-as.Q4(q)
   }

@@ -1,8 +1,8 @@
-\name{duars}
-\alias{duars}
-\title{UARS density function}
+\name{puars}
+\alias{puars}
+\title{UARS distribution function}
 \usage{
-  duars(os, S = diag(3), kappa = 1, dangle, ...)
+  puars(os, S = diag(3), kappa = 1, pangle = NULL, ...)
 }
 \arguments{
   \item{os}{Value at which to evaluate the UARS density}
@@ -12,16 +12,17 @@
   \item{kappa}{concentration of the distribution}
 
   \item{dangle}{The function to evaulate the angles from:
-  e.g. dcayley, dvmises, dfisher, dhaar}
+  e.g. dcayley, dvmises, dfisher, dhaar.  If left at NULL,
+  the empirical CDF is used}
 
   \item{...}{additional arguments passed to the angular
   distribution}
 }
 \value{
-  density value at o
+  cdf evaulated at each os value
 }
 \description{
-  Evaluate the UARS density with a given angular
-  distribution.
+  Evaluate the UARS distributions fuction with a given
+  angular distribution
 }
 

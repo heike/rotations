@@ -190,8 +190,15 @@ Q4<-function(U,...){
 #' @family Q4
 
 Q4.default <- function(U,theta){
-  x <- c(cos(theta/2), sin(theta/2) * U)
-  class(x)<-"Q4"
+	n<-length(theta)
+	
+	if(n!=length(U)/3){
+		stop("A different number of angles and axis were supplied.")
+	}
+	
+	x <- cbind(cos(theta/2), sin(theta/2) * U)
+
+	class(x)<-"Q4"
   return(x)
 }
 
@@ -204,10 +211,11 @@ Q4.default <- function(U,theta){
 
 Q4.SO3 <- function(R) {
   
-  theta <- angle(R)
-  u <- axis2(R)
-  x <- Q4(u,theta)
-  
+	R<-formatSO3(R)
+ 	theta <- angle(R)
+ 	u <- axis2(R)
+ 	x <- Q4(u,theta)
+
   return(x)
 }
 
@@ -270,27 +278,36 @@ SO3 <- function(U,...){
 #' @family SO3
 
 SO3.default <- function(U, theta=NULL) {
-  # based on Rodrigues formula
   
+	n<-length(U)/3
 	
-  ulen<-sqrt(sum(U^2))
+	if(n%%1!=0)
+		stop("This functions only works in three dimensions.")	
+	
+	U<-matrix(U,n,3)
+	
+	ulen<-sqrt(rowSums(U^2)) 
   
   if(is.null(theta)){ 
-  	theta<-ulen%%2*pi
-  	if(theta>pi)
-  		theta<-2*pi-theta
+  	theta<-ulen%%(2*pi)
+  	
+  	#if(theta>pi)
+  	#	theta<-2*pi-theta
   }
-  
-  if(ulen!=0){
-    U <- U/ulen
+
+	R<-matrix(NA,n,9)
+	
+  for(i in 1:n){
+  	
+  	if(ulen[i]!=0)
+  		U[i,]<-U[i,]/ulen[i]
+  	
+ 		P <- U[i,] %*% t(U[i,])
+   
+  	R[i,] <- P + (diag(3) - P) * cos(theta[i]) + eskew(U[i,]) * sin(theta[i])
   }
-  
-  P <- U %*% t(U)
-  
-  id <- diag(3)
-  
-  R <- P + (id - P) * cos(theta) + eskew(U) * sin(theta)
-  class(R) <- "SO3"
+ 		
+ 	class(R) <- "SO3"
   return(R)
 }
 

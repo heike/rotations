@@ -362,7 +362,7 @@ rvmises <- function(n, kappa = 1, nu = NULL) {
 #' 
 #' Evaluate the UARS density with a given angular distribution.
 #' 
-#' @param o Value at which to evaluate the UARS density
+#' @param os Value at which to evaluate the UARS density
 #' @param S principal direction of the distribution
 #' @param kappa concentration of the distribution
 #' @param dangle The function to evaulate the angles from: e.g. dcayley, dvmises, dfisher, dhaar
@@ -370,16 +370,54 @@ rvmises <- function(n, kappa = 1, nu = NULL) {
 #' @return density value at o
 #' @export
 
-duars<-function(o,S=diag(3),kappa=1,dangle,...){
+duars<-function(os,S=diag(3),kappa=1,dangle,...){
 	
-	o<-matrix(o,3,3)
-	trStO<-sum(diag(t(S)%*%o))
-	r<-acos(.5*(trStO-1))
-	cr<-dangle(r,kappa,...)
+	os<-formatSO3(os)
+	rs<-angle(os)
+	cr<-dangle(rs,kappa,...)	
+	trStO<-2*cos(rs)+1
+	
 	den<-4*pi*cr/(3-trStO)
+	
 	return(den)
 }
 
+#' UARS distribution function
+#' 
+#' Evaluate the UARS distributions fuction with a given angular distribution
+#' 
+#' @param os Value at which to evaluate the UARS density
+#' @param S principal direction of the distribution
+#' @param kappa concentration of the distribution
+#' @param dangle The function to evaulate the angles from: e.g. dcayley, dvmises, dfisher, dhaar.  If left at NULL, the empirical CDF is used
+#' @param ... additional arguments passed to the angular distribution
+#' @return cdf evaulated at each os value
+
+puars<-function(os,S=diag(3),kappa=1,pangle=NULL,...){
+	
+	#This is not a true CDF, but it will work for now
+	os<-formatSO3(os)
+	rs<-angle(os)
+	
+	if(is.null(pangle)){
+		
+		n<-length(rs)
+		cr<-rep(0,n)
+		
+		for(i in 1:length(rs))
+			cr[i]<-length(which(rs<=rs[i]))/n
+		
+	}else{		
+		cr<-pangle(rs,kappa,...)
+	}
+	
+	#trStO<-2*cos(rs)+1
+	
+	#den<-4*pi*cr/(3-trStO)
+	
+	return(cr)
+	
+}
 #' UARS random deviates
 #' 
 #' Produce random deviates from a chosen UARS distribution.

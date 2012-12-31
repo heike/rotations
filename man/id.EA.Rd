@@ -10,9 +10,9 @@
   Identity in EA space
 }
 \seealso{
-  Other EA: \code{\link{EA}}, \code{\link{EA-class}},
-  \code{\link{EA.Q4}}, \code{\link{EA.SO3}},
-  \code{\link{EA.default}}, \code{\link{as.EA}}
+  Other EA: \code{\link{as.EA}}, \code{\link{EA}},
+  \code{\link{EA-class}}, \code{\link{EA.default}},
+  \code{\link{EA.Q4}}, \code{\link{EA.SO3}}
 }
 \keyword{datasets}
 

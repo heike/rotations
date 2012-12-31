@@ -392,3 +392,11 @@ weighted.mean.Q4 <- function(Qs, w, type = "projected", epsilon = 1e-05, maxIter
 	return(Q4.SO3(R))
 	
 }
+
+
+trimmed.mean.SO3<-function(Rs,alpha=0.1){
+	
+	n<-nrow(Rs)
+	ps<-puars(Rs)
+	
+}

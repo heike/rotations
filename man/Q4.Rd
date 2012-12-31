@@ -1,8 +1,8 @@
 \name{Q4}
 \alias{Q4}
+\alias{Q4.default}
 \alias{Q4.EA}
 \alias{Q4.SO3}
-\alias{Q4.default}
 \title{Quaternions}
 \usage{
   Q4(U, ...)
@@ -39,16 +39,16 @@
   other form, e.g. a matrix in SO(3) or Euler angles.
 }
 \seealso{
-  Other Q4: \code{\link{Q4-class}}, \code{\link{as.Q4}},
-  \code{\link{id.Q4}}
+  Other Q4: \code{\link{as.Q4}}, \code{\link{id.Q4}},
+  \code{\link{Q4-class}}
 
-  Other Q4: \code{\link{Q4-class}}, \code{\link{as.Q4}},
-  \code{\link{id.Q4}}
+  Other Q4: \code{\link{as.Q4}}, \code{\link{id.Q4}},
+  \code{\link{Q4-class}}
 
-  Other Q4: \code{\link{Q4-class}}, \code{\link{as.Q4}},
-  \code{\link{id.Q4}}
+  Other Q4: \code{\link{as.Q4}}, \code{\link{id.Q4}},
+  \code{\link{Q4-class}}
 
-  Other Q4: \code{\link{Q4-class}}, \code{\link{as.Q4}},
-  \code{\link{id.Q4}}
+  Other Q4: \code{\link{as.Q4}}, \code{\link{id.Q4}},
+  \code{\link{Q4-class}}
 }
 

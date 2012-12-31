@@ -19,9 +19,9 @@ is.SO3(diag(1,3,3))
 is.SO3(1:9)
 }
 \seealso{
-  Other SO3: \code{\link{SO3}}, \code{\link{SO3-class}},
-  \code{\link{SO3.EA}}, \code{\link{SO3.Q4}},
-  \code{\link{SO3.default}}, \code{\link{as.SO3}},
-  \code{\link{id.SO3}}
+  Other SO3: \code{\link{as.SO3}}, \code{\link{id.SO3}},
+  \code{\link{SO3}}, \code{\link{SO3-class}},
+  \code{\link{SO3.default}}, \code{\link{SO3.EA}},
+  \code{\link{SO3.Q4}}
 }
 

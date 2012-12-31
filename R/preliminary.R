@@ -165,16 +165,21 @@ angle<-function(Rs){
 #' @S3method angle SO3
 
 angle.SO3 <- function(Rs){
-  ##  trace of a rotation matrix has to be between -1 and 3. If not, this is due
-  ## to numerical inconcistencies, that we have to fix here
-  tr<-Rs[1]+Rs[5]+Rs[9]
-  eps <- 10^-3
-  
-if (tr > 3+eps) print(sprintf("Warning: trace too large (> 3.0): %f ", tr))
-  if (tr < -1-eps) print(sprintf("Warning: trace too small (< -1.0): %f ", tr))
-#  stopifnot(tr<3+eps, tr>-1-eps)
-  tr <- max(min(3, tr), -1)
-  
+	
+	Rs<-formatSO3(Rs)
+	n<-nrow(Rs)
+	tr<-rep(0,n)
+	eps <- 10^-3
+	for(i in 1:n){
+  	##  trace of a rotation matrix has to be between -1 and 3. If not, this is due
+  	## to numerical inconcistencies, that we have to fix here
+  	tr[i]<-Rs[i,1]+Rs[i,5]+Rs[i,9]
+
+		if (tr[i] > 3+eps) print(sprintf("Warning: trace too large (> 3.0): %f ", tr))
+  		if (tr[i] < -1-eps) print(sprintf("Warning: trace too small (< -1.0): %f ", tr))
+		#  stopifnot(tr<3+eps, tr>-1-eps)
+  	tr[i] <- max(min(3, tr[i]), -1)
+	}
   return(acos((tr-1)/2))
 }
 
@@ -185,8 +190,14 @@ if (tr > 3+eps) print(sprintf("Warning: trace too large (> 3.0): %f ", tr))
 #' @S3method angle Q4
 
 angle.Q4 <- function(Qs){
-  theta<-2*acos(Qs[1])
-  return(theta)
+	
+	n<-nrow(Qs)
+	theta<-rep(0,n)
+	
+	for(i in 1:n){
+	  theta[i]<-2*acos(Qs[i,1])
+	}
+	 return(theta)
 }
 
 #' @return \code{NULL}
@@ -230,13 +241,18 @@ axis2<-function(R){
 #' @S3method axis2 SO3
 
 axis2.SO3<-function(R){
-  # based on Rodrigues formula: R - t(R)
-  R<-matrix(R,3,3)
   
-  X <- R - t(R)
-  u <- rev(X[upper.tri(X)])*c(-1,1,-1)
-  
-  return(u/sqrt(sum(u^2))) # will be trouble, if R is symmetric, i.e. id,  .... 
+	R<-formatSO3(R)
+  n<-nrow(R)
+	u<-matrix(NA,n,3)
+	
+	for(i in 1:n){
+		Ri<-matrix(R[i,],3,3)
+  	X <- Ri - t(Ri)
+  	u[i,] <- rev(X[upper.tri(X)])*c(-1,1,-1)
+		u[i,]<-u[i,]/sqrt(sum(u[i,]^2))
+	}
+  return(u) # will be trouble, if R is symmetric, i.e. id,  .... 
 
 }
 
@@ -525,6 +541,16 @@ vecNorm <- function(x, S, ...) {
   return(norm(matrix(cenX, n, n), ...))
 }
 
-
+formatSO3<-function(Rs){
+	#This function will take input and format it to work with our functions
+	
+	if(length(Rs)%%9!=0)
+		stop("Data needs to have length divisible by 9.")
+	
+	if(length(Rs)==9)
+		return(as.SO3(matrix(Rs,1,9)))
+	else
+		return(as.SO3(Rs))
+}
 
 

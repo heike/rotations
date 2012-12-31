@@ -328,7 +328,7 @@ eskew <- function(U) {
 #' r<-rvmises(20,0.01)
 #' genR(r)
 
-genR <- function(r, S = diag(1, 3, 3), space='SO3') {
+genR <- function(r, S = diag(3), space='SO3') {
   
   if(!(space %in% c("SO3","Q4","EA")))
     stop("Incorrect space argument.  Options are: SO3, Q4 and EA. ")
@@ -357,7 +357,7 @@ genR <- function(r, S = diag(1, 3, 3), space='SO3') {
     
     if(space=="SO3"){
       
-      o[i,] <- as.vector(S %*% SO3(u, r[i]))
+      o[i,] <- as.vector(S %*% matrix(SO3(u, r[i]),3,3))
       
     }else if(space=="Q4"){
       
@@ -365,7 +365,7 @@ genR <- function(r, S = diag(1, 3, 3), space='SO3') {
       
     }else{
       
-      ea[i,] <- EA.SO3(S %*% SO3(u, r[i]))
+      ea[i,] <- EA.SO3(S %*% matrix(SO3(u, r[i]),3,3))
     }
   }
   if(space=="SO3"){

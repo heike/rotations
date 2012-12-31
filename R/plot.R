@@ -1,7 +1,7 @@
 library(ggplot2)
 require(grid)
 # set origin of concentric circles
-origin <- SO3(c(1,-1,0), pi/16)
+origin <- matrix(SO3(c(1,-1,0), pi/16),3,3)
   
 # construct helper grid lines for sphere
 
@@ -30,7 +30,7 @@ circles.2$ID <- as.numeric(factor(df$phi))+9
 circles <- rbind(circles, circles.2)
 
 
-setOrigin <- function(origin = SO3(c(1,-1,0), pi/8)) {
+setOrigin <- function(origin = matrix(SO3(c(1,-1,0), pi/8),3,3)) {
   origin <<- origin
   pcircles <- data.frame(as.matrix(circles[,1:3]) %*% origin)
   pcircles
@@ -39,7 +39,7 @@ setOrigin <- function(origin = SO3(c(1,-1,0), pi/8)) {
 
 # this is the coordinate system and should be fixed, no matter what column of the rotation matrices is shown
 
-base <- ggplot(aes(x=X1, y=X2), data=setOrigin(SO3(c(1,-1,0), pi/16))) + 
+base <- ggplot(aes(x=X1, y=X2), data=setOrigin(matrix(SO3(c(1,-1,0), pi/16),3,3))) + 
   coord_equal() + 
   geom_point(aes(alpha=X3), size=0.6, colour="grey65") + 
   scale_alpha(range=c(0,0.8),  guide="none") + 
@@ -55,7 +55,7 @@ base <- ggplot(aes(x=X1, y=X2), data=setOrigin(SO3(c(1,-1,0), pi/16))) +
 
 
 roteye <- function(origin, center, column=1) {
-  R <- list(SO3(c(0,1,0), pi/2), SO3(c(1,0,0), -pi/2), diag(c(1,1,1)))[[column]]
+  R <- list(matrix(SO3(c(0,1,0), pi/2),3,3), matrix(SO3(c(1,0,0), -pi/2),3,3), diag(c(1,1,1)))[[column]]
   rot <- center %*% R %*% origin 
 }
 

@@ -10,7 +10,7 @@
   \method{dist}{SO3} (R1, R2 = id.SO3,
     method = "projected", p = 1)
 
-  \method{dist}{Q4} (R1, R2 = id.Q4, method = "projected",
+  \method{dist}{Q4} (Q1, Q2 = id.Q4, method = "projected",
     p = 1)
 
   \method{dist}{EA} (R1, R2 = id.EA, method = "projected",

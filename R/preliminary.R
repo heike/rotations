@@ -105,6 +105,8 @@ dist.SO3 <- function(R1, R2=id.SO3, method='projected' , p=1) {
 dist.Q4 <- function(Q1, Q2=id.Q4 ,method='projected', p=1) {
   #Q1 <- R1
   #Q2 <- R2
+  Q1<-formatQ4(Q1)
+  Q2<-formatQ4(Q2)
   
   if(method=='intrinsic'){
     
@@ -116,7 +118,7 @@ dist.Q4 <- function(Q1, Q2=id.Q4 ,method='projected', p=1) {
     
     R1<-SO3.Q4(Q1)
     R2<-SO3.Q4(Q2)
-    R2<-matrix(R2,nrow(R1),9)
+    R2<-matrix(R2,nrow(R1),9,byrow=T)
     q4dist<-sqrt(rowSums((R1-R2)^2))^p
     
   }else{
@@ -563,4 +565,12 @@ formatSO3<-function(Rs){
 		return(as.SO3(Rs))
 }
 
-
+formatQ4<-function(Qs){
+  if(length(Qs)%%4!=0)
+    stop("Data needs to have length divisible by 4.")
+  
+  if(length(Qs)==4)
+    return(as.Q4(matrix(Qs,1,4)))
+  else
+    return(as.Q4(Qs))
+}

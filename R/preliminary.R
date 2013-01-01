@@ -201,6 +201,7 @@ angle.SO3 <- function(Rs){
 
 angle.Q4 <- function(Qs){
 	
+  Qs<-formatQ4(Qs)
 	n<-nrow(Qs)
 	theta<-rep(0,n)
 	
@@ -274,6 +275,7 @@ axis2.SO3<-function(R){
 
 axis2.Q4 <- function(q){
   
+  q<-formatQ4(q)
   theta<-angle(q)
   
   u <- q[,2:4]/sin(theta/2)
@@ -507,7 +509,7 @@ sum_dist<-function(Rs, S = genR(0, space=class(Rs)), method='projected', p=1){
 
 sum_dist.SO3 <- function(Rs, S = id.SO3, method='projected', p=1) {
 
-  return(sum(apply(Rs, 1, dist.SO3 , R2 = S, method=method, p=p)))
+  return(sum(dist(Rs,S, method=method, p=p)))
   
 }
 #' @return \code{NULL}
@@ -518,7 +520,7 @@ sum_dist.SO3 <- function(Rs, S = id.SO3, method='projected', p=1) {
 
 sum_dist.EA <- function(EAs, S = id.EA, method='projected', p=1) {
   
-  return(sum(apply(EAs, 1, dist.EA , EA2 = S, method=method, p=p)))
+  return(sum(dist(EAs,S, method=method, p=p)))
   
 }
 
@@ -530,7 +532,7 @@ sum_dist.EA <- function(EAs, S = id.EA, method='projected', p=1) {
 
 sum_dist.Q4 <- function(Qs, S = id.Q4, method='projected', p=1) {
   
-  return(sum(apply(Qs, 1, dist.Q4 , Q2 = S, method=method, p=p)))
+  return(sum(dist(Qs,S, method=method, p=p)))
   
 }
 

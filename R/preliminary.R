@@ -71,16 +71,22 @@ dist<-function(x,...){
 
 dist.SO3 <- function(R1, R2=id.SO3, method='projected' , p=1) {
   
-  R1<-as.SO3(matrix(R1,3,3))
-  R2<-as.SO3(matrix(R2,3,3))
+  R1<-formatSO3(R1)
   
   if(method=='projected'){
     
-    so3dist<-norm(R1-R2,type='F')^p
+    R2<-matrix(R2,nrow(R1),9,byrow=T)
+    so3dist<-sqrt(rowSums((R1-R2)^2))^p
     
   }else if(method=='intrinsic'){
     
-    so3dist<-angle(as.SO3(t(R1)%*%R2))^p
+    R2<-matrix(R2,3,3)
+    
+    for(i in 1:nrow(R1)){
+      R1[i,]<-t(matrix(R1[i,],3,3))%*%R2
+    }
+    
+    so3dist<-angle(as.SO3(R1))^p
     
   }else{
     stop("Incorrect usage of method argument.  Please choose intrinsic or projected.")
@@ -96,20 +102,22 @@ dist.SO3 <- function(R1, R2=id.SO3, method='projected' , p=1) {
 #' @method dist Q4
 #' @S3method dist Q4
 
-dist.Q4 <- function(R1, R2=id.Q4 ,method='projected', p=1) {
-  Q1 <- R1
-  Q2 <- R2
+dist.Q4 <- function(Q1, Q2=id.Q4 ,method='projected', p=1) {
+  #Q1 <- R1
+  #Q2 <- R2
   
   if(method=='intrinsic'){
     
-    cp <- sum(Q1*Q2)
+    Q2<-matrix(Q2,nrow(Q1),4,byrow=T)
+    cp <- rowSums(Q1*Q2)
     q4dist<-acos(2*cp*cp-1)^p
     
   }else if(method=='projected'){
     
     R1<-SO3.Q4(Q1)
     R2<-SO3.Q4(Q2)
-    q4dist<-norm(R1-R2,type='F')^p
+    R2<-matrix(R2,nrow(R1),9)
+    q4dist<-sqrt(rowSums((R1-R2)^2))^p
     
   }else{
     stop("Incorrect usage of method argument.  Please choose intrinsic or projected.")
@@ -268,8 +276,8 @@ axis2.Q4 <- function(q){
   
   u <- q[,2:4]/sin(theta/2)
 
-	if(any(is.infinite(u))){
-		infs<-which(is.infinite(u))
+	if(any(is.infinite(u)|is.nan(u))){
+		infs<-which(is.infinite(u)|is.nan(u))
 		u[infs]<-0
 	}  
   

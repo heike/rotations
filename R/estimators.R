@@ -381,6 +381,8 @@ weighted.mean.Q4 <- function(Qs, w, type = "projected", epsilon = 1e-05, maxIter
 trimmed.mean.SO3<-function(Rs,alpha=0.1){
 	
 	n<-nrow(Rs)
+	Shat<-median(Rs)
+	cRs<-centeringSO3(Rs,Shat)
 	ps<-puars(Rs)
 	
 }

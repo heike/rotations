@@ -423,15 +423,15 @@ puars<-function(os,S=diag(3),kappa=1,pangle=NULL,...){
 #' Produce random deviates from a chosen UARS distribution.
 #' 
 #' @param n number of observations. If \code{length(n)>1}, the length is taken to be n
+#' @param rangle The function from which to simulate angles: e.g. rcayley, rvmises, rhaar, rfisher
 #' @param S principal direction of the distribution
 #' @param kappa concentration of the distribution
-#' @param rangle The function from which to simulate angles: e.g. rcayley, rvmises, rhaar, rfisher
 #' @param space Indicates the desired representation: matrix (SO3), quaternion (Q4) or Euler angles (EA)
 #' @param ... additional arguments passed to the angular function
 #' @return random deviates from the specified UARS distribution
 #' @export
 
-ruars<-function(n,S=diag(3),kappa=1,rangle,space="SO3",...){
+ruars<-function(n,rangle,S=diag(3),kappa=1,space="SO3",...){
   
   r<-rangle(n,kappa,...)
   Rs<-genR(r,S,space)

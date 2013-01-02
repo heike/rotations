@@ -468,7 +468,7 @@ log.SO3 <- function(R) {
 
 project.SO3 <- function(M) {
   
-	M<-formatSO3(M)
+	#M<-formatSO3(M)
 	M<-matrix(M,3,3)
   d <- svd(t(M) %*% M)
   u <- d$u
@@ -557,20 +557,34 @@ vecNorm <- function(x, S, ...) {
   return(norm(matrix(cenX, n, n), ...))
 }
 
+centeringSO3<-function(Rs,S){
+	#This takes a set of observations in SO3 and centers them around S
+	
+	Rs<-formatSO3(Rs)
+	S<-matrix(formatSO3(S),3,3)
+	
+	for(i in 1:nrow(Rs)){
+		Rs[i,]<-t(S)%*%matrix(Rs[i,],3,3)
+	}
+	return(as.SO3(Rs))
+}
+
 formatSO3<-function(Rs){
 	#This function will take input and format it to work with our functions
 	#It also checks that the data is actually SO3 and of appropriate dimension
 	
-	if(length(Rs)%%9!=0)
+	len<-length(Rs)
+	if(len%%9!=0)
 		stop("Data needs to have length divisible by 9.")
+	
+	Rs<-matrix(Rs,len/9,9)
 	
 	if (!all(apply(Rs, 1, is.SO3))) 
 		warning("At least one of the given observations is not in SO(3).  Use result with caution.")
 	
-	if(length(Rs)==9)
-		return(as.SO3(matrix(Rs,1,9)))
-	else
-		return(as.SO3(Rs))
+	
+	return(as.SO3(Rs))
+
 }
 
 formatQ4<-function(Qs){

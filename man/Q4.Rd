@@ -7,7 +7,7 @@
 \usage{
   Q4(U, ...)
 
-  \method{Q4}{default} (U, theta)
+  \method{Q4}{default} (U, theta = NULL)
 
   \method{Q4}{SO3} (R)
 

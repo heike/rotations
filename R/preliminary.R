@@ -341,7 +341,7 @@ eskew <- function(U) {
 #' r<-rvmises(20,0.01)
 #' genR(r)
 
-genR <- function(r, S = diag(3), space='SO3') {
+genR <- function(r, S = id.SO3, space='SO3') {
   
   if(!(space %in% c("SO3","Q4","EA")))
     stop("Incorrect space argument.  Options are: SO3, Q4 and EA. ")
@@ -352,37 +352,35 @@ genR <- function(r, S = diag(3), space='SO3') {
   n<-length(r)
   
   # Generate angles theta from a uniform distribution from 0 to pi
+  
   theta <- acos(runif(n, -1, 1))
   
-  # Generate angles phi from a uniform distribution from 0 to 2*pi
-  phi <- runif(n, -pi, pi)
+  # Generate angles phi from a uniform distribution from -pi to pi
   
+  phi <- runif(n, -pi, pi)
   u <- matrix(c(sin(theta) * cos(phi), sin(theta) * sin(phi), cos(theta)),length(r),3)
   
   if(space=="SO3"){
   	
-  	o2<-SO3(u,r)
-  	o2<-centeringSO3(o2,t(S))
+  	o<-SO3(u,r)
+  	o<-centeringSO3(o,t(S))
   	
   	class(o) <- "SO3"
   	return(o)
   	
   }else if(space=="Q4"){
   	
-  	q <- matrix(NA, length(r), 4)
-  	
-  	for(i in 1:n)
-  		q[i,] <- c(cos(r[i]/2),sin(r[i]/2)*S%*%u[i,])
+  	q<-matrix(c(cos(r/2),sin(r/2)*u),n,4)
+  	q<-centeringQ4(q,t(S))
   	
   	class(q)<-"Q4"
   	return(q)
   	
   }else{
   	
-  	ea <- matrix(NA, length(r), 3)
-  	
-  	for(i in 1:n)
-  		ea[i,] <- EA.SO3(S %*% matrix(SO3(u[i,], r[i]),3,3))
+  	o<-SO3(u,r)
+  	o<-centeringSO3(o,t(S))
+  	ea<-EA.SO3(ea)
   	
   	class(ea)<-"EA"
   	return(ea)
@@ -562,6 +560,19 @@ centeringSO3<-function(Rs,S){
 		Rs[i,]<-t(S)%*%matrix(Rs[i,],3,3)
 	}
 	return(as.SO3(Rs))
+}
+
+centeringQ4<-function(Qs,S){
+	#This takes a set of observations in Q4 and centers them around S
+	Qs<-formatQ4(Qs)
+	S<-formatSO3(S)
+	S<-matrix(S,3,3)
+	
+	for(i in 1:nrow(Qs)){
+		Qs[i,2:4]<-t(S)%*%Qs[i,2:4]
+	}
+	
+	return(as.Q4(Qs))
 }
 
 formatSO3<-function(Rs){

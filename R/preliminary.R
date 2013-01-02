@@ -351,14 +351,6 @@ genR <- function(r, S = diag(3), space='SO3') {
   
   n<-length(r)
   
-  if(space=="SO3")
-    o <- matrix(NA, length(r), 9)
-  else if(space=="Q4")
-    q <- matrix(NA, length(r), 4)
-  else
-    ea <- matrix(NA, length(r), 3)
-
-  
   # Generate angles theta from a uniform distribution from 0 to pi
   theta <- acos(runif(n, -1, 1))
   
@@ -369,13 +361,15 @@ genR <- function(r, S = diag(3), space='SO3') {
   
   if(space=="SO3"){
   	
-  	for(i in 1:n)
-  		o[i,] <- as.vector(S %*% matrix(SO3(u[i,], r[i]),3,3))
+  	o2<-SO3(u,r)
+  	o2<-centeringSO3(o2,t(S))
   	
   	class(o) <- "SO3"
   	return(o)
   	
   }else if(space=="Q4"){
+  	
+  	q <- matrix(NA, length(r), 4)
   	
   	for(i in 1:n)
   		q[i,] <- c(cos(r[i]/2),sin(r[i]/2)*S%*%u[i,])
@@ -384,6 +378,8 @@ genR <- function(r, S = diag(3), space='SO3') {
   	return(q)
   	
   }else{
+  	
+  	ea <- matrix(NA, length(r), 3)
   	
   	for(i in 1:n)
   		ea[i,] <- EA.SO3(S %*% matrix(SO3(u[i,], r[i]),3,3))
@@ -468,7 +464,6 @@ log.SO3 <- function(R) {
 
 project.SO3 <- function(M) {
   
-	#M<-formatSO3(M)
 	M<-matrix(M,3,3)
   d <- svd(t(M) %*% M)
   u <- d$u

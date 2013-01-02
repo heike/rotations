@@ -24,20 +24,15 @@
 
 mean.SO3 <- function(Rs, type = "projected", epsilon = 1e-05, maxIter = 2000, ...) {
 	
-	if(ncol(Rs)<9)
-		stop("Input must be a n-by-9 SO3 object")
+	Rs<-formatSO3(Rs)	
 	
 	if(nrow(Rs)==1)
 		return(Rs)
 	
-  if (!all(apply(Rs, 1, is.SO3))) 
-    warning("At least one of the observations is not in SO(3).  Use result with caution.")
-  
   if (!(type %in% c("projected", "intrinsic")))
     stop("type needs to be one of 'projected' or 'intrinsic'.")
   
   R <- project.SO3(matrix(colMeans(Rs), 3, 3))
-  
   
   if (type == "intrinsic") {
     n <- nrow(Rs)
@@ -93,8 +88,7 @@ mean.SO3 <- function(Rs, type = "projected", epsilon = 1e-05, maxIter = 2000, ..
 
 mean.Q4 <- function(Qs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
 	
-	if(ncol(Qs)<4)
-		stop("Input must be a n-by-4 Q4 object")
+	Qs<-formatQ4(Qs)
 	
 	if(nrow(Qs)==1)
 		return(Qs)
@@ -173,15 +167,11 @@ median<-function(x,...){
 
 median.SO3 <- function(Rs, type = "projected", epsilon = 1e-05, maxIter = 2000, na.rm=FALSE) {
   
-	if(ncol(Rs)<9)
-		stop("Input must be a n-by-9 SO3 object")
+	Rs<-formatSO3(Rs)
 	
 	if(nrow(Rs)==1)
 		return(Rs)
 	
-  if (!all(apply(Rs, 1, is.SO3))) 
-    warning("At least one of the given observations is not in SO(3).  Use result with caution.")
-  
   stopifnot(type %in% c("projected", "intrinsic"))
   
   S <- mean.SO3(Rs)
@@ -236,8 +226,7 @@ median.SO3 <- function(Rs, type = "projected", epsilon = 1e-05, maxIter = 2000, 
 
 median.Q4 <- function(Qs, type = "projected", epsilon = 1e-05, maxIter = 2000, na.rm=FALSE) {
 	
-	if((length(Qs)/4)%%1!=0)
-		stop("Input must be a n-by-4 Q4 object")
+	Qs<-formatQ4(Qs)
 	
 	if(length(Qs)==4)
 		return(Qs)
@@ -299,17 +288,13 @@ median.EA <- function(EAs, type = "projected", epsilon = 1e-05, maxIter = 2000, 
 
 weighted.mean.SO3 <- function(Rs, w, type = "projected", epsilon = 1e-05, maxIter = 2000, ...) {
 	
-	if(ncol(Rs)<9)
-		stop("Input must be a n-by-9 SO3 object")
+	Rs<-formatSO3(Rs)
 	
 	if(nrow(Rs)==1)
 		return(Rs)
 	
 	if(length(w)!=nrow(Rs))
 		stop("'Rs' and 'w' must have same length")
-	
-	if (!all(apply(Rs, 1, is.SO3))) 
-		warning("At least one of the observations is not in SO(3).  Use result with caution.")
 	
 	if (!(type %in% c("projected", "intrinsic")))
 		stop("type needs to be one of 'projected' or 'intrinsic'.")
@@ -379,8 +364,7 @@ weighted.mean.SO3 <- function(Rs, w, type = "projected", epsilon = 1e-05, maxIte
 
 weighted.mean.Q4 <- function(Qs, w, type = "projected", epsilon = 1e-05, maxIter = 2000) {
 	
-	if(ncol(Qs)<4)
-		stop("Input must be a n-by-4 Q4 object")
+	Qs<-formatQ4(Qs)
 	
 	if(nrow(Qs)==1)
 		return(Qs)

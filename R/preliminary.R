@@ -439,7 +439,8 @@ log.SO3 <- function(R) {
     stop("Input has to be of class SO(3).")
   }
   
-  theta <- angle.SO3(R)
+  theta <- angle(R)  #The angle function calls 'formatSO3' immediately so we don't need to call it here
+  R<-matrix(R,3,3)
   
   if (abs(cos(theta)) >= 1) {
     return(diag(0, 3, 3))
@@ -467,6 +468,8 @@ log.SO3 <- function(R) {
 
 project.SO3 <- function(M) {
   
+	M<-formatSO3(M)
+	M<-matrix(M,3,3)
   d <- svd(t(M) %*% M)
   u <- d$u
   
@@ -557,9 +560,13 @@ vecNorm <- function(x, S, ...) {
 
 formatSO3<-function(Rs){
 	#This function will take input and format it to work with our functions
+	#It also checks that the data is actually SO3 and of appropriate dimension
 	
 	if(length(Rs)%%9!=0)
 		stop("Data needs to have length divisible by 9.")
+	
+	if (!all(apply(Rs, 1, is.SO3))) 
+		warning("At least one of the given observations is not in SO(3).  Use result with caution.")
 	
 	if(length(Rs)==9)
 		return(as.SO3(matrix(Rs,1,9)))
@@ -568,8 +575,13 @@ formatSO3<-function(Rs){
 }
 
 formatQ4<-function(Qs){
+	
   if(length(Qs)%%4!=0)
     stop("Data needs to have length divisible by 4.")
+  
+  if (!all(apply(Qs, 1, is.Q4))) 
+  	warning("At least one of the given observations is not in SO(3).  Use result with caution.")
+  
   
   if(length(Qs)==4)
     return(as.Q4(matrix(Qs,1,4)))

@@ -103,8 +103,7 @@ dist.SO3 <- function(R1, R2=id.SO3, method='projected' , p=1) {
 #' @S3method dist Q4
 
 dist.Q4 <- function(Q1, Q2=id.Q4 ,method='projected', p=1) {
-  #Q1 <- R1
-  #Q2 <- R2
+
   Q1<-formatQ4(Q1)
   Q2<-formatQ4(Q2)
   
@@ -350,6 +349,8 @@ genR <- function(r, S = diag(3), space='SO3') {
   if (!is.SO3(S))
     stop("The principal direction must be in SO(3).")
   
+  n<-length(r)
+  
   if(space=="SO3")
     o <- matrix(NA, length(r), 9)
   else if(space=="Q4")
@@ -359,39 +360,38 @@ genR <- function(r, S = diag(3), space='SO3') {
 
   
   # Generate angles theta from a uniform distribution from 0 to pi
-  theta <- acos(runif(length(r), -1, 1))
+  theta <- acos(runif(n, -1, 1))
   
   # Generate angles phi from a uniform distribution from 0 to 2*pi
-  phi <- runif(length(r), -pi, pi)
+  phi <- runif(n, -pi, pi)
   
-  for (i in 1:length(r)) {
-    
-    # Using theta and phi generate a point uniformly on the unit sphere
-    u <- c(sin(theta[i]) * cos(phi[i]), sin(theta[i]) * sin(phi[i]), cos(theta[i]))
-    
-    if(space=="SO3"){
-      
-      o[i,] <- as.vector(S %*% matrix(SO3(u, r[i]),3,3))
-      
-    }else if(space=="Q4"){
-      
-      q[i,] <- c(cos(r[i]/2),sin(r[i]/2)*S%*%u)
-      
-    }else{
-      
-      ea[i,] <- EA.SO3(S %*% matrix(SO3(u, r[i]),3,3))
-    }
-  }
+  u <- matrix(c(sin(theta) * cos(phi), sin(theta) * sin(phi), cos(theta)),length(r),3)
+  
   if(space=="SO3"){
-    class(o) <- "SO3"
-    return(o)
-  }else if (space=="Q4"){
-    class(q)<-"Q4"
-    return(q)
+  	
+  	for(i in 1:n)
+  		o[i,] <- as.vector(S %*% matrix(SO3(u[i,], r[i]),3,3))
+  	
+  	class(o) <- "SO3"
+  	return(o)
+  	
+  }else if(space=="Q4"){
+  	
+  	for(i in 1:n)
+  		q[i,] <- c(cos(r[i]/2),sin(r[i]/2)*S%*%u[i,])
+  	
+  	class(q)<-"Q4"
+  	return(q)
+  	
   }else{
-    class(ea)<-"EA"
-    return(ea)
+  	
+  	for(i in 1:n)
+  		ea[i,] <- EA.SO3(S %*% matrix(SO3(u[i,], r[i]),3,3))
+  	
+  	class(ea)<-"EA"
+  	return(ea)
   }
+ 
 }
 
 
@@ -551,7 +551,6 @@ tLogMat2 <- function(x, S) {
   return(as.vector(tra))
 }
 
-
 vecNorm <- function(x, S, ...) {
   n <- sqrt(length(x))
   cenX <- x - as.vector(S)
@@ -579,12 +578,14 @@ formatQ4<-function(Qs){
   if(length(Qs)%%4!=0)
     stop("Data needs to have length divisible by 4.")
   
+  Qs<-matrix(Qs,length(Qs)/4,4)
+  
   if (!all(apply(Qs, 1, is.Q4))) 
-  	warning("At least one of the given observations is not in SO(3).  Use result with caution.")
+  	warning("At least one of the given observations is not a unit quaternion.  Use result with caution.")
   
   
   if(length(Qs)==4)
-    return(as.Q4(matrix(Qs,1,4)))
+    return(as.Q4(Qs))
   else
     return(as.Q4(Qs))
 }

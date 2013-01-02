@@ -1,6 +1,6 @@
 \name{Haar}
-\alias{Haar}
 \alias{dhaar}
+\alias{Haar}
 \alias{phaar}
 \alias{rhaar}
 \title{Haar Measure}

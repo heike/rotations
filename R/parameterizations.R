@@ -252,6 +252,19 @@ as.Q4<-function(x){
 #' @export
 id.Q4 <- as.Q4(c(1,0,0,0))
 
+#' A function to determine if a given matrix is in unit quaternion or not.
+#'
+#' @param x numeric 1-by-4  vector of length 9
+#' @return logical T if the vector is a unit quaternion and false otherwise
+#' @family SO3
+#' @export
+
+is.Q4 <- function(x) {
+
+ return(sum(x^2)-1<10e-10 & length(x)==4)
+	
+}
+
 #' Matrix in SO(3)
 #' 
 #' Create a rotation matrix

@@ -1,8 +1,8 @@
 \name{EA}
 \alias{EA}
+\alias{EA.default}
 \alias{EA.Q4}
 \alias{EA.SO3}
-\alias{EA.default}
 \title{Euler Angles}
 \usage{
   EA(U, ...)
@@ -39,13 +39,13 @@
   other form, e.g. a matrix in SO(3) or unit quaternion.
 }
 \seealso{
-  Other EA: \code{\link{EA-class}}, \code{\link{as.EA}},
+  Other EA: \code{\link{as.EA}}, \code{\link{EA-class}},
   \code{\link{id.EA}}
 
-  Other EA: \code{\link{EA-class}}, \code{\link{as.EA}},
+  Other EA: \code{\link{as.EA}}, \code{\link{EA-class}},
   \code{\link{id.EA}}
 
-  Other EA: \code{\link{EA-class}}, \code{\link{as.EA}},
+  Other EA: \code{\link{as.EA}}, \code{\link{EA-class}},
   \code{\link{id.EA}}
 }
 

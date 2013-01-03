@@ -429,11 +429,9 @@ exp.skew <- function(A) {
 
 log.SO3 <- function(R) {
   
-  if (!is.SO3(R)) {
-    stop("Input has to be of class SO(3).")
-  }
+	#R<-formatSO3(R)
   
-  theta <- angle(R)  #The angle function calls 'formatSO3' immediately so we don't need to call it here
+  theta <- angle.SO3(R)  
   R<-matrix(R,3,3)
   
   if (abs(cos(theta)) >= 1) {

@@ -376,27 +376,3 @@ weighted.mean.Q4 <- function(Qs, w, type = "projected", epsilon = 1e-05, maxIter
 	return(Q4.SO3(R))
 	
 }
-
-
-trimmed.mean.SO3<-function(Rs,alpha=0.1){
-	
-	n<-nrow(Rs)
-	ncut<-floor(alpha*n)
-	Shat<-mean(Rs)
-	
-	if(ncut==0){
-		return(Shat)
-	}else{
-		
-		ds<-dist(Rs,Shat,method='intrinsic')
-		
-		for(i in 1:ncut){
-			ci<-which.max(ds)
-			ds<-dist(Rs,Rs[ci,])
-			
-		}
-		
-		
-	}
-	
-}

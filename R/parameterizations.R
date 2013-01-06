@@ -372,6 +372,8 @@ SO3.EA <- function(eur) {
 
 SO3.Q4<-function(q){
   
+	q<-formatQ4(q)
+	
   if(any((rowSums(q^2)-1)>10e-10)){
     warning("Unit quaternions required.  Input was normalized.")
     nonq<-which((rowSums(q^2)-1)>10e-10)

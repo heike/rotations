@@ -258,7 +258,7 @@ as.Q4<-function(x){
 #' Identity in Q4 space
 #' @family Q4
 #' @export
-id.Q4 <- as.Q4(c(1,0,0,0))
+id.Q4 <- as.Q4(matrix(c(1,0,0,0),1,4))
 
 #' A function to determine if a given matrix is in unit quaternion or not.
 #'

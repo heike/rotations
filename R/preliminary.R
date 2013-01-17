@@ -563,14 +563,15 @@ centeringSO3<-function(Rs,S){
 centeringQ4<-function(Qs,S){
 	#This takes a set of observations in Q4 and centers them around S
 	Qs<-formatQ4(Qs)
+	Rs<-SO3(Qs)
 	S<-formatSO3(S)
 	S<-matrix(S,3,3)
 	
 	for(i in 1:nrow(Qs)){
-		Qs[i,2:4]<-t(S)%*%Qs[i,2:4]
+		Rs[i,]<-t(S)%*%matrix(Rs[i,],3,3)
 	}
-	
-	return(as.Q4(Qs))
+	Qs<-Q4(Rs)
+	return(Qs)
 }
 
 formatSO3<-function(Rs){

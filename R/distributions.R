@@ -431,7 +431,7 @@ puars<-function(os,S=diag(3),kappa=1,pangle=NULL,...){
 #' @return random deviates from the specified UARS distribution
 #' @export
 
-ruars<-function(n,rangle,S=diag(3),kappa=1,space="SO3",...){
+ruars<-function(n,rangle,S=NULL,kappa=1,space="SO3",...){
   
   r<-rangle(n,kappa,...)
   Rs<-genR(r,S,space)

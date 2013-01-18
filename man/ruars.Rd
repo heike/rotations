@@ -2,8 +2,7 @@
 \alias{ruars}
 \title{UARS random deviates}
 \usage{
-  ruars(n, rangle, S = diag(3), kappa = 1, space = "SO3",
-    ...)
+  ruars(n, rangle, S = NULL, kappa = 1, space = "SO3", ...)
 }
 \arguments{
   \item{n}{number of observations. If \code{length(n)>1},

@@ -341,13 +341,10 @@ eskew <- function(U) {
 #' r<-rvmises(20,0.01)
 #' genR(r)
 
-genR <- function(r, S = id.SO3, space='SO3') {
+genR <- function(r, S = NULL, space='SO3') {
   
   if(!(space %in% c("SO3","Q4","EA")))
     stop("Incorrect space argument.  Options are: SO3, Q4 and EA. ")
-  
-  if (!is.SO3(S))
-    stop("The principal direction must be in SO(3).")
   
   n<-length(r)
   
@@ -362,6 +359,9 @@ genR <- function(r, S = id.SO3, space='SO3') {
   
   if(space=="SO3"){
   	
+  	if(is.null(S))
+  		S<-id.SO3
+  	S<-formatSO3(S)
   	o<-SO3(u,r)
   	o<-centeringSO3(o,t(S))
   	
@@ -370,8 +370,14 @@ genR <- function(r, S = id.SO3, space='SO3') {
   	
   }else if(space=="Q4"){
   	
+  	if(is.null(S))
+  		S<-id.Q4
+  	
+  	S<-formatQ4(S)
+  	
+  	S[2:4]<--S[2:4]
   	q<-matrix(c(cos(r/2),sin(r/2)*u),n,4)
-  	q<-centeringQ4(q,t(S))
+  	q<-centeringQ4(q,S)
   	
   	class(q)<-"Q4"
   	return(q)
@@ -563,14 +569,13 @@ centeringSO3<-function(Rs,S){
 centeringQ4<-function(Qs,S){
 	#This takes a set of observations in Q4 and centers them around S
 	Qs<-formatQ4(Qs)
-	Rs<-SO3(Qs)
-	S<-formatSO3(S)
-	S<-matrix(S,3,3)
+	S<-formatQ4(S)
+	S[2:4]<--S[2:4]
 	
 	for(i in 1:nrow(Qs)){
-		Rs[i,]<-t(S)%*%matrix(Rs[i,],3,3)
+		Qs[i,]<-qMult(S,Qs[i,])
 	}
-	Qs<-Q4(Rs)
+
 	return(Qs)
 }
 
@@ -607,4 +612,15 @@ formatQ4<-function(Qs){
     return(as.Q4(Qs))
   else
     return(as.Q4(Qs))
+}
+
+qMult<-function(q1,q2){
+	#Forms quaternion product q1 x q2, i.e., rotate q2 by q1
+	q1<-formatQ4(q1)
+	q2<-formatQ4(q2)
+	t0<-q2%*%matrix(c(q1[1],-q1[2:4]),4,1)
+	t1<-q2%*%matrix(c(q1[2:1],-q1[4],q1[3]),4,1)
+	t2<-q2%*%matrix(c(q1[c(3,4,1)],-q1[2]),4,1)
+	t3<-q2%*%matrix(c(q1[4],-q1[3],q1[2:1]),4,1)
+	return(formatQ4(c(t0,t1,t2,t3)))
 }

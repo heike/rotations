@@ -93,11 +93,20 @@ mean.Q4 <- function(Qs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
 	if(nrow(Qs)==1)
 		return(Qs)
 	
-	Rs<-SO3(Qs)
-  
-  R<-mean(Rs,type,epsilon,maxIter)
-  
-  return(Q4.SO3(R))
+	if(type=='projected'){
+		
+		QtQ<-t(Qs)%*%Qs
+		R<-formatQ4(svd(QtQ)$u[,1])
+		if(sign(R[1])==-1)
+			R<--R
+		
+	}else{
+		
+		Rs<-SO3(Qs)
+  	R<-mean(Rs,type,epsilon,maxIter)
+		R<-Q4.SO3(R)
+	}
+  return(R)
   
 }
 

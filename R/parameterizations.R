@@ -202,6 +202,7 @@ Q4.default <- function(U,theta=NULL){
 	
 	if(is.null(theta)){ 
 		theta<-ulen%%(pi)
+		U<-U/ulen
 	}
 	
 	x <- cbind(cos(theta/2), sin(theta/2) * U)

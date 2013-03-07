@@ -18,7 +18,6 @@ region<-function(Qs,method,alpha,...){
 }
 
 
-
 #' @return \code{NULL}
 #' 
 #' @rdname region
@@ -49,7 +48,7 @@ region.Q4<-function(Qs,method,alpha,...){
 		
 	}else{
 		
-		stop("Only the Rancourt and Zhang options are available now.")
+		stop("Only the Rancourt, Zhang and Fisher options are currently available")
 		
 	}
 	
@@ -84,7 +83,7 @@ region.SO3<-function(Rs,method,alpha,...){
 		
 	}else{
 		
-		stop("Only the Rancourt, Zhang and Fisher options are available now.")
+		stop("Only the Rancourt, Zhang and Fisher options are currently available")
 		
 	}
 	
@@ -134,7 +133,7 @@ rancourtCR.Q4<-function(Qs,a){
 	RtR<-t(Rhat)%*%Rhat
 	Ahat<-(diag(RtR[1,1],3,3)-RtR[-1,-1])/n
 	
-	Tm<-max(diag(n*Ahat%*%solve(VarShat)%*%Ahat))
+	Tm<-min(diag(n*Ahat%*%solve(VarShat)%*%Ahat))
 	
 	r<-sqrt(qchisq(a,3)/Tm)
 	return(r)
@@ -295,7 +294,28 @@ fisherCR<-function(Qs,a){
 #' @method fisherCR Q4
 #' @S3method fisherCR Q4
 
-fisherCR.Q4<-function(Qs,a){
+fisherCR.Q4<-function(Qs,a,m=300){
+	
+	Qs<-formatQ4(Qs)
+	n<-nrow(Qs)
+	mhat<-mean(Qs)
+	Tstats<-rep(0,m)
+	
+	for(i in 1:m){
+		Qsi<-as.Q4(Qs[sample(n,replace=T),])
+		Tstats[i]<-fisherAxis(Qsi,mhat)
+	}
+	
+	
+	qhat<-as.numeric(quantile(Tstats,a))
+	
+	rsym<-fisherAxis(Qs,id.Q4)
+	
+	r<-sqrt(qhat/rsym)
+	return(r)
+}
+
+fisherAxis<-function(Qs,Shat){
 	
 	n<-nrow(Qs)
 	svdQs<-svd(t(Qs)%*%Qs/n)
@@ -315,21 +335,9 @@ fisherCR.Q4<-function(Qs,a){
 		}
 	}
 	
-	Ginv<-try(solve(G),silent=T)
-	
-	if(class(Ginv)!='matrix'){
-		Ginv<-diag(1/diag(G))
-		print('Diagonal used')
-	}
-	
-	
-	Tm<-max(diag(n*t(Mhat)%*%Ginv%*%Mhat))
-	
-	r<-sqrt(qchisq(a,3)/Tm)
+	Tm<-n*Shat%*%t(Mhat)%*%solve(G)%*%Mhat%*%t(Shat)
 	return(Tm)
 }
-
-
 
 #' @return \code{NULL}
 #' 

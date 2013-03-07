@@ -6,7 +6,7 @@
 \usage{
   fisherCR(Qs, a)
 
-  \method{fisherCR}{Q4} (Qs, a)
+  \method{fisherCR}{Q4} (Qs, a, m = 300)
 
   \method{fisherCR}{SO3} (Rs, a)
 }

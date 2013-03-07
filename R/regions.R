@@ -1,12 +1,47 @@
+#' Confidence Region for Mean Rotation
+#'
+#' Find the radius of a 100(1-a)% confidence region for the projected mean
+#'
+#' @param Qs A n-by-4 matrix where each row corresponds to a random rotation in matrix form
+#' @param method Character string specifying which type of interval is required
+#' @param alpha The alhpa level desired
+#' @return radius of the confidence region centered at the projected mean
+#' @cite rancourt2000
+#' @S3method region Q4
+#' @method region Q4
+#' @examples
+#' Qs<-ruars(20,rcayley,space='Q4',kappa=100)
+#' region(Qs,method='rancourt',alpha=0.9)
 
+region.Q4<-function(Qs,method,alpha){
+	
+	Qs<-formatQ4(Qs)
+	
+	if(method%in%c('Rancourt','rancourt')){
+		
+		r<-rancourtCR.Q4(Qs=Qs,a=alpha)
+		return(r)
+		
+	}else{
+		stop("Only the Rancourt option is available now.")
+	}
+	
+}
 
-RivestCI<-function(qs,S=id.Q4){
-	#This takes as input the dataset and true central direction S
-	n<-nrow(qs)
-	Shat<-mean(qs)
+rancourtCR.SO3<-function(Rs,a){
+	Qs<-Q4(Rs)
+	r<-rancourtCR.Q4(Qs,a)
+	return(r)
+}
+
+rancourtCR.Q4<-function(Qs,a){
+	#This takes a sample qs and returns the radius of the confidence region
+	#centered at the projected mean
+	n<-nrow(Qs)
+	Shat<-mean(Qs)
 	Phat<-pMat(Shat)
 	
-	Rhat<-qs%*%Phat
+	Rhat<-Qs%*%Phat
 	resids<-matrix(0,n,3)
 	VarShat<-matrix(0,3,3)
 	
@@ -17,13 +52,11 @@ RivestCI<-function(qs,S=id.Q4){
 	RtR<-t(Rhat)%*%Rhat
 	Ahat<-(diag(RtR[1,1],3,3)-RtR[-1,-1])/n
 	
-	St<-as.Q4(matrix(c(S[1],-S[2:4]),1,4))
-	StShat<-qMult(St,Shat)
-	avec<-matrix(axis2(StShat)*angle(StShat),1,3)
+	avec<-matrix(axis2(Shat),1,3)
 	
 	Tm<-n*avec%*%Ahat%*%solve(VarShat)%*%Ahat%*%t(avec)
-	
-	return(Tm)
+	r<-sqrt(qchisq(alpha,3)/Tm)
+	return(r)
 }
 
 

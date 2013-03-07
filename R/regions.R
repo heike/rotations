@@ -41,6 +41,12 @@ region.Q4<-function(Qs,method,alpha,...){
 		
 		return(r)
 		
+	}else	if(method%in%c('Fisher','fisher')){
+		
+		r<-fisherCR.Q4(Qs=Qs,a=alpha)
+		
+		return(r)
+		
 	}else{
 		
 		stop("Only the Rancourt and Zhang options are available now.")
@@ -70,9 +76,15 @@ region.SO3<-function(Rs,method,alpha,...){
 		
 		return(r)
 		
+	}else	if(method%in%c('Fisher','fisher')){
+		
+		r<-fisherCR.SO3(Rs=Rs,a=alpha)
+		
+		return(r)
+		
 	}else{
 		
-		stop("Only the Rancourt and Zhang options are available now.")
+		stop("Only the Rancourt, Zhang and Fisher options are available now.")
 		
 	}
 	
@@ -86,7 +98,6 @@ region.SO3<-function(Rs,method,alpha,...){
 #' symmetry and is therefore conservative.
 #'
 #' @param Qs A n-by-4 matrix where each row corresponds to a random rotation in matrix form
-#' @param method Character string specifying which type of interval is required
 #' @param a The alhpa level desired
 #' @return radius of the confidence region centered at the projected mean
 #' @cite rancourt2000
@@ -94,6 +105,16 @@ region.SO3<-function(Rs,method,alpha,...){
 #' @examples
 #' Qs<-ruars(20,rcayley,kappa=100,space='Q4')
 #' region(Qs,method='rancourt',alpha=0.9)
+
+rancourtCR<-function(Qs,a){
+	UseMethod("rancourtCR")
+}
+
+#' @return \code{NULL}
+#' 
+#' @rdname rancourtCR
+#' @method rancourtCR Q4
+#' @S3method rancourtCR Q4
 
 rancourtCR.Q4<-function(Qs,a){
 	#This takes a sample qs and returns the radius of the confidence region
@@ -119,18 +140,12 @@ rancourtCR.Q4<-function(Qs,a){
 	return(r)
 }
 
-#' Rancourt CR Method
-#'
-#' Find the radius of a 100(1-a)% confidence region for the projected mean \cite{rancourt2000}
-#'
-#' @param Rs A n-by-9 matrix where each row corresponds to a random rotation in matrix form
-#' @param a The alhpa level desired
-#' @return radius of the confidence region centered at the projected mean
-#' @cite rancourt2000
-#' @export
-#' @examples
-#' Rs<-ruars(20,rcayley,kappa=100)
-#' region(Rs,method='rancourt',a=0.9)
+#' @return \code{NULL}
+#' 
+#' @rdname rancourtCR
+#' @method rancourtCR SO3
+#' @S3method rancourtCR SO3
+
 
 rancourtCR.SO3<-function(Rs,a){
 	Qs<-Q4(Rs)
@@ -142,21 +157,31 @@ rancourtCR.SO3<-function(Rs,a){
 #'
 #' Find the radius of a 100(1-a)% confidence region for the projected mean
 #'
-#' @param Rs A n-by-9 matrix where each row corresponds to a random rotation in matrix form
+#' @param Qs A n-by-p matrix where each row corresponds to a random rotation in matrix or quaternion form
+#' @param a The alhpa level desired
 #' @param m Number of replicates to use to estiamte cut point
-#' @param alpha The alhpa level desired
-#' @param Pivot should the pivotal (T) or non-pivotal (F) method be used
+#' @param pivot should the pivotal (T) or non-pivotal (F) method be used
 #' @return radius of the confidence region centered at the projected mean
 #' @export
 #' @examples
 #' Rs<-ruars(20,rcayley,kappa=100)
 #' region(Rs,method='zhang',alpha=0.9)
 
-zhangCR.SO3<-function(Rs,alpha,m=300,pivot=T){
+zhangCR<-function(Qs,a,m,pivot){
+	UseMethod("zhangCR")
+}
+
+#' @return \code{NULL}
+#' 
+#' @rdname zhangCR
+#' @method zhangCR SO3
+#' @S3method zhangCR SO3
+
+zhangCR.SO3<-function(Rs,a,m=300,pivot=T){
 	
 	#Rs is a n-by-9 matrix where each row is an 3-by-3 rotation matrix
-	#m is the number of resamples to find q_1-alpha
-	#alpha is the level of confidence desired, e.g. 0.95 or 0.90
+	#m is the number of resamples to find q_1-a
+	#a is the level of confidence desired, e.g. 0.95 or 0.90
 	#pivot logical; should the pivotal (T) bootstrap be used or nonpivotal (F)
 	
 	Rs<-formatSO3(Rs)
@@ -165,11 +190,12 @@ zhangCR.SO3<-function(Rs,alpha,m=300,pivot=T){
 	
 	tstar<-rep(0,m)
 	
-	if(Pivot){
+	if(pivot){
 		
 		tstarPivot<-rep(0,m)
 	
 		for(i in 1:m){
+			
 			Ostar<-as.SO3(Rs[sample(n,replace=T),])
 			ShatStar<-mean(Ostar)
 			tstar[i]<-3-sum(diag(t(Shat)%*%ShatStar))
@@ -182,45 +208,40 @@ zhangCR.SO3<-function(Rs,alpha,m=300,pivot=T){
 		
 		cdhat<-cdfuns(Rs,Shat)
 		
-		qhat<-as.numeric(quantile(tstarPivot,alpha))*cdhat$c/(2*n*cdhat$d)
+		qhat<-as.numeric(quantile(tstarPivot,a))*cdhat$c/(2*n*cdhat$d)
 		
 		return(acos(1-qhat/2))
 		
 	}else{
 		
 		for(i in 1:m){
+			
 			Ostar<-as.SO3(Rs[sample(n,replace=T),])
+			
 			ShatStar<-mean(Ostar)
+			
 			tstar[i]<-3-sum(diag(t(Shat)%*%ShatStar))
 			
 		}
 		
-		qhat<-as.numeric(quantile(tstar,alpha))
+		qhat<-as.numeric(quantile(tstar,a))
 		
 		return(acos(1-qhat/2))
 	}
 	
 }
 
-#' Zhang CR Method
-#'
-#' Find the radius of a 100(1-a)% confidence region for the projected mean
-#'
-#' @param Rs A n-by-9 matrix where each row corresponds to a random rotation in matrix form
-#' @param m Number of replicates to use to estiamte cut point
-#' @param alpha The alhpa level desired
-#' @param Pivot should the pivotal (T) or non-pivotal (F) method be used
-#' @return radius of the confidence region centered at the projected mean
-#' @export
-#' @examples
-#' Qs<-ruars(20,rcayley,kappa=100,space='Q4')
-#' region(Qs,method='zhang',alpha=0.9)
+#' @return \code{NULL}
+#' 
+#' @rdname zhangCR
+#' @method zhangCR Q4
+#' @S3method zhangCR Q4
 
 zhangCR.Q4<-function(Qs,alpha,m=300,pivot=T){
 	
 	Rs<-SO3(Qs)
 	
-	r<-zhangCR.SO3(Rs,alpha,m,Pivot)
+	r<-zhangCR.SO3(Rs,alpha,m,pivot)
 	
 	return(r)
 }
@@ -245,7 +266,36 @@ cdfuns<-function(Rs,Shat){
 	return(list(c=c,d=d))
 }
 
-fisherAxis<-function(Qs,Shat){
+
+
+
+#' Fisher Mean Polax Axis CR Method
+#'
+#' Find the radius of a 100(1-a)% confidence region for the projected mean \cite{fisher1996}
+#'
+#' This works in the same way as done in \cite{bingham09} which assumes rotational 
+#' symmetry and is therefore conservative.
+#'
+#' @param Qs A n-by-4 matrix where each row corresponds to a random rotation in matrix form
+#' @param a The alpha level desired
+#' @return radius of the confidence region centered at the projected mean
+#' @cite fisher1996
+#' @export
+#' @examples
+#' Qs<-ruars(20,rcayley,kappa=100,space='Q4')
+#' region(Qs,method='fisher',alpha=0.9)
+
+fisherCR<-function(Qs,a){
+	UseMethod("fisherCR")
+}
+
+#' @return \code{NULL}
+#' 
+#' @rdname fisherCR
+#' @method fisherCR Q4
+#' @S3method fisherCR Q4
+
+fisherCR.Q4<-function(Qs,a){
 	
 	n<-nrow(Qs)
 	svdQs<-svd(t(Qs)%*%Qs/n)
@@ -272,6 +322,25 @@ fisherAxis<-function(Qs,Shat){
 		print('Diagonal used')
 	}
 	
-	Tm<-n*Shat%*%t(Mhat)%*%Ginv%*%Mhat%*%t(Shat)
+	
+	Tm<-max(diag(n*t(Mhat)%*%Ginv%*%Mhat))
+	
+	r<-sqrt(qchisq(a,3)/Tm)
 	return(Tm)
+}
+
+
+
+#' @return \code{NULL}
+#' 
+#' @rdname fisherCR
+#' @method fisherCR SO3
+#' @S3method fisherCR SO3
+
+fisherCR.SO3<-function(Rs,a){
+	
+	Qs<-Q4(Rs)
+	r<-fisherCR.Q4(Qs,a)
+	
+	return(r)
 }

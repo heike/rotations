@@ -614,13 +614,29 @@ formatQ4<-function(Qs){
     return(as.Q4(Qs))
 }
 
+pMat<-function(p){
+	#Make the matrix P from quaternion p according to 3.1 of Rancourt, Rivest and Asselin (2000)
+	#This is one way to multiply quaternions
+	Pmat<-matrix(0,4,4)
+	Pmat[,1]<-p
+	Pmat[,2]<-p[c(2,1,4,3)]*c(-1,1,1,-1)
+	Pmat[,3]<-c(-p[3:4],p[1:2])
+	Pmat[,4]<-p[4:1]*c(-1,1,-1,1)
+	return(Pmat)
+}
+
 qMult<-function(q1,q2){
 	#Forms quaternion product q1 x q2, i.e., rotate q2 by q1
+	#This functions utilizes the 
 	q1<-formatQ4(q1)
 	q2<-formatQ4(q2)
-	t0<-q2%*%matrix(c(q1[1],-q1[2:4]),4,1)
-	t1<-q2%*%matrix(c(q1[2:1],-q1[4],q1[3]),4,1)
-	t2<-q2%*%matrix(c(q1[c(3,4,1)],-q1[2]),4,1)
-	t3<-q2%*%matrix(c(q1[4],-q1[3],q1[2:1]),4,1)
-	return(formatQ4(c(t0,t1,t2,t3)))
+	q1q2<-pMat(q1)%*%matrix(q2,4,1)
+	return(formatQ4(q1q2))
+}
+
+proj<-function(u,v){
+	#Project the vector v orthogonally onto the line spanned by the vector u
+	num<-t(u)%*%v
+	denom<-t(u)%*%u
+	return(num*u/denom)
 }

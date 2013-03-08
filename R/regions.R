@@ -277,6 +277,8 @@ cdfuns<-function(Rs,Shat){
 #'
 #' @param Qs A n-by-4 matrix where each row corresponds to a random rotation in matrix form
 #' @param a The alpha level desired
+#' @param boot Should the bootstrap or normal theory critical value be used
+#' @param m number of bootstrap replicates to use to estimate critical value
 #' @return radius of the confidence region centered at the projected mean
 #' @cite fisher1996
 #' @export
@@ -284,7 +286,7 @@ cdfuns<-function(Rs,Shat){
 #' Qs<-ruars(20,rcayley,kappa=100,space='Q4')
 #' region(Qs,method='fisher',alpha=0.9)
 
-fisherCR<-function(Qs,a){
+fisherCR<-function(Qs,a,boot,m){
 	UseMethod("fisherCR")
 }
 
@@ -294,22 +296,29 @@ fisherCR<-function(Qs,a){
 #' @method fisherCR Q4
 #' @S3method fisherCR Q4
 
-fisherCR.Q4<-function(Qs,a,m=300){
+fisherCR.Q4<-function(Qs,a,boot=T,m=300){
 	
 	Qs<-formatQ4(Qs)
 	n<-nrow(Qs)
 	mhat<-mean(Qs)
-	Tstats<-rep(0,m)
 	
-	for(i in 1:m){
-		Qsi<-as.Q4(Qs[sample(n,replace=T),])
-		Tstats[i]<-fisherAxis(Qsi,mhat)
+	if(boot){
+		Tstats<-rep(0,m)
+	
+		for(i in 1:m){
+			Qsi<-as.Q4(Qs[sample(n,replace=T),])
+			Tstats[i]<-fisherAxis(Qsi,mhat)
+		}
+	
+		qhat<-as.numeric(quantile(Tstats,a))
+		
+	}else{
+		
+		qhat<-qchisq(a,3)
+		
 	}
 	
-	
-	qhat<-as.numeric(quantile(Tstats,a))
-	
-	rsym<-fisherAxis(Qs,id.Q4)
+	rsym<-optim(.05,optimAxis,Qs=Qs,cut=qhat,method='Brent',lower=0,upper=pi)$par
 	
 	r<-sqrt(qhat/rsym)
 	return(r)
@@ -339,16 +348,25 @@ fisherAxis<-function(Qs,Shat){
 	return(Tm)
 }
 
+optimAxis<-function(r,Qs,cut){
+	
+	Shat<-Q4(axis2(mean(Qs)),r)
+	
+	Tm<-fisherAxis(Qs,Shat)
+	
+	return((Tm-cut)^2)
+}
+
 #' @return \code{NULL}
 #' 
 #' @rdname fisherCR
 #' @method fisherCR SO3
 #' @S3method fisherCR SO3
 
-fisherCR.SO3<-function(Rs,a){
+fisherCR.SO3<-function(Rs,a,boot=T,m=300){
 	
 	Qs<-Q4(Rs)
-	r<-fisherCR.Q4(Qs,a)
+	r<-fisherCR.Q4(Qs,a,boot,m)
 	
 	return(r)
 }

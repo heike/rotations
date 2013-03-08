@@ -4,17 +4,23 @@
 \alias{fisherCR.SO3}
 \title{Fisher Mean Polax Axis CR Method}
 \usage{
-  fisherCR(Qs, a)
+  fisherCR(Qs, a, boot, m)
 
-  \method{fisherCR}{Q4} (Qs, a, m = 300)
+  \method{fisherCR}{Q4} (Qs, a, boot = T, m = 300)
 
-  \method{fisherCR}{SO3} (Rs, a)
+  \method{fisherCR}{SO3} (Rs, a, boot = T, m = 300)
 }
 \arguments{
   \item{Qs}{A n-by-4 matrix where each row corresponds to a
   random rotation in matrix form}
 
   \item{a}{The alpha level desired}
+
+  \item{boot}{Should the bootstrap or normal theory
+  critical value be used}
+
+  \item{m}{number of bootstrap replicates to use to
+  estimate critical value}
 }
 \value{
   radius of the confidence region centered at the projected

@@ -320,8 +320,7 @@ fisherCR.Q4<-function(Qs,a,boot=T,m=300){
 	
 	rsym<-optim(.05,optimAxis,Qs=Qs,cut=qhat,method='Brent',lower=0,upper=pi)$par
 	
-	r<-sqrt(qhat/rsym)
-	return(r)
+	return(rsym)
 }
 
 fisherAxis<-function(Qs,Shat){

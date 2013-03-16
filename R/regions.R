@@ -160,13 +160,14 @@ rancourtCR.SO3<-function(Rs,a){
 #' @param a The alhpa level desired
 #' @param m Number of replicates to use to estiamte cut point
 #' @param pivot should the pivotal (T) or non-pivotal (F) method be used
+#' @param estimator Mean or median
 #' @return radius of the confidence region centered at the projected mean
 #' @export
 #' @examples
 #' Rs<-ruars(20,rcayley,kappa=100)
 #' region(Rs,method='zhang',alpha=0.9)
 
-zhangCR<-function(Qs,a,m,pivot){
+zhangCR<-function(Qs,a,m,pivot,estimator){
 	UseMethod("zhangCR")
 }
 
@@ -176,7 +177,7 @@ zhangCR<-function(Qs,a,m,pivot){
 #' @method zhangCR SO3
 #' @S3method zhangCR SO3
 
-zhangCR.SO3<-function(Rs,a,m=300,pivot=T){
+zhangCR.SO3<-function(Rs,a,m=300,pivot=T,estimator='mean'){
 	
 	#Rs is a n-by-9 matrix where each row is an 3-by-3 rotation matrix
 	#m is the number of resamples to find q_1-a
@@ -185,8 +186,13 @@ zhangCR.SO3<-function(Rs,a,m=300,pivot=T){
 	
 	Rs<-formatSO3(Rs)
 	n<-nrow(Rs)
-	Shat<-mean(Rs)
-	
+  
+  if(estimator=='mean'){
+	  Shat<-mean(Rs)
+	}else{
+    Shat<-median(Rs,type='intrinsic')
+  }
+
 	tstar<-rep(0,m)
 	
 	if(pivot){
@@ -196,7 +202,13 @@ zhangCR.SO3<-function(Rs,a,m=300,pivot=T){
 		for(i in 1:m){
 			
 			Ostar<-as.SO3(Rs[sample(n,replace=T),])
-			ShatStar<-mean(Ostar)
+      
+			if(estimator=='mean'){
+			  ShatStar<-mean(Ostar)
+			}else{
+			  ShatStar<-median(Ostar,type='intrinsic')
+			}
+      
 			tstar[i]<-3-sum(diag(t(Shat)%*%ShatStar))
 		
 			cd<-cdfuns(Ostar,ShatStar)
@@ -217,7 +229,11 @@ zhangCR.SO3<-function(Rs,a,m=300,pivot=T){
 			
 			Ostar<-as.SO3(Rs[sample(n,replace=T),])
 			
-			ShatStar<-mean(Ostar)
+			if(estimator=='mean'){
+			  ShatStar<-mean(Ostar)
+			}else{
+			  ShatStar<-median(Ostar,type='intrinsic')
+			}
 			
 			tstar[i]<-3-sum(diag(t(Shat)%*%ShatStar))
 			
@@ -236,11 +252,11 @@ zhangCR.SO3<-function(Rs,a,m=300,pivot=T){
 #' @method zhangCR Q4
 #' @S3method zhangCR Q4
 
-zhangCR.Q4<-function(Qs,alpha,m=300,pivot=T){
+zhangCR.Q4<-function(Qs,alpha,m=300,pivot=T,estimator='mean'){
 	
 	Rs<-SO3(Qs)
 	
-	r<-zhangCR.SO3(Rs,alpha,m,pivot)
+	r<-zhangCR.SO3(Rs,alpha,m,pivot,estimator)
 	
 	return(r)
 }

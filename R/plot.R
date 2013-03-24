@@ -59,7 +59,31 @@ roteye <- function(origin, center, column=1) {
   rot <- center %*% R %*% origin 
 }
 
-pointsXY <- function(data, center, column=1) {
+# pointsXY <- function(data, center, column=1) {
+#   rot <- roteye(origin, center, column)
+#   idx <- list(1:3,4:6, 7:9)[[column]]
+#   data <- as.matrix(data[,idx])
+#   
+#   psample1 <- data.frame(data %*% rot)
+#   names(psample1) <- c("X","Y","Z")
+#   
+# #  psample1 <- data.frame(psample1, data)
+# #  psample1 <- psample1[order(psample1$Z, decreasing=FALSE),]
+#   psample1  
+# }
+
+#' Project rotation data onto sphere
+#' 
+#' Projection of rotation matrices onto sphere with given center.
+#'
+#' @param data data frame of rotation matrices in 3 x 3 matrix representation
+#' @param center point about which to center the observations
+#' @param column integer 1 to 3 indicating which column to display
+#' @return  data frame with columns X, Y, Z standing for the respective coordinates in 3d space
+#' @export
+#' @examples
+#' 
+pointsXYZ <- function(data, center, column=1) {
   rot <- roteye(origin, center, column)
   idx <- list(1:3,4:6, 7:9)[[column]]
   data <- as.matrix(data[,idx])
@@ -67,10 +91,11 @@ pointsXY <- function(data, center, column=1) {
   psample1 <- data.frame(data %*% rot)
   names(psample1) <- c("X","Y","Z")
   
-#  psample1 <- data.frame(psample1, data)
-#  psample1 <- psample1[order(psample1$Z, decreasing=FALSE),]
+  #  psample1 <- data.frame(psample1, data)
+  #  psample1 <- psample1[order(psample1$Z, decreasing=FALSE),]
   psample1  
 }
+
 
 #' Visualizing random rotations.
 #'
@@ -99,7 +124,7 @@ plot.SO3 <- function(x, center, col=1, toRange=FALSE, show_estimates=FALSE,  ...
   ylimits <- c(-1,1)
   
   X <- Y <- Est <- NULL
-  proj2d <- pointsXY(Rs, center=center, column=col)
+  proj2d <- pointsXYZ(Rs, center=center, column=col)
   if(toRange) {
     xlimits <- range(proj2d$X)
     ylimits <- range(proj2d$Y)
@@ -120,7 +145,7 @@ plot.SO3 <- function(x, center, col=1, toRange=FALSE, show_estimates=FALSE,  ...
     labels <- c(expression(hat(S)[E]), expression(tilde(S)[E]), expression(hat(S)[R]), expression(tilde(S)[R]))
     levels(Shats$Est) <- labels
 
-    estimates <- list(geom_point(aes(x=X, y=Y, colour=Est),size=3, data=data.frame(pointsXY(Shats, center=center, column=col), Shats)),
+    estimates <- list(geom_point(aes(x=X, y=Y, colour=Est),size=3, data=data.frame(pointsXYZ(Shats, center=center, column=col), Shats)),
     scale_colour_brewer("Estimates", palette="Paired", labels=labels))
   }
   base + geom_point(aes(x=X, y=Y), data=proj2d, ...) + 

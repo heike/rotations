@@ -1,5 +1,6 @@
 library(ggplot2)
 require(grid)
+
 # set origin of concentric circles
 origin <- matrix(SO3(c(1,-1,0), pi/16),3,3)
   
@@ -59,18 +60,6 @@ roteye <- function(origin, center, column=1) {
   rot <- center %*% R %*% origin 
 }
 
-# pointsXY <- function(data, center, column=1) {
-#   rot <- roteye(origin, center, column)
-#   idx <- list(1:3,4:6, 7:9)[[column]]
-#   data <- as.matrix(data[,idx])
-#   
-#   psample1 <- data.frame(data %*% rot)
-#   names(psample1) <- c("X","Y","Z")
-#   
-# #  psample1 <- data.frame(psample1, data)
-# #  psample1 <- psample1[order(psample1$Z, decreasing=FALSE),]
-#   psample1  
-# }
 
 #' Project rotation data onto sphere
 #' 
@@ -117,7 +106,7 @@ pointsXYZ <- function(data, center, column=1) {
 #' Rs<-genR(r)
 #' plot(Rs,center=mean(Rs),show_estimates=NULL,shape=4)
 #' # Z is computed internally and contains information on depth
-#' plot(Rs,center=mean(Rs),show_estimates=c("proj.mean", "riem.mean")) + aes(size=Z, alpha=Z) + scale_size(limits=c(-1,1), range=c(0,2.5))
+#' plot(Rs,center=mean(Rs),show_estimates=c("proj.mean", "riem.mean")) + aes(size=Z, alpha=Z) + scale_size(limits=c(-1,1), range=c(0.5,2.5))
 
 plot.SO3 <- function(x, center, col=1, toRange=FALSE, show_estimates=NULL,  ...) {
   Rs <- as.SO3(x)
@@ -148,10 +137,10 @@ plot.SO3 <- function(x, center, col=1, toRange=FALSE, show_estimates=NULL,  ...)
     levels(Shats$Est) <- labels
     Shats <- na.omit(Shats)
     
-    estimates <- list(geom_point(aes(x=X, y=Y, colour=Est),size=3, data=data.frame(pointsXYZ(Shats, center=center, column=col), Shats)),
+    estimates <- list(geom_point(aes(x=X, y=Y, colour=Est),size=3.5, data=data.frame(pointsXYZ(Shats, center=center, column=col), Shats)),
                       scale_colour_brewer("Estimates", palette="Paired", labels=labels))
   }
   base + geom_point(aes(x=X, y=Y), data=proj2d, ...) + 
-    estimates+
+    estimates +
     xlim(xlimits) + ylim(ylimits) 
 }

@@ -106,7 +106,8 @@ pointsXYZ <- function(data, center, column=1) {
 #' @param center point about which to center the observations
 #' @param col integer 1 to 3 indicating which column to display
 #' @param toRange show only part of the globe that is in range of the data?
-#' @param show_estimates rather to display the four estimates of the principal direction or not
+#' @param show_estimates character vector to specify  which of the four estimates of the principal direction to show. Possibilities are
+#'     "proj.mean", "proj.median", "riem.mean", "riem.median"
 #' @param ... parameters passed onto the points layer
 #' @return  a ggplot2 object with the data displayed on spherical grid
 #' @cite wickham09
@@ -114,11 +115,11 @@ pointsXYZ <- function(data, center, column=1) {
 #' @examples
 #' r<-rvmises(200,1.0)
 #' Rs<-genR(r)
-#' plot(Rs,center=mean(Rs),show_estimates=TRUE,shape=4)
+#' plot(Rs,center=mean(Rs),show_estimates=NULL,shape=4)
 #' # Z is computed internally and contains information on depth
-#' plot(Rs,center=mean(Rs),show_estimates=TRUE) + aes(size=Z, alpha=Z) + scale_size(limits=c(-1,1), range=c(0,2.5))
+#' plot(Rs,center=mean(Rs),show_estimates=c("proj.mean", "riem.mean")) + aes(size=Z, alpha=Z) + scale_size(limits=c(-1,1), range=c(0,2.5))
 
-plot.SO3 <- function(x, center, col=1, toRange=FALSE, show_estimates=FALSE,  ...) {
+plot.SO3 <- function(x, center, col=1, toRange=FALSE, show_estimates=NULL,  ...) {
   Rs <- as.SO3(x)
   xlimits <- c(-1,1)
   ylimits <- c(-1,1)
@@ -134,19 +135,21 @@ plot.SO3 <- function(x, center, col=1, toRange=FALSE, show_estimates=FALSE,  ...
     ylimits <- ybar + 1.1*(ylimits-ybar)
   }
   estimates <- NULL
-  if (show_estimates) {
-    ShatP<-mean(Rs, type="projected")
-    StildeP<-median(Rs, type="projected")
-    ShatG<-mean(Rs, type="intrinsic")
-    StildeG<-median(Rs, type="intrinsic")
+  if (!is.null(show_estimates)) {
+    ShatP <- StildeP <- ShatG <- StildeG <- NA
+    if (length(grep("proj.mean", show_estimates)) > 0) ShatP<-mean(Rs, type="projected")
+    if (length(grep("proj.median", show_estimates)) >0)    StildeP<-median(Rs, type="projected")
+    if (length(grep("riem.mean", show_estimates)) > 0)    ShatG<-mean(Rs, type="intrinsic")
+    if (length(grep("riem.median", show_estimates)) > 0)    StildeG<-median(Rs, type="intrinsic")
     
     Shats<-data.frame(rbind(as.vector(ShatP),as.vector(StildeP),as.vector(ShatG),as.vector(StildeG)),Est=1:4)
     Shats$Est <- factor(Shats$Est)
     labels <- c(expression(hat(S)[E]), expression(tilde(S)[E]), expression(hat(S)[R]), expression(tilde(S)[R]))
     levels(Shats$Est) <- labels
-
+    Shats <- na.omit(Shats)
+    
     estimates <- list(geom_point(aes(x=X, y=Y, colour=Est),size=3, data=data.frame(pointsXYZ(Shats, center=center, column=col), Shats)),
-    scale_colour_brewer("Estimates", palette="Paired", labels=labels))
+                      scale_colour_brewer("Estimates", palette="Paired", labels=labels))
   }
   base + geom_point(aes(x=X, y=Y), data=proj2d, ...) + 
     estimates+

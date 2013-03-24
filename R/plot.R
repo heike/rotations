@@ -70,7 +70,6 @@ roteye <- function(origin, center, column=1) {
 #' @param column integer 1 to 3 indicating which column to display
 #' @return  data frame with columns X, Y, Z standing for the respective coordinates in 3d space
 #' @export
-#' @examples
 #' 
 pointsXYZ <- function(data, center, column=1) {
   rot <- roteye(origin, center, column)

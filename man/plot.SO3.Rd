@@ -3,7 +3,7 @@
 \title{Visualizing random rotations.}
 \usage{
   plot.SO3(x, center, col = 1, toRange = FALSE,
-    show_estimates = FALSE, ...)
+    show_estimates = NULL, ...)
 }
 \arguments{
   \item{x}{n rotations in SO3 format}
@@ -17,8 +17,10 @@
   \item{toRange}{show only part of the globe that is in
   range of the data?}
 
-  \item{show_estimates}{rather to display the four
-  estimates of the principal direction or not}
+  \item{show_estimates}{character vector to specify which
+  of the four estimates of the principal direction to show.
+  Possibilities are "proj.mean", "proj.median",
+  "riem.mean", "riem.median"}
 
   \item{...}{parameters passed onto the points layer}
 }
@@ -37,9 +39,9 @@
 \examples{
 r<-rvmises(200,1.0)
 Rs<-genR(r)
-plot(Rs,center=mean(Rs),show_estimates=TRUE,shape=4)
+plot(Rs,center=mean(Rs),show_estimates=NULL,shape=4)
 # Z is computed internally and contains information on depth
-plot(Rs,center=mean(Rs),show_estimates=TRUE) + aes(size=Z, alpha=Z) + scale_size(limits=c(-1,1), range=c(0,2.5))
+plot(Rs,center=mean(Rs),show_estimates=c("proj.mean", "riem.mean")) + aes(size=Z, alpha=Z) + scale_size(limits=c(-1,1), range=c(0.5,2.5))
 }
 \references{
   Wickham H (2009). _ggplot2: elegant graphics for data

@@ -1,8 +1,8 @@
 \name{SO3}
 \alias{SO3}
-\alias{SO3.default}
 \alias{SO3.EA}
 \alias{SO3.Q4}
+\alias{SO3.default}
 \title{Matrix in SO(3)}
 \usage{
   SO3(U, ...)
@@ -40,20 +40,20 @@
   quaternion.
 }
 \seealso{
-  Other SO3: \code{\link{as.SO3}}, \code{\link{id.SO3}},
-  \code{\link{is.Q4}}, \code{\link{is.SO3}},
-  \code{\link{SO3-class}}
+  Other SO3: \code{\link{SO3-class}}, \code{\link{as.SO3}},
+  \code{\link{id.SO3}}, \code{\link{is.Q4}},
+  \code{\link{is.SO3}}
 
-  Other SO3: \code{\link{as.SO3}}, \code{\link{id.SO3}},
-  \code{\link{is.Q4}}, \code{\link{is.SO3}},
-  \code{\link{SO3-class}}
+  Other SO3: \code{\link{SO3-class}}, \code{\link{as.SO3}},
+  \code{\link{id.SO3}}, \code{\link{is.Q4}},
+  \code{\link{is.SO3}}
 
-  Other SO3: \code{\link{as.SO3}}, \code{\link{id.SO3}},
-  \code{\link{is.Q4}}, \code{\link{is.SO3}},
-  \code{\link{SO3-class}}
+  Other SO3: \code{\link{SO3-class}}, \code{\link{as.SO3}},
+  \code{\link{id.SO3}}, \code{\link{is.Q4}},
+  \code{\link{is.SO3}}
 
-  Other SO3: \code{\link{as.SO3}}, \code{\link{id.SO3}},
-  \code{\link{is.Q4}}, \code{\link{is.SO3}},
-  \code{\link{SO3-class}}
+  Other SO3: \code{\link{SO3-class}}, \code{\link{as.SO3}},
+  \code{\link{id.SO3}}, \code{\link{is.Q4}},
+  \code{\link{is.SO3}}
 }
 

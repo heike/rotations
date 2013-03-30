@@ -1,6 +1,5 @@
 \name{axis2}
 \alias{axis2}
-\alias{axis2.EA}
 \alias{axis2.Q4}
 \alias{axis2.SO3}
 \title{Misorientation Axis}
@@ -10,16 +9,12 @@
   \method{axis2}{SO3} (R)
 
   \method{axis2}{Q4} (q)
-
-  \method{axis2}{EA} (eur)
 }
 \arguments{
   \item{R}{3-by-3 matrix in SO3}
 }
 \value{
   axis in form of three dimensional vector of length one.
-
-  \code{NULL}
 
   \code{NULL}
 

@@ -1,6 +1,5 @@
 \name{dist}
 \alias{dist}
-\alias{dist.EA}
 \alias{dist.Q4}
 \alias{dist.SO3}
 \title{Rotational Distance}
@@ -12,9 +11,6 @@
 
   \method{dist}{Q4} (Q1, Q2 = id.Q4, method = "projected",
     p = 1)
-
-  \method{dist}{EA} (R1, R2 = id.EA, method = "projected",
-    p = 1)
 }
 \arguments{
   \item{x}{rotation in SO3 representation}
@@ -23,8 +19,6 @@
 }
 \value{
   the distance between x and something else
-
-  \code{NULL}
 
   \code{NULL}
 

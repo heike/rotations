@@ -35,8 +35,7 @@
   simulations don't match this claim.
 }
 \examples{
-r<-rvmises(20,0.01)
-Qs<-genR(r,space="Q4")
+Qs<-ruars(20,rcayley,space="Q4")
 mean(Qs,type='intrinsic')
 }
 \references{

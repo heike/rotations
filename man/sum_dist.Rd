@@ -1,6 +1,5 @@
 \name{sum_dist}
 \alias{sum_dist}
-\alias{sum_dist.EA}
 \alias{sum_dist.Q4}
 \alias{sum_dist.SO3}
 \title{Sample Distance}
@@ -9,9 +8,6 @@
     method = "projected", p = 1)
 
   \method{sum_dist}{SO3} (Rs, S = id.SO3,
-    method = "projected", p = 1)
-
-  \method{sum_dist}{EA} (EAs, S = id.EA,
     method = "projected", p = 1)
 
   \method{sum_dist}{Q4} (Qs, S = id.Q4,
@@ -32,8 +28,6 @@
 \value{
   the sum of the pth order distance between each sample in
   Rs and S
-
-  \code{NULL}
 
   \code{NULL}
 

@@ -17,7 +17,7 @@
   \item{maxIter}{The maximum number of iterations allowed
   before returning most recent estimate}
 
-  \item{...}{only used for consistency with mean.default}
+  \item{...}{additional arguments passed to mean}
 }
 \value{
   projected or intrinsic mean of the sample

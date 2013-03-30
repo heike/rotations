@@ -1,6 +1,6 @@
 \name{Fisher}
-\alias{Fisher}
 \alias{dfisher}
+\alias{Fisher}
 \alias{pfisher}
 \alias{rfisher}
 \title{The Matrix Fisher Distribution}

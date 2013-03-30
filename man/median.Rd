@@ -1,6 +1,5 @@
 \name{median}
 \alias{median}
-\alias{median.EA}
 \alias{median.Q4}
 \alias{median.SO3}
 \title{Median Rotation}
@@ -12,9 +11,6 @@
 
   \method{median}{Q4} (Qs, type = "projected",
     epsilon = 1e-05, maxIter = 2000, na.rm = FALSE)
-
-  \method{median}{EA} (EAs, type = "projected",
-    epsilon = 1e-05, maxIter = 2000, na.rm = FALSE)
 }
 \arguments{
   \item{x}{A \eqn{n\times 9} matrix where each row
@@ -24,8 +20,6 @@
 }
 \value{
   the median
-
-  \code{NULL}
 
   \code{NULL}
 

@@ -1,8 +1,7 @@
 \name{Q4}
 \alias{Q4}
-\alias{Q4.EA}
-\alias{Q4.SO3}
 \alias{Q4.default}
+\alias{Q4.SO3}
 \title{Quaternions}
 \usage{
   Q4(U, ...)
@@ -10,8 +9,6 @@
   \method{Q4}{default} (U, theta = NULL)
 
   \method{Q4}{SO3} (R)
-
-  \method{Q4}{EA} (eur)
 }
 \arguments{
   \item{U}{three-dimensional vector describing the fix axis
@@ -21,8 +18,6 @@
 }
 \value{
   unit quaternion of class "Q4"
-
-  \code{NULL}
 
   \code{NULL}
 
@@ -39,16 +34,13 @@
   other form, e.g. a matrix in SO(3) or Euler angles.
 }
 \seealso{
-  Other Q4: \code{\link{Q4-class}}, \code{\link{as.Q4}},
-  \code{\link{id.Q4}}
+  Other Q4: \code{\link{as.Q4}}, \code{\link{id.Q4}},
+  \code{\link{Q4-class}}
 
-  Other Q4: \code{\link{Q4-class}}, \code{\link{as.Q4}},
-  \code{\link{id.Q4}}
+  Other Q4: \code{\link{as.Q4}}, \code{\link{id.Q4}},
+  \code{\link{Q4-class}}
 
-  Other Q4: \code{\link{Q4-class}}, \code{\link{as.Q4}},
-  \code{\link{id.Q4}}
-
-  Other Q4: \code{\link{Q4-class}}, \code{\link{as.Q4}},
-  \code{\link{id.Q4}}
+  Other Q4: \code{\link{as.Q4}}, \code{\link{id.Q4}},
+  \code{\link{Q4-class}}
 }
 

@@ -1,6 +1,6 @@
 \name{Mises}
-\alias{Mises}
 \alias{dvmises}
+\alias{Mises}
 \alias{pvmises}
 \alias{rvmises}
 \title{The circular-von Mises distribution}

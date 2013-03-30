@@ -43,7 +43,6 @@ arsample.unif <- function(f, M, ...) {
 
 
 
-
 #' Rotational Distance
 #'
 #' Calculate the Euclidean or Riemannian distance between two rotations
@@ -127,27 +126,6 @@ dist.Q4 <- function(Q1, Q2=id.Q4 ,method='projected', p=1) {
   return(q4dist)
 }
 
-#' @return \code{NULL}
-#' 
-#' @rdname dist
-#' @method dist EA
-#' @S3method dist EA
-
-dist.EA <- function(R1, R2=id.EA ,method='projected', p=1) {
-  EA1 <- R1
-  EA2 <- R2
-  
-  R1<-SO3.EA(EA1)
-  
-  R2<-SO3.EA(EA2)
-  
-  EAdist<-dist.SO3(R1,R2,method,p)
-  
-  return(EAdist)
-}
-
-
-
 
 #' Misorientation Angle
 #' 
@@ -208,21 +186,6 @@ angle.Q4 <- function(Qs){
 	  theta[i]<-2*acos(Qs[i,1])
 	}
 	 return(theta)
-}
-
-#' @return \code{NULL}
-#'
-#' @rdname angle
-#' @method angle EA
-#' @S3method angle EA
-
-angle.EA<-function(eur){
-  
-  trR <- cos(eur[1]) * cos(eur[3]) - sin(eur[1]) * sin(eur[3]) * cos(eur[2])
-  trR <- trR + (-sin(eur[1]) * sin(eur[3]) + cos(eur[1]) * cos(eur[3]) * cos(eur[2]))
-  trR <- trR + (cos(eur[2]))
-  theta<-acos((trR-1)/2)
-  return(theta)
 }
 
 
@@ -287,17 +250,6 @@ axis2.Q4 <- function(q){
   return(u)
 }
 
-#' @return \code{NULL}
-#'
-#' @rdname axis2
-#' @method axis2 EA
-#' @S3method axis2 EA
-
-axis2.EA <- function(eur){
-  R<-SO3.EA(eur)
-  u<-axis2(R)
-  return(u)
-}
 
 #' Directional vector to skew-symmetric Matrix
 #'
@@ -343,8 +295,8 @@ eskew <- function(U) {
 
 genR <- function(r, S = NULL, space='SO3') {
   
-  if(!(space %in% c("SO3","Q4","EA")))
-    stop("Incorrect space argument.  Options are: SO3, Q4 and EA. ")
+  if(!(space %in% c("SO3","Q4")))
+    stop("Incorrect space argument.  Options are: SO3 and Q4. ")
   
   n<-length(r)
   
@@ -368,7 +320,7 @@ genR <- function(r, S = NULL, space='SO3') {
   	class(o) <- "SO3"
   	return(o)
   	
-  }else if(space=="Q4"){
+  }else{
   	
   	if(is.null(S))
   		S<-id.Q4
@@ -381,17 +333,8 @@ genR <- function(r, S = NULL, space='SO3') {
   	
   	class(q)<-"Q4"
   	return(q)
-  	
-  }else{
-  	
-  	o<-SO3(u,r)
-  	o<-centeringSO3(o,t(S))
-  	ea<-EA.SO3(ea)
-  	
-  	class(ea)<-"EA"
-  	return(ea)
   }
- 
+
 }
 
 
@@ -512,17 +455,7 @@ sum_dist.SO3 <- function(Rs, S = id.SO3, method='projected', p=1) {
   return(sum(dist(Rs,S, method=method, p=p)))
   
 }
-#' @return \code{NULL}
-#'
-#' @rdname sum_dist
-#' @method sum_dist EA
-#' @S3method sum_dist EA
 
-sum_dist.EA <- function(EAs, S = id.EA, method='projected', p=1) {
-  
-  return(sum(dist(EAs,S, method=method, p=p)))
-  
-}
 
 #' @return \code{NULL}
 #'

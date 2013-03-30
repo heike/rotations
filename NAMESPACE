@@ -1,6 +1,3 @@
-S3method(CIradius,EA)
-S3method(CIradius,Q4)
-S3method(CIradius,SO3)
 S3method(EA,Q4)
 S3method(EA,SO3)
 S3method(EA,default)

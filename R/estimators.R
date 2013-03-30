@@ -117,9 +117,12 @@ mean.Q4 <- function(Qs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
 #' The median-type estimators are defined as \deqn{\widetilde{\bm{S}}=\argmin_{\bm{S}\in SO(3)}\sum_{i=1}^nd_D(\bm{R}_i,\bm{S}).}  If the choice of distance metrid, \eqn{d_D}, is Riemannian then the estimator is called the intrinsic, and if the distance metric in Euclidean then it projected.
 #' The algorithm used in the intrinsic case is discussed in \cite{hartley11} and the projected case was written by the authors.
 #'
-#' @param x A \eqn{n\times 9} matrix where each row corresponds to a random rotation in matrix form
+#' @param x A \eqn{n-by-p} matrix where each row corresponds to a random rotation in matrix form (\eqn{p=9}) or quaternion form (\eqn{p=4})
+#' @param type String indicating 'projeted' or 'intrinsic' type mean estimator
+#' @param epsilon Stopping rule for the intrinsic method
+#' @param maxIter The maximum number of iterations allowed before returning most recent estimate
 #' @param ... additional arguments
-#' @return the median
+#' @return an estimate of the projected or intrinsic mean
 #' @seealso \code{\link{mean.SO3}}
 #' @cite hartley11
 #' @export
@@ -128,13 +131,11 @@ median<-function(x,...){
   UseMethod("median")
 }
 
-#' @return \code{NULL}
-#' 
 #' @rdname median
 #' @method median SO3
 #' @S3method median SO3
 
-median.SO3 <- function(Rs, type = "projected", epsilon = 1e-05, maxIter = 2000, na.rm=FALSE) {
+median.SO3 <- function(Rs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
   
 	Rs<-formatSO3(Rs)
 	
@@ -187,13 +188,12 @@ median.SO3 <- function(Rs, type = "projected", epsilon = 1e-05, maxIter = 2000, 
   return(S)
 }
 
-#' @return \code{NULL}
-#' 
+
 #' @rdname median
 #' @method median Q4
 #' @S3method median Q4
 
-median.Q4 <- function(Qs, type = "projected", epsilon = 1e-05, maxIter = 2000, na.rm=FALSE) {
+median.Q4 <- function(Qs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
 	
 	Qs<-formatQ4(Qs)
 	
@@ -229,8 +229,7 @@ median.Q4 <- function(Qs, type = "projected", epsilon = 1e-05, maxIter = 2000, n
 #' @S3method weighted.mean SO3
 #' @method weighted.mean SO3
 #' @examples
-#' r<-rvmises(20,0.01)
-#' Rs<-genR(r)
+#' Rs<-ruars(20,rvmises,kappa=0.01)
 #' wt<-abs(1/r)
 #' weighted.mean(Rs,wt)
 

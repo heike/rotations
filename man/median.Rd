@@ -7,23 +7,28 @@
   median(x, ...)
 
   \method{median}{SO3} (Rs, type = "projected",
-    epsilon = 1e-05, maxIter = 2000, na.rm = FALSE)
+    epsilon = 1e-05, maxIter = 2000)
 
   \method{median}{Q4} (Qs, type = "projected",
-    epsilon = 1e-05, maxIter = 2000, na.rm = FALSE)
+    epsilon = 1e-05, maxIter = 2000)
 }
 \arguments{
-  \item{x}{A \eqn{n\times 9} matrix where each row
-  corresponds to a random rotation in matrix form}
+  \item{x}{A \eqn{n-by-p} matrix where each row corresponds
+  to a random rotation in matrix form (\eqn{p=9}) or
+  quaternion form (\eqn{p=4})}
+
+  \item{type}{String indicating 'projeted' or 'intrinsic'
+  type mean estimator}
+
+  \item{epsilon}{Stopping rule for the intrinsic method}
+
+  \item{maxIter}{The maximum number of iterations allowed
+  before returning most recent estimate}
 
   \item{...}{additional arguments}
 }
 \value{
-  the median
-
-  \code{NULL}
-
-  \code{NULL}
+  an estimate of the projected or intrinsic mean
 }
 \description{
   Compute the projected or intrinsic median of a sample of

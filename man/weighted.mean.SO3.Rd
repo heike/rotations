@@ -47,8 +47,7 @@
   \cite{Manton (2004)}.
 }
 \examples{
-r<-rvmises(20,0.01)
-Rs<-genR(r)
+Rs<-ruars(20,rvmises,kappa=0.01)
 wt<-abs(1/r)
 weighted.mean(Rs,wt)
 }

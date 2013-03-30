@@ -33,10 +33,10 @@ rar <- function(n, f, M, ...) {
 
 #' The Symmetric Cayley Distribution
 #'
-#' Density and random generation for the Cayley distribution with concentration kappa
+#' Density and random generation for the Cayley distribution with concentration kappa (\eqn{\kappa})
 #'
 #' The symmetric Cayley distribution with concentration kappa (or circular variance nu) had density 
-#' \deqn{C_\mathrm{C}(r |\kappa)=\frac{1}{\sqrt{\pi}} \frac{\Gamma(\kappa+2)}{\Gamma(\kappa+1/2)}2^{-(\kappa+1)}(1+\cos r)^\kappa(1-\cos r).}{C(r |\kappa)=1/\sqrt\pi \frac{\Gamma(\kappa+2)}{\Gamma(\kappa+1/2)}2^{-(\kappa+1)}(1+\cos r)^\kappa(1-\cos r).}
+#' \deqn{C_\mathrm{C}(r |\kappa)=\frac{1}{\sqrt{\pi}} \frac{\Gamma(\kappa+2)}{\Gamma(\kappa+1/2)}2^{-(\kappa+1)}(1+\cos r)^\kappa(1-\cos r).}{C(r |\kappa)= \Gamma(\kappa+2)(1+cos r)^\kappa(1-cos r)/[\Gamma(\kappa+1/2)2^(\kappa+1)\sqrt\pi].}
 #'
 #' @name Cayley
 #' @aliases Cayley rcayley dcayley
@@ -108,12 +108,12 @@ rcayley <- function(n, kappa = 1, nu = NULL) {
 
 #' The Matrix Fisher Distribution
 #'
-#' Density and random generation for the matrix Fisher distribution with concentration kappa
+#' Density and random generation for the matrix Fisher distribution with concentration kappa (\eqn{\kappa})
 #'
 #' The matrix Fisher distribution with concentration kappa (or circular variance nu) has density
-#' \deqn{C_\mathrm{{F}}(r|\kappa)=\frac{1}{2\pi[\mathrm{I_0}(2\kappa)-\mathrm{I_1}(2\kappa)]}e^{2\kappa\cos(r)}[1-\cos(r)]}
-#' where \eqn{\mathrm{I_p}(\cdot)} denotes the Bessel function of order \eqn{p} defined as  
-#' \eqn{\mathrm{I_p}(\kappa)=\frac{1}{2\pi}\int_{-\pi}^{\pi}\cos(pr)e^{\kappa\cos r}dr}.
+#' \deqn{C_\mathrm{{F}}(r|\kappa)=\frac{1}{2\pi[\mathrm{I_0}(2\kappa)-\mathrm{I_1}(2\kappa)]}e^{2\kappa\cos(r)}[1-\cos(r)]}{C(r|\kappa)=exp[2\kappa cos(r)][1-cos(r)]/(2\pi[I0(2\kappa)-I1(2\kappa)])}
+#' where \eqn{\mathrm{I_p}(\cdot)}{Ip()} denotes the Bessel function of order \eqn{p} defined as  
+#' \eqn{\mathrm{I_p}(\kappa)=\frac{1}{2\pi}\int_{-\pi}^{\pi}\cos(pr)e^{\kappa\cos r}dr}{Ip(\kappa)} is the modified Bessel function with parameters \eqn{p} and \eqn{kappa}.
 #'
 #' @name Fisher
 #' @aliases Fisher dfisher rfisher

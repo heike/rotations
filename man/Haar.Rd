@@ -28,7 +28,7 @@
 \details{
   The uniform density on the circle (also referred to as
   Haar measure) has the density
-  \deqn{C_U(r)=\frac{1-cos(r)}{2\pi}.}
+  \deqn{C_U(r)=\frac{1-cos(r)}{2\pi}.}{C(r)=1-cos(r)/2\pi.}
 }
 \seealso{
   \link{Angular-distributions} for other distributions in

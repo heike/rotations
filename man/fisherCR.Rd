@@ -11,8 +11,8 @@
   \method{fisherCR}{SO3} (Rs, a, boot = T, m = 300)
 }
 \arguments{
-  \item{Qs}{A n-by-4 matrix where each row corresponds to a
-  random rotation in matrix form}
+  \item{Qs}{A \eqn{n\times 4}{n-by-4} matrix where each row
+  corresponds to a random rotation in matrix form}
 
   \item{a}{The alpha level desired}
 
@@ -25,14 +25,10 @@
 \value{
   radius of the confidence region centered at the projected
   mean
-
-  \code{NULL}
-
-  \code{NULL}
 }
 \description{
-  Find the radius of a 100(1-a)% confidence region for the
-  projected mean \cite{Fisher et al. (1996)}
+  Find the radius of a \eqn{100(1-\alpha)%} confidence
+  region for the projected mean \cite{Fisher et al. (1996)}
 }
 \details{
   This works in the same way as done in \cite{Bingham et

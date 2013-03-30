@@ -1,12 +1,12 @@
 \name{mean.Q4}
 \alias{mean.Q4}
-\title{Rotation Median}
+\title{Mean Rotation}
 \usage{
   \method{mean}{Q4} (Qs, type = "projected",
     epsilon = 1e-05, maxIter = 2000)
 }
 \arguments{
-  \item{Qs}{A \eqn{n\times 4} matrix where each row
+  \item{Qs}{A \eqn{n\times 4}{n-by-4} matrix where each row
   corresponds to a random rotation in unit quaternion}
 
   \item{type}{String indicating 'projeted' or 'intrinsic'
@@ -25,22 +25,23 @@
   rotations
 }
 \details{
-  This function takes a sample of n unit quaternions and
-  approximates the mean rotation.  If the projected mean is
-  called for then the quaternions are turned
-  reparameterized to matrices and mean.SO3 is called.  If
-  the intrinsic mean is called then according to
-  \cite{Gramkow (2001)} a better approximation is achieved
-  by taking average quaternion and normalizing.  Our
-  simulations don't match this claim.
+  This function takes a sample of \eqn{n} unit quaternions
+  and approximates the mean rotation.  If the projected
+  mean is called for then the according to \cite{Tyler
+  (1981)} an estimate of the mean is the eigenvector
+  corresponding to the largest eigen value of
+  \eqn{\frac{1}{n}\sum_{i=1}^nq_i^\top q_i}{Q`Q/n}.  If the
+  intrinsic mean is called then the quaternions are
+  transformed into \eqn{3\times 3}{3-by-3} matrices and the
+  \code{mean.SO3} function is called.
 }
 \examples{
 Qs<-ruars(20,rcayley,space="Q4")
 mean(Qs,type='intrinsic')
 }
 \references{
-  Gramkow C (2001). "On averaging rotations." _Journal of
-  Mathematical Imaging and Vision_, *15*(1), pp. 7-16.
+  Tyler DE (1981). "Asymptotic inference for eigenvectors."
+  _The Annals of Statistics_, pp. 725-736.
 
   Moakher M (2002). "Means and averaging in the group of
   rotations." _SIAM Journal on Matrix Analysis and

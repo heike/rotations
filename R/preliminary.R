@@ -48,22 +48,24 @@ arsample.unif <- function(f, M, ...) {
 #' Calculate the Euclidean or Riemannian distance between two rotations
 #'
 #' This function will calculate the intrinsic (Riemannian) or projected (Euclidean) distance between two rotations.  If only one rotation is specified
-#' the other will be set to the identity and the distance between the two is returned.  For rotations \eqn{R_1} and \eqn{R_2}
-#' both in SO(3), the Euclidean distance between them is \deqn{||R_1-R_2||_F} where \eqn{||\cdot||_F} is the Frobenius norm.
-#' The intrinsic distance is defined as \deqn{||Log(R_1^\top R_2)||_F} where \eqn{Log} is the matrix logarithm, and it corresponds
-#' to the misorientation angle of \eqn{R[1]' R[2]}.
+#' the other will be set to the identity and the distance between the two is returned.  For rotations \eqn{R_1}{R1} and \eqn{R_2}{R2}
+#' both in \eqn{SO(3)}, the Euclidean distance between them is \deqn{||R_1-R_2||_F}{||R1-R2||} where \eqn{||\cdot||_F}{|| ||} is the Frobenius norm.
+#' The intrinsic distance is defined as \deqn{||Log(R_1^\top R_2)||_F}{||Log(R1'R2)||} where \eqn{Log} is the matrix logarithm, and it corresponds
+#' to the misorientation angle of \eqn{R_1^\top R_2}{R1'R2}.
 #'
-#' @param x rotation in SO3 representation
+#' @param R1 (or Q1) a rotation in matrix or quaternion representation
+#' @param R2 (or Q2) the second rotation in the same parameterization as R1
+#' @param method String indicating 'projected' or 'intrinsic' method of distance 
+#' @param p the order of the distance 
 #' @param ... Additional arguments
-#' @return the distance between x and something else
+#' @return the rotational distance between R1 and R2
 #' @export
 
 dist<-function(x,...){
   UseMethod("dist")
 }
 
-#' @return \code{NULL}
-#' 
+
 #' @rdname dist
 #' @method dist SO3
 #' @S3method dist SO3
@@ -95,8 +97,7 @@ dist.SO3 <- function(R1, R2=id.SO3, method='projected' , p=1) {
   
 }
 
-#' @return \code{NULL}
-#' 
+
 #' @rdname dist
 #' @method dist Q4
 #' @S3method dist Q4
@@ -145,8 +146,7 @@ angle<-function(Rs){
   UseMethod("angle")
 }
 
-#' @return \code{NULL}
-#'
+
 #' @rdname angle
 #' @method angle SO3
 #' @S3method angle SO3
@@ -170,8 +170,7 @@ angle.SO3 <- function(Rs){
   return(acos((tr-1)/2))
 }
 
-#' @return \code{NULL}
-#'
+
 #' @rdname angle
 #' @method angle Q4
 #' @S3method angle Q4
@@ -207,8 +206,6 @@ axis2<-function(R){
   UseMethod("axis2")
 }
 
-#' @return \code{NULL}
-#'
 #' @rdname axis2
 #' @method axis2 SO3
 #' @S3method axis2 SO3
@@ -229,8 +226,6 @@ axis2.SO3<-function(R){
 
 }
 
-#' @return \code{NULL}
-#'
 #' @rdname axis2
 #' @method axis2 Q4
 #' @S3method axis2 Q4
@@ -279,9 +274,10 @@ eskew <- function(U) {
 #'
 #' Generate rotations according to the Uniform-Axis Random Spin methodology
 #'
-#' Given a vector \eqn{u\in\mathbb{R}^2} of length one and angle of rotation r, a rotation can be formed using Rodrigues formula
-#' \deqn{\cos(r)I_{3\times 3}+\sin(r)\Phi(u)+(1-\cos(r))uu^\top} where \eqn{\Phi(u)} is a \eqn{3\times 3} skew-symmetric matirix
-#' with upper triangular elements \eqn{-u_3}, \eqn{u_2} and \eqn{-u_1} in that order.
+#' Given a vector \eqn{u\in\mathbb{R}^2}{u in R^2} of length one and angle of rotation \eqn{r}, a rotation can be formed using Rodrigues formula
+#' \deqn{\cos(r)I_{3\times 3}+\sin(r)\Phi(u)+(1-\cos(r))uu^\top}{cos(r)I+sin(r)\Phi(u)+(1-cos(r))uu'} 
+#' where \eqn{I_{3\times 3}}{I} is the \eqn{3\times 3}{3-by-3} identity matrix,\eqn{\Phi(u)} is a \eqn{3\times 3}{3-by-3} skew-symmetric matirix
+#' with upper triangular elements \eqn{-u_3}{-u3}, \eqn{u_2}{u2} and \eqn{-u_1}{-u1} in that order.
 #'
 #' @param r vector of angles
 #' @param S The principle direction
@@ -343,7 +339,7 @@ genR <- function(r, S = NULL, space='SO3') {
 #' See \cite{moakher02}
 #'
 #' @param A 3-dimensional skew-symmetric matrix, i.e., \eqn{\bm A=-\bm A^\top}
-#' @return numeric matrix \eqn{e^{\bm A}}
+#' @return numeric matrix \eqn{e^{\bm A}}{e^A}
 #' @cite moakher02
 
 exp.skew <- function(A) {
@@ -373,7 +369,7 @@ exp.skew <- function(A) {
 #' For details see \cite{moakher02}
 #'
 #' @param R numeric matrix in \eqn{SO(n)}
-#' @return mlog numeric matrix \eqn{\log(R)}
+#' @return mlog numeric matrix \eqn{\log(R)}{log(R)}
 #' @cite moakher02
 
 log.SO3 <- function(R) {
@@ -395,12 +391,12 @@ log.SO3 <- function(R) {
 
 #' Projection Procedure
 #'
-#' Project an arbitrary \eqn{3\times 3} matrix into SO(3)
+#' Project an arbitrary \eqn{3\times 3}{3-by-3} matrix into SO(3)
 #'
-#' This function uses the process given in \cite{moakher02} to project an arbitrary \eqn{3\times 3} matrix into \eqn{SO(3)}.
+#' This function uses the process given in \cite{moakher02} to project an arbitrary \eqn{3\times 3}{3-by-3} matrix into \eqn{SO(3)}.
 #' 
-#' @param M \eqn{3\times 3} matrix to project
-#' @return projection of \eqn{\bm M} into \eqn{SO(3)}
+#' @param M \eqn{3\times 3}{3-by-3} matrix to project
+#' @return projection of \eqn{\bm M}{M} into \eqn{SO(3)}
 #' @seealso \code{\link{mean.SO3}}, \code{\link{median.SO3}}
 #' @export
 #' @examples
@@ -424,7 +420,7 @@ project.SO3 <- function(M) {
 
 #' Sample Distance
 #'
-#' Compute the sum of the \eqn{p^{\text{th}}} order distances between Rs and S
+#' Compute the sum of the \eqn{p^{\text{th}}}{pth} order distances between Rs and S
 #'
 #' @param Rs a matrix of rotation observations, one row per observation
 #' @param S the individual matrix of interest, usually an estimate of the mean

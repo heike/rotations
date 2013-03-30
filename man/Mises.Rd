@@ -26,7 +26,7 @@
   respect to Haar}
 
   \item{lower.tail}{logica; if TRUE probabilites are
-  \eqn{P(X\le x)} otherwise, \eqn{P(X>x)}}
+  \eqn{P(X\leq x)}{P(X\le x)} otherwise, \eqn{P(X>x)}}
 }
 \value{
   \code{dvmises} gives the density, \code{pvmises} gives
@@ -40,7 +40,10 @@
 \details{
   The circular von Mises-based distribution has the density
   \deqn{C_\mathrm{M}(r|\kappa)=\frac{1}{2\pi
-  \mathrm{I_0}(\kappa)}e^{\kappa cos(r)}.}
+  \mathrm{I_0}(\kappa)}e^{\kappa
+  cos(r)}.}{C(r|\kappa)=exp[\kappa cos(r)]/[2\pi
+  I(\kappa)]} where \eqn{\mathrm{I_0}(\kappa)}{I(\kappa)}
+  is the modified bessel function of order 0.
 }
 \seealso{
   \link{Angular-distributions} for other distributions in

@@ -26,9 +26,9 @@
   respect to Haar}
 }
 \value{
-  \code{dcayley} gives the density,\code{pcayley} gives the
-  distribution function, \code{rcayley} generates random
-  deviates
+  \code{dcayley} gives the density, \code{pcayley} gives
+  the distribution function, \code{rcayley} generates
+  random deviates
 }
 \description{
   Density and random generation for the Cayley distribution
@@ -38,6 +38,8 @@
   The symmetric Cayley distribution with concentration
   kappa (or circular variance nu) had density
   \deqn{C_\mathrm{C}(r |\kappa)=\frac{1}{\sqrt{\pi}}
+  \frac{\Gamma(\kappa+2)}{\Gamma(\kappa+1/2)}2^{-(\kappa+1)}(1+\cos
+  r)^\kappa(1-\cos r).}{C(r |\kappa)=1/\sqrt\pi
   \frac{\Gamma(\kappa+2)}{\Gamma(\kappa+1/2)}2^{-(\kappa+1)}(1+\cos
   r)^\kappa(1-\cos r).}
 }

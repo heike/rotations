@@ -1,10 +1,10 @@
 #' Confidence Region for Mean Rotation
 #'
-#' Find the radius of a 100(1-a)% confidence region for the projected mean
+#' Find the radius of a \eqn{100(1-\alpha)%} confidence region for the projected mean
 #'
-#' @param Qs A n-by-4 matrix where each row corresponds to a random rotation in matrix form
+#' @param Qs A \eqn{n\times 4}{n-by-4} matrix where each row corresponds to a random rotation in matrix form
 #' @param method Character string specifying which type of interval is required
-#' @param alpha The alhpa level desired
+#' @param alpha The alpha level desired
 #' @param ... Additional arguments
 #' @return radius of the confidence region centered at the projected mean
 #' @cite rancourt2000
@@ -18,8 +18,6 @@ region<-function(Qs,method,alpha,...){
 }
 
 
-#' @return \code{NULL}
-#' 
 #' @rdname region
 #' @method region Q4
 #' @S3method region Q4
@@ -54,8 +52,7 @@ region.Q4<-function(Qs,method,alpha,...){
 	
 }
 
-#' @return \code{NULL}
-#' 
+
 #' @rdname region
 #' @method region SO3
 #' @S3method region SO3
@@ -91,13 +88,13 @@ region.SO3<-function(Rs,method,alpha,...){
 
 #' Rancourt CR Method
 #'
-#' Find the radius of a 100(1-a)% confidence region for the projected mean \cite{rancourt2000}
+#' Find the radius of a \eqn{100(1-\alpha)%} confidence region for the projected mean \cite{rancourt2000}
 #'
 #' This works in the same way as done in \cite{bingham09} which assumes rotational 
 #' symmetry and is therefore conservative.
 #'
-#' @param Qs A n-by-4 matrix where each row corresponds to a random rotation in matrix form
-#' @param a The alhpa level desired
+#' @param Qs A \eqn{n\times 4}{n-by-4} matrix where each row corresponds to a random rotation in matrix form
+#' @param a The alpha level desired
 #' @return radius of the confidence region centered at the projected mean
 #' @cite rancourt2000
 #' @export
@@ -109,8 +106,7 @@ rancourtCR<-function(Qs,a){
 	UseMethod("rancourtCR")
 }
 
-#' @return \code{NULL}
-#' 
+
 #' @rdname rancourtCR
 #' @method rancourtCR Q4
 #' @S3method rancourtCR Q4
@@ -139,8 +135,7 @@ rancourtCR.Q4<-function(Qs,a){
 	return(r)
 }
 
-#' @return \code{NULL}
-#' 
+
 #' @rdname rancourtCR
 #' @method rancourtCR SO3
 #' @S3method rancourtCR SO3
@@ -154,10 +149,10 @@ rancourtCR.SO3<-function(Rs,a){
 
 #' Zhang CR Method
 #'
-#' Find the radius of a 100(1-a)% confidence region for the projected mean
+#' Find the radius of a \eqn{100(1-\alpha)%} confidence region for the projected mean
 #'
-#' @param Qs A n-by-p matrix where each row corresponds to a random rotation in matrix or quaternion form
-#' @param a The alhpa level desired
+#' @param Qs A \eqn{n\times p}{n-by-p} matrix where each row corresponds to a random rotation in matrix or quaternion form
+#' @param a The alpha level desired
 #' @param m Number of replicates to use to estiamte cut point
 #' @param pivot should the pivotal (T) or non-pivotal (F) method be used
 #' @param estimator Mean or median
@@ -171,8 +166,7 @@ zhangCR<-function(Qs,a,m,pivot,estimator){
 	UseMethod("zhangCR")
 }
 
-#' @return \code{NULL}
-#' 
+
 #' @rdname zhangCR
 #' @method zhangCR SO3
 #' @S3method zhangCR SO3
@@ -246,8 +240,6 @@ zhangCR.SO3<-function(Rs,a,m=300,pivot=T,estimator='mean'){
 	
 }
 
-#' @return \code{NULL}
-#' 
 #' @rdname zhangCR
 #' @method zhangCR Q4
 #' @S3method zhangCR Q4
@@ -286,12 +278,12 @@ cdfuns<-function(Rs,Shat){
 
 #' Fisher Mean Polax Axis CR Method
 #'
-#' Find the radius of a 100(1-a)% confidence region for the projected mean \cite{fisher1996}
+#' Find the radius of a \eqn{100(1-\alpha)%} confidence region for the projected mean \cite{fisher1996}
 #'
 #' This works in the same way as done in \cite{bingham09} which assumes rotational 
 #' symmetry and is therefore conservative.
 #'
-#' @param Qs A n-by-4 matrix where each row corresponds to a random rotation in matrix form
+#' @param Qs A \eqn{n\times 4}{n-by-4} matrix where each row corresponds to a random rotation in matrix form
 #' @param a The alpha level desired
 #' @param boot Should the bootstrap or normal theory critical value be used
 #' @param m number of bootstrap replicates to use to estimate critical value
@@ -306,8 +298,7 @@ fisherCR<-function(Qs,a,boot,m){
 	UseMethod("fisherCR")
 }
 
-#' @return \code{NULL}
-#' 
+
 #' @rdname fisherCR
 #' @method fisherCR Q4
 #' @S3method fisherCR Q4
@@ -372,8 +363,7 @@ optimAxis<-function(r,Qs,cut){
 	return((Tm-cut)^2)
 }
 
-#' @return \code{NULL}
-#' 
+
 #' @rdname fisherCR
 #' @method fisherCR SO3
 #' @S3method fisherCR SO3

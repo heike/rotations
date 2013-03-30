@@ -15,10 +15,6 @@
 }
 \value{
   axis in form of three dimensional vector of length one.
-
-  \code{NULL}
-
-  \code{NULL}
 }
 \description{
   Find the misorientation axis of a rotation

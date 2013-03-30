@@ -21,13 +21,15 @@
   Spin methodology
 }
 \details{
-  Given a vector \eqn{u\in\mathbb{R}^2} of length one and
-  angle of rotation r, a rotation can be formed using
-  Rodrigues formula \deqn{\cos(r)I_{3\times
-  3}+\sin(r)\Phi(u)+(1-\cos(r))uu^\top} where \eqn{\Phi(u)}
-  is a \eqn{3\times 3} skew-symmetric matirix with upper
-  triangular elements \eqn{-u_3}, \eqn{u_2} and \eqn{-u_1}
-  in that order.
+  Given a vector \eqn{u\in\mathbb{R}^2}{u in R^2} of length
+  one and angle of rotation \eqn{r}, a rotation can be
+  formed using Rodrigues formula \deqn{\cos(r)I_{3\times
+  3}+\sin(r)\Phi(u)+(1-\cos(r))uu^\top}{cos(r)I+sin(r)\Phi(u)+(1-cos(r))uu'}
+  where \eqn{I_{3\times 3}}{I} is the \eqn{3\times
+  3}{3-by-3} identity matrix,\eqn{\Phi(u)} is a
+  \eqn{3\times 3}{3-by-3} skew-symmetric matirix with upper
+  triangular elements \eqn{-u_3}{-u3}, \eqn{u_2}{u2} and
+  \eqn{-u_1}{-u1} in that order.
 }
 \examples{
 r<-rvmises(20,0.01)

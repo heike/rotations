@@ -9,7 +9,7 @@
   \eqn{\bm A=-\bm A^\top}}
 }
 \value{
-  numeric matrix \eqn{e^{\bm A}}
+  numeric matrix \eqn{e^{\bm A}}{e^A}
 }
 \description{
   See \cite{Moakher (2002)}

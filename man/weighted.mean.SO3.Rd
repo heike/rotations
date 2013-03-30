@@ -6,11 +6,12 @@
     epsilon = 1e-05, maxIter = 2000, ...)
 }
 \arguments{
-  \item{Rs}{A n-by-9 matrix where each row corresponds to a
-  random rotation in matrix form}
+  \item{Rs}{A \eqn{n\times 9}{n-by-9} matrix where each row
+  corresponds to a random rotation in matrix form}
 
   \item{w}{a numerical vector of weights the same length as
-  Rs giving the weights to use for elements of Rs}
+  the number of rows in Rs giving the weights to use for
+  elements of Rs}
 
   \item{type}{String indicating 'projeted' or 'intrinsic'
   type mean estimator}
@@ -30,25 +31,27 @@
   sample of rotations
 }
 \details{
-  This function takes a sample of \eqn{3\times 3} rotations
-  (in the form of a n-by-9 matrix where n>1 is the sample
-  size) and returns the weighted projected arithmetic mean
-  denoted \eqn{\widehat{\bm S}_P} or intrinsic mean
-  \eqn{\widehat{\bm S}_G} according to the \code{type}
+  This function takes a sample of \eqn{3\times 3}{3-by-3}
+  rotations (in the form of a \eqn{n\times 9}{n-by-9}
+  matrix where \eqn{n>1} is the sample size) and returns
+  the weighted projected arithmetic mean denoted
+  \eqn{\widehat{\bm S}_P}{S_P} or intrinsic mean
+  \eqn{\widehat{\bm S}_G}{S_G} according to the \code{type}
   option. For a sample of \eqn{n} random rotations
-  \eqn{\bm{R}_i\in SO(3)$, $i=1,2,\dots,n}, the mean-type
-  estimator is defined as
+  \eqn{\bm{R}_i\in SO(3), i=1,2,\dots,n}{Ri in SO(3),
+  i=1,2,\dots,n}, the mean-type estimator is defined as
   \deqn{\widehat{\bm{S}}=\argmin_{\bm{S}\in
-  SO(3)}\sum_{i=1}^nd_D^2(\bm{R}_i,\bm{S})} where
-  \eqn{\bar{\bm{R}}=\frac{1}{n}\sum_{i=1}^n\bm{R}_i} and
-  the distance metric \eqn{d_D} is the Riemannian or
-  Euclidean.  For more on the projected mean see
-  \cite{Moakher (2002)} and for the intrinsic mean see
+  SO(3)}\sum_{i=1}^nd_D^2(\bm{R}_i,\bm{S})}{argmin
+  d(bar(R),S)} where
+  \eqn{\bar{\bm{R}}=\frac{1}{n}\sum_{i=1}^n\bm{R}_i}{bar(R)=\sum
+  R_i/n} and the distance metric \eqn{d_D}{d} is the
+  Riemannian or Euclidean.  For more on the projected mean
+  see \cite{Moakher (2002)} and for the intrinsic mean see
   \cite{Manton (2004)}.
 }
 \examples{
 Rs<-ruars(20,rvmises,kappa=0.01)
-wt<-abs(1/r)
+wt<-abs(1/angle(Rs))
 weighted.mean(Rs,wt)
 }
 \references{

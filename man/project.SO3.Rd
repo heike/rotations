@@ -5,18 +5,19 @@
   project.SO3(M)
 }
 \arguments{
-  \item{M}{\eqn{3\times 3} matrix to project}
+  \item{M}{\eqn{3\times 3}{3-by-3} matrix to project}
 }
 \value{
-  projection of \eqn{\bm M} into \eqn{SO(3)}
+  projection of \eqn{\bm M}{M} into \eqn{SO(3)}
 }
 \description{
-  Project an arbitrary \eqn{3\times 3} matrix into SO(3)
+  Project an arbitrary \eqn{3\times 3}{3-by-3} matrix into
+  SO(3)
 }
 \details{
   This function uses the process given in \cite{Moakher
-  (2002)} to project an arbitrary \eqn{3\times 3} matrix
-  into \eqn{SO(3)}.
+  (2002)} to project an arbitrary \eqn{3\times 3}{3-by-3}
+  matrix into \eqn{SO(3)}.
 }
 \examples{
 M<-matrix(rnorm(9),3,3)

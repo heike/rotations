@@ -15,10 +15,6 @@
 }
 \value{
   angle of rotation
-
-  \code{NULL}
-
-  \code{NULL}
 }
 \description{
   Find the misorientation angle of a rotation

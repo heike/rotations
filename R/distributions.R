@@ -36,7 +36,7 @@ rar <- function(n, f, M, ...) {
 #' Density and random generation for the Cayley distribution with concentration kappa
 #'
 #' The symmetric Cayley distribution with concentration kappa (or circular variance nu) had density 
-#' \deqn{C_\mathrm{C}(r |\kappa)=\frac{1}{\sqrt{\pi}} \frac{\Gamma(\kappa+2)}{\Gamma(\kappa+1/2)}2^{-(\kappa+1)}(1+\cos r)^\kappa(1-\cos r).}
+#' \deqn{C_\mathrm{C}(r |\kappa)=\frac{1}{\sqrt{\pi}} \frac{\Gamma(\kappa+2)}{\Gamma(\kappa+1/2)}2^{-(\kappa+1)}(1+\cos r)^\kappa(1-\cos r).}{C(r |\kappa)=1/\sqrt\pi \frac{\Gamma(\kappa+2)}{\Gamma(\kappa+1/2)}2^{-(\kappa+1)}(1+\cos r)^\kappa(1-\cos r).}
 #'
 #' @name Cayley
 #' @aliases Cayley rcayley dcayley
@@ -47,7 +47,7 @@ rar <- function(n, f, M, ...) {
 #' @param kappa Concentration paramter
 #' @param nu The circular variance, can be used in place of kappa
 #' @param Haar logical; if TRUE density is evaluated with respect to Haar
-#' @return \code{dcayley} gives the density,\code{pcayley} gives the distribution function, \code{rcayley} generates random deviates
+#' @return \code{dcayley} gives the density, \code{pcayley} gives the distribution function, \code{rcayley} generates random deviates
 #' @seealso \link{Angular-distributions} for other distributions in the rotations package
 #' @cite Schaeben97 leon06
 
@@ -191,7 +191,7 @@ rfisher <- function(n, kappa = 1, nu = NULL) {
 #' Uniform density on the circle
 #' 
 #' The uniform density on the circle  (also referred to as Haar measure)
-#' has the density \deqn{C_U(r)=\frac{1-cos(r)}{2\pi}.}
+#' has the density \deqn{C_U(r)=\frac{1-cos(r)}{2\pi}.}{C(r)=1-cos(r)/2\pi.}
 #'
 #' @name Haar
 #' @aliases Haar dhaar phaar rhaar
@@ -253,7 +253,8 @@ rhaar<-function(n){
 #' Density for the the circular von Mises-based distribution with concentration kappa
 #' 
 #' The circular von Mises-based distribution has the density
-#' \deqn{C_\mathrm{M}(r|\kappa)=\frac{1}{2\pi \mathrm{I_0}(\kappa)}e^{\kappa cos(r)}.}
+#' \deqn{C_\mathrm{M}(r|\kappa)=\frac{1}{2\pi \mathrm{I_0}(\kappa)}e^{\kappa cos(r)}.}{C(r|\kappa)=exp[\kappa cos(r)]/[2\pi I(\kappa)]}
+#' where \eqn{\mathrm{I_0}(\kappa)}{I(\kappa)} is the modified bessel function of order 0.
 #'
 #' @name Mises
 #' @aliases Mises dvmises rvmises
@@ -265,7 +266,7 @@ rhaar<-function(n){
 #' @param kappa concentration paramter
 #' @param nu The circular variance, can be used in place of kappa
 #' @param Haar logical; if TRUE density is evaluated with respect to Haar
-#' @param lower.tail logica; if TRUE probabilites are \eqn{P(X\le x)} otherwise, \eqn{P(X>x)}
+#' @param lower.tail logica; if TRUE probabilites are \eqn{P(X\leq x)}{P(X\le x)} otherwise, \eqn{P(X>x)}
 #' @return \code{dvmises} gives the density, \code{pvmises} gives the distribution function, \code{rvmises} generates random deviates
 #' @seealso \link{Angular-distributions} for other distributions in the rotations package
 

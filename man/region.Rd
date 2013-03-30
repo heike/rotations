@@ -11,27 +11,23 @@
   \method{region}{SO3} (Rs, method, alpha, ...)
 }
 \arguments{
-  \item{Qs}{A n-by-4 matrix where each row corresponds to a
-  random rotation in matrix form}
+  \item{Qs}{A \eqn{n\times 4}{n-by-4} matrix where each row
+  corresponds to a random rotation in matrix form}
 
   \item{method}{Character string specifying which type of
   interval is required}
 
-  \item{alpha}{The alhpa level desired}
+  \item{alpha}{The alpha level desired}
 
   \item{...}{Additional arguments}
 }
 \value{
   radius of the confidence region centered at the projected
   mean
-
-  \code{NULL}
-
-  \code{NULL}
 }
 \description{
-  Find the radius of a 100(1-a)% confidence region for the
-  projected mean
+  Find the radius of a \eqn{100(1-\alpha)%} confidence
+  region for the projected mean
 }
 \examples{
 Rs<-ruars(20,rcayley,kappa=100)

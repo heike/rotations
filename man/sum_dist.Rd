@@ -34,7 +34,7 @@
   \code{NULL}
 }
 \description{
-  Compute the sum of the \eqn{p^{\text{th}}} order
+  Compute the sum of the \eqn{p^{\text{th}}}{pth} order
   distances between Rs and S
 }
 \examples{

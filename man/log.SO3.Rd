@@ -8,7 +8,7 @@
   \item{R}{numeric matrix in \eqn{SO(n)}}
 }
 \value{
-  mlog numeric matrix \eqn{\log(R)}
+  mlog numeric matrix \eqn{\log(R)}{log(R)}
 }
 \description{
   For details see \cite{Moakher (2002)}

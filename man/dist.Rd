@@ -13,16 +13,21 @@
     p = 1)
 }
 \arguments{
-  \item{x}{rotation in SO3 representation}
+  \item{R1}{(or Q1) a rotation in matrix or quaternion
+  representation}
+
+  \item{R2}{(or Q2) the second rotation in the same
+  parameterization as R1}
+
+  \item{method}{String indicating 'projected' or
+  'intrinsic' method of distance}
+
+  \item{p}{the order of the distance}
 
   \item{...}{Additional arguments}
 }
 \value{
-  the distance between x and something else
-
-  \code{NULL}
-
-  \code{NULL}
+  the rotational distance between R1 and R2
 }
 \description{
   Calculate the Euclidean or Riemannian distance between
@@ -33,12 +38,13 @@
   or projected (Euclidean) distance between two rotations.
   If only one rotation is specified the other will be set
   to the identity and the distance between the two is
-  returned.  For rotations \eqn{R_1} and \eqn{R_2} both in
-  SO(3), the Euclidean distance between them is
-  \deqn{||R_1-R_2||_F} where \eqn{||\cdot||_F} is the
-  Frobenius norm. The intrinsic distance is defined as
-  \deqn{||Log(R_1^\top R_2)||_F} where \eqn{Log} is the
-  matrix logarithm, and it corresponds to the
-  misorientation angle of \eqn{R[1]' R[2]}.
+  returned.  For rotations \eqn{R_1}{R1} and \eqn{R_2}{R2}
+  both in \eqn{SO(3)}, the Euclidean distance between them
+  is \deqn{||R_1-R_2||_F}{||R1-R2||} where
+  \eqn{||\cdot||_F}{|| ||} is the Frobenius norm. The
+  intrinsic distance is defined as \deqn{||Log(R_1^\top
+  R_2)||_F}{||Log(R1'R2)||} where \eqn{Log} is the matrix
+  logarithm, and it corresponds to the misorientation angle
+  of \eqn{R_1^\top R_2}{R1'R2}.
 }
 

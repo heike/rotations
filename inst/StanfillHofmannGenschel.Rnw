@@ -37,7 +37,7 @@ library(rotations)
 @
 
 \abstract{
-In this article we introduce the \pkg{rotations} package which provides users with the ability to simulate, analyze and visualize 3-dimensional rotation data.  The \pkg{rotations} package includes four distributions from which to simulate data, four estimators of the central orientation and a novel approach to visualizing these data.  All of the above features are available to three different parameterizations of rotations: 3-by-3 matrix form, quaternions and Euler angles.
+In this article we introduce the \pkg{rotations} package which provides users with the ability to simulate, analyze and visualize 3-dimensional rotation data.  The \pkg{rotations} package includes four distributions from which to simulate data, four estimators of the central orientation and a novel approach to visualizing these data.  All of the above features are available to two different parameterizations of rotations: 3-by-3 matrix form and quaternions.
 }
 
 \section{Introduction}
@@ -66,7 +66,7 @@ The \pkg{rotations} package provides users with the tools necessary to simulate 
 
 \section{Rotation Representations}
 
-The variety of applications for rotations is echoed by the number of equivalent ways to parameterize them.  We consider three of the most popular: matrices in $SO(3)$, unit quaternions and Euler angles.  
+The variety of applications for rotations is echoed by the number of equivalent ways to parameterize them.  We consider three of the most popular: matrices in $SO(3)$ and unit quaternions.  
 
 \subsection{Matrix Form}
 
@@ -107,23 +107,22 @@ This makes $q$ a unit quaternion.  %To form a quaternion given an angle and axis
 
 %This form is popular with mathematicians and others interested in the theory of rotations because their form makes them simple to deal with in certain situations.
 
-\subsection{Euler Angle Form}
-
-The final parameterization we consider is {\it Euler angles}.  Euler angles are three dimensional vectors describing a sequence of rotations of some fixed coordinate axis.  There are several versions of Euler angles and we consider the $z-x-z$ formulation.  That is, the orintation $\bm R\in SO(3)$ can be represented as $\bm e=(\alpha,\beta,\gamma)$  where $\alpha,2\beta,\gamma\in[0,2\pi]$.  This specific formulation of $\bm e$ can form a rotation by rotating the identity about the $z$-axis counterclockwise through $\alpha$ radians, then rotate the $x$-axis through $\beta$ radians and finally rotate the $z$-axis through $\gamma$ radians.
-
-To make this more concrete, we can form the rotation matrix, $\bm R\in SO(3)$ from a vector of Euler angles, $(\alpha,\beta,\gamma)$, as follows.  Let $\bm e_1=\begin{bmatrix} 1&0&0\end{bmatrix}$ and $\bm e_3=\begin{bmatrix} 0&0&1\end{bmatrix}$ then using the notation from \ref{eqn:angleaxis},
-\[
-\bm R=\bm R(\gamma,\bm e_1)\bm R(\beta,\bm e_3)\bm R(\alpha,\bm e_1).
-\]
-
-For each of these parameterizations we have created a class of R objects: \code{SO3} for the matrix representation, \code{Q4} for quaternions and \code{EA} for Euler angles.  The names of these classes  are also functions that will return an object of the class with the same name given an angle and axis, or an object of any other class.  See the below code for an illustration.  First I generate a rotation matrix from an angle, $r$, and an axis, $\bm U$ using the function \code{SO3}.  Next we transform that rotation into quaternions then Euler angles with the funcions \code{Q4} and \code{EA}, respecitvely.  One can also create quaternions or Euler angles directly by feeding the angle and axis into those same functions.
+% \subsection{Euler Angle Form}
+% 
+% The final parameterization we consider is {\it Euler angles}.  Euler angles are three dimensional vectors describing a sequence of rotations of some fixed coordinate axis.  There are several versions of Euler angles and we consider the $z-x-z$ formulation.  That is, the orintation $\bm R\in SO(3)$ can be represented as $\bm e=(\alpha,\beta,\gamma)$  where $\alpha,2\beta,\gamma\in[0,2\pi]$.  This specific formulation of $\bm e$ can form a rotation by rotating the identity about the $z$-axis counterclockwise through $\alpha$ radians, then rotate the $x$-axis through $\beta$ radians and finally rotate the $z$-axis through $\gamma$ radians.
+% 
+% To make this more concrete, we can form the rotation matrix, $\bm R\in SO(3)$ from a vector of Euler angles, $(\alpha,\beta,\gamma)$, as follows.  Let $\bm e_1=\begin{bmatrix} 1&0&0\end{bmatrix}$ and $\bm e_3=\begin{bmatrix} 0&0&1\end{bmatrix}$ then using the notation from \ref{eqn:angleaxis},
+% \[
+% \bm R=\bm R(\gamma,\bm e_1)\bm R(\beta,\bm e_3)\bm R(\alpha,\bm e_1).
+% \]
+% 
+% For each of these parameterizations we have created a class of R objects: \code{SO3} for the matrix representation, \code{Q4} for quaternions and \code{EA} for Euler angles.  The names of these classes  are also functions that will return an object of the class with the same name given an angle and axis, or an object of any other class.  See the below code for an illustration.  First I generate a rotation matrix from an angle, $r$, and an axis, $\bm U$ using the function \code{SO3}.  Next we transform that rotation into quaternions then Euler angles with the funcions \code{Q4} and \code{EA}, respecitvely.  One can also create quaternions or Euler angles directly by feeding the angle and axis into those same functions.
 
 <<params,background="white",highlight=FALSE>>=
 r<-pi/2
 U<-c(1/sqrt(2),1/sqrt(2),0)
 R<-SO3(U,r)
 q<-Q4(R)
-ea<-EA(R)
 @
 %As before the function \code{axis} and \code{angle} will extract the axis and angle of the Euler angle.  One can also translate an Euler angle into a quaternion or matrix by passing an \code{EA} object into \code{Q4} and \code{SO3}, respectively.  One can go the other direction too.
 
@@ -167,11 +166,10 @@ C_\mathrm{M}(r|\kappa)=\frac{1}{2\pi \mathrm{I_0}(\kappa)}e^{\kappa\cos(r)}.
 \]
 Simulation from this distribution was developed by \citet{best79} and the function \code{rvmises} follows this procedure closely.  Also, \code{dvmises} evaluates the density at a given angle, $r$.
 
-Once an angular distribution has been chosen and a vector of $n$ angles of rotation have been generated, the \code{genR} function with option \code{space="SO3"} creates an $n\times 9$ matrix representing a sample from the appropriate UARS member as demonstrated in the following code.  If quaternions or Euler angles are desired the options \code{space} can be changed to \code{"Q4"} and \code{"R3"}, respectively.
+Once an angular distribution has been chosen and a vector of $n$ angles of rotation have been generated, the \code{genR} function with option \code{space="SO3"} creates an $n\times 9$ matrix representing a sample from the appropriate UARS member as demonstrated in the following code.  If quaternions are required the options \code{space} can be changed to \code{"Q4"}.
 
 <<genRs,background='white',highlight=FALSE>>=
-rs<-rcayley(20,1)
-Rs<-genR(rs)
+Rs<-ruars(20,rcayley,kappa=1)
 matrix(Rs[1,],3,3)
 @
 
@@ -221,18 +219,18 @@ SO(3)}\sum_{i=1}^n\Rdist^2(\bm{R}_i,\bm{S}).
 \end{equation}
 The function \code{mean} with option \code{type="intrinsic"} implements an algorithm first proposed by \citet{manton04} in estimating $\GeoMean$.
 
-\section{Confidence Area Construction}
-
-With limited theory available for estimators of the central orientation, a bootstrap method is proposed to estimate the uncertainty associated with them.  The procedure implemented by the function \code{CIradius} is as follows where $\widehat{\bm S}$ is any of the estimators discussed so far:
-\begin{enumerate}
-\item Estimate $\widehat{\bm S}$ from $(\bm R_1,\dots,\bm R_n)$ 
-\item Sample $\bm R_1$,...,$\bm R_m$ from $(\bm R_1,\dots,\bm R_n)$ with replacement
-\item Estimate $\widehat{\bm S}^*$ from bootstrap sample
-\item Compute $\hat{T}=d_G(\widehat{\bm S},\widehat{\bm S}^*)$
-\item Repeat steps 1-3 B times
-\item Report q\% percentile of $\hat{T}$ to be the radius of the confidence `cone'
-\end{enumerate}
-A similar procedure was used by \cite{bingham10}, but in place of $\Rdist$ the maximum absolute angle between all three axis, which they called $\alpha$, was used.  It's easy to show that $\alpha$ is less than or equal to the geodesic distance between any two rotations making our method slightly more conservative.
+% \section{Confidence Area Construction}
+% 
+% With limited theory available for estimators of the central orientation, a bootstrap method is proposed to estimate the uncertainty associated with them.  The procedure implemented by the function \code{CIradius} is as follows where $\widehat{\bm S}$ is any of the estimators discussed so far:
+% \begin{enumerate}
+% \item Estimate $\widehat{\bm S}$ from $(\bm R_1,\dots,\bm R_n)$ 
+% \item Sample $\bm R_1$,...,$\bm R_m$ from $(\bm R_1,\dots,\bm R_n)$ with replacement
+% \item Estimate $\widehat{\bm S}^*$ from bootstrap sample
+% \item Compute $\hat{T}=d_G(\widehat{\bm S},\widehat{\bm S}^*)$
+% \item Repeat steps 1-3 B times
+% \item Report q\% percentile of $\hat{T}$ to be the radius of the confidence `cone'
+% \end{enumerate}
+% A similar procedure was used by \cite{bingham10}, but in place of $\Rdist$ the maximum absolute angle between all three axis, which they called $\alpha$, was used.  It's easy to show that $\alpha$ is less than or equal to the geodesic distance between any two rotations making our method slightly more conservative.
 
 \section{Visualizations}
 In this section we introduce a method to visualize $SO(3)$ data via the the \pkg{ggplot2} package \citep{wickham09}.  The function \code{plot} takes as input a $n\times 9$ matrix of $SO(3)$ observations and returns a visualization of one of the three columns.  The user can specify which column to use with the \code{column} option, the default is one.
@@ -240,8 +238,7 @@ In this section we introduce a method to visualize $SO(3)$ data via the the \pkg
 The four estimates of the central orientation given in the previous section can be plotted by setting \code{estimates show=TRUE}.  The estimators are indicated by shape.  One can also center the data about any observation in $SO(3)$ by setting \code{center=S}.   Typically take \code{center=mean(Rs)}.  
 
 <<eye,fig.width=6,fig.height=6,out.width='0mm',background='white',highlight=FALSE>>=
-rs<-rvmises(50,0.01)
-Rs<-genR(rs)
+Rs<-ruars(20,rcayley,kappa=1)
 plot(Rs,center=mean(Rs),show_estimates=T)
 @
 

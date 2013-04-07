@@ -19,7 +19,7 @@
 
   \item{show_estimates}{character vector to specify which
   of the four estimates of the principal direction to show.
-  Possibilities are "proj.mean", "proj.median",
+  Possibilities are "all", "proj.mean", "proj.median",
   "riem.mean", "riem.median"}
 
   \item{...}{parameters passed onto the points layer}

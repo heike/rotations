@@ -89,7 +89,7 @@
 
 
 \abstract{
-In this article we introduce the \pkg{rotations} package which provides users with the ability to simulate, analyze and visualize 3-dimensional rotation data.  The \pkg{rotations} package includes four distributions from which to simulate data, four estimators of the central orientation and a novel approach to visualizing these data.  All of the above features are available to three different parameterizations of rotations: 3-by-3 matrix form, quaternions and Euler angles.
+In this article we introduce the \pkg{rotations} package which provides users with the ability to simulate, analyze and visualize 3-dimensional rotation data.  The \pkg{rotations} package includes four distributions from which to simulate data, four estimators of the central orientation and a novel approach to visualizing these data.  All of the above features are available to two different parameterizations of rotations: 3-by-3 matrix form and quaternions.
 }
 
 \section{Introduction}
@@ -118,7 +118,7 @@ The \pkg{rotations} package provides users with the tools necessary to simulate 
 
 \section{Rotation Representations}
 
-The variety of applications for rotations is echoed by the number of equivalent ways to parameterize them.  We consider three of the most popular: matrices in $SO(3)$, unit quaternions and Euler angles.  
+The variety of applications for rotations is echoed by the number of equivalent ways to parameterize them.  We consider three of the most popular: matrices in $SO(3)$ and unit quaternions.  
 
 \subsection{Matrix Form}
 
@@ -159,16 +159,16 @@ This makes $q$ a unit quaternion.  %To form a quaternion given an angle and axis
 
 %This form is popular with mathematicians and others interested in the theory of rotations because their form makes them simple to deal with in certain situations.
 
-\subsection{Euler Angle Form}
-
-The final parameterization we consider is {\it Euler angles}.  Euler angles are three dimensional vectors describing a sequence of rotations of some fixed coordinate axis.  There are several versions of Euler angles and we consider the $z-x-z$ formulation.  That is, the orintation $\bm R\in SO(3)$ can be represented as $\bm e=(\alpha,\beta,\gamma)$  where $\alpha,2\beta,\gamma\in[0,2\pi]$.  This specific formulation of $\bm e$ can form a rotation by rotating the identity about the $z$-axis counterclockwise through $\alpha$ radians, then rotate the $x$-axis through $\beta$ radians and finally rotate the $z$-axis through $\gamma$ radians.
-
-To make this more concrete, we can form the rotation matrix, $\bm R\in SO(3)$ from a vector of Euler angles, $(\alpha,\beta,\gamma)$, as follows.  Let $\bm e_1=\begin{bmatrix} 1&0&0\end{bmatrix}$ and $\bm e_3=\begin{bmatrix} 0&0&1\end{bmatrix}$ then using the notation from \ref{eqn:angleaxis},
-\[
-\bm R=\bm R(\gamma,\bm e_1)\bm R(\beta,\bm e_3)\bm R(\alpha,\bm e_1).
-\]
-
-For each of these parameterizations we have created a class of R objects: \code{SO3} for the matrix representation, \code{Q4} for quaternions and \code{EA} for Euler angles.  The names of these classes  are also functions that will return an object of the class with the same name given an angle and axis, or an object of any other class.  See the below code for an illustration.  First I generate a rotation matrix from an angle, $r$, and an axis, $\bm U$ using the function \code{SO3}.  Next we transform that rotation into quaternions then Euler angles with the funcions \code{Q4} and \code{EA}, respecitvely.  One can also create quaternions or Euler angles directly by feeding the angle and axis into those same functions.
+% \subsection{Euler Angle Form}
+% 
+% The final parameterization we consider is {\it Euler angles}.  Euler angles are three dimensional vectors describing a sequence of rotations of some fixed coordinate axis.  There are several versions of Euler angles and we consider the $z-x-z$ formulation.  That is, the orintation $\bm R\in SO(3)$ can be represented as $\bm e=(\alpha,\beta,\gamma)$  where $\alpha,2\beta,\gamma\in[0,2\pi]$.  This specific formulation of $\bm e$ can form a rotation by rotating the identity about the $z$-axis counterclockwise through $\alpha$ radians, then rotate the $x$-axis through $\beta$ radians and finally rotate the $z$-axis through $\gamma$ radians.
+% 
+% To make this more concrete, we can form the rotation matrix, $\bm R\in SO(3)$ from a vector of Euler angles, $(\alpha,\beta,\gamma)$, as follows.  Let $\bm e_1=\begin{bmatrix} 1&0&0\end{bmatrix}$ and $\bm e_3=\begin{bmatrix} 0&0&1\end{bmatrix}$ then using the notation from \ref{eqn:angleaxis},
+% \[
+% \bm R=\bm R(\gamma,\bm e_1)\bm R(\beta,\bm e_3)\bm R(\alpha,\bm e_1).
+% \]
+% 
+% For each of these parameterizations we have created a class of R objects: \code{SO3} for the matrix representation, \code{Q4} for quaternions and \code{EA} for Euler angles.  The names of these classes  are also functions that will return an object of the class with the same name given an angle and axis, or an object of any other class.  See the below code for an illustration.  First I generate a rotation matrix from an angle, $r$, and an axis, $\bm U$ using the function \code{SO3}.  Next we transform that rotation into quaternions then Euler angles with the funcions \code{Q4} and \code{EA}, respecitvely.  One can also create quaternions or Euler angles directly by feeding the angle and axis into those same functions.
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{1, 1, 1}\color{fgcolor}\begin{kframe}
@@ -177,7 +177,6 @@ r <- pi/2
 U <- c(1/sqrt(2), 1/sqrt(2), 0)
 R <- SO3(U, r)
 q <- Q4(R)
-ea <- EA(R)
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -224,7 +223,7 @@ C_\mathrm{M}(r|\kappa)=\frac{1}{2\pi \mathrm{I_0}(\kappa)}e^{\kappa\cos(r)}.
 \]
 Simulation from this distribution was developed by \citet{best79} and the function \code{rvmises} follows this procedure closely.  Also, \code{dvmises} evaluates the density at a given angle, $r$.
 
-Once an angular distribution has been chosen and a vector of $n$ angles of rotation have been generated, the \code{genR} function with option \code{space="SO3"} creates an $n\times 9$ matrix representing a sample from the appropriate UARS member as demonstrated in the following code.  If quaternions or Euler angles are desired the options \code{space} can be changed to \code{"Q4"} and \code{"R3"}, respectively.
+Once an angular distribution has been chosen and a vector of $n$ angles of rotation have been generated, the \code{genR} function with option \code{space="SO3"} creates an $n\times 9$ matrix representing a sample from the appropriate UARS member as demonstrated in the following code.  If quaternions are required the options \code{space} can be changed to \code{"Q4"}.
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{1, 1, 1}\color{fgcolor}\begin{kframe}
@@ -233,16 +232,16 @@ rs <- rcayley(20, 1)
 Rs <- genR(rs)
 matrix(Rs[1, ], 3, 3)
 
-##          [,1]    [,2]    [,3]
-## [1,] -0.49788 -0.8520 -0.1621
-## [2,]  0.04006  0.1642 -0.9856
-## [3,]  0.86632 -0.4972 -0.0476
+##        [,1]    [,2]    [,3]
+## [1,] 0.5263 -0.3746 -0.7633
+## [2,] 0.3162  0.9196 -0.2332
+## [3,] 0.7893 -0.1186  0.6024
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
 
 
-Here \code{rcayley(20,1)} simulates $r_1,\ldots,r_{20}$ from  $C_\mathrm{C}(r |\kappa=1)$ then \code{genR} generates the matrices.  Each row of \code{Rs} is an element in $SO(3)$, as demonstrated by \code{is.SOn}, in vector form with central orientation $\bm I_{3\times 3}$.  Any other central orientation in $SO(3)$ is possible by changing the \code{S} option.  If a central orientation not in $SO(3)$ is proposed, however, an error is returned.
+Here \code{rcayley(20,1)} simulates $r_1,\ldots,r_{20}$ from  $C_\mathrm{C}(r |\kappa=1)$ then \code{genR} generates the matrices.  Each row of \code{Rs} is an element in $SO(3)$, as demonstrated by \code{is.SO3}, in vector form with central orientation $\bm I_{3\times 3}$.  Any other central orientation in $SO(3)$ is possible by changing the \code{S} option.  If a central orientation not in $SO(3)$ is proposed, however, an error is returned.
 
 \section{$SO(3)$ data analysis\label{section:analysis}}
 
@@ -313,13 +312,7 @@ rs <- rvmises(50, 0.01)
 Rs <- genR(rs)
 plot(Rs, center = mean(Rs), show_estimates = T)
 \end{verbatim}
-\end{kframe}
-
-{\centering \includegraphics[width=0mm]{figures/eye} 
-
-}
-
-
+\begin{flushleft}\ttfamily\noindent\bfseries\textcolor{errorcolor}{\#\# Error: undefined columns selected}\end{flushleft}\end{kframe}
 \end{knitrout}
 
 

@@ -138,6 +138,7 @@ median<-function(x,...){
 median.SO3 <- function(Rs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
   
 	Rs<-formatSO3(Rs)
+	n<-nrow(Rs)
 	
 	if(nrow(Rs)==1)
 		return(Rs)
@@ -152,7 +153,9 @@ median.SO3 <- function(Rs, type = "projected", epsilon = 1e-05, maxIter = 2000) 
   while (d >= epsilon) {
     
     if (type == "projected") {
-      vn <- apply(Rs, 1, vecNorm, type = "F", S = S)
+    	
+    	cRs<-Rs-matrix(as.vector(S),n,9,byrow=T)
+    	vn<-sqrt(rowSums(cRs^2))
       
       delta <- matrix(colSums(Rs/vn)/sum(1/vn), 3, 3)
       
@@ -165,8 +168,8 @@ median.SO3 <- function(Rs, type = "projected", epsilon = 1e-05, maxIter = 2000) 
       
       S <- exp.skew(delta) %*% S 
       
-      v <- t(apply(Rs, 1, tLogMat2, S = S))
-      vn <- apply(v, 1, vecNorm, S = diag(0, 3, 3), type = "F")
+      v <- apply(Rs, 1, tLogMat2, S = S)
+      vn <- sqrt(colSums(v^2))
       vn <- pmax(epsilon, vn) # make sure we don't dividde by zero
  #     if (iter ==25) browser()
       delta <- matrix(colSums(v/vn)/sum(1/vn), 3, 3)

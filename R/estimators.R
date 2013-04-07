@@ -150,43 +150,50 @@ median.SO3 <- function(Rs, type = "projected", epsilon = 1e-05, maxIter = 2000) 
   iter <- 1
   delta <- matrix(0, 3, 3)
   
-  while (d >= epsilon) {
-    
-    if (type == "projected") {
-    	
-    	cRs<-Rs-matrix(as.vector(S),n,9,byrow=T)
-    	vn<-sqrt(rowSums(cRs^2))
+  if (type == "projected") {
+  	
+  	while (d >= epsilon){	
+  		
+   		cRs<-Rs-matrix(as.vector(S),n,9,byrow=T)
+   		vn<-sqrt(rowSums(cRs^2))
       
-      delta <- matrix(colSums(Rs/vn)/sum(1/vn), 3, 3)
+     	delta <- matrix(colSums(Rs/vn)/sum(1/vn), 3, 3)
       
-      Snew <- project.SO3(delta)
+     	Snew <- project.SO3(delta)
       
-      d <- norm(Snew - S, type = "F")
-      S <- Snew
+     	d <- norm(Snew - S, type = "F")
+     	S <- Snew
+   		iter <- iter + 1
+   		
+   		if (iter >= maxIter) {
+   			warning(paste("Unique solution wasn't found after ", iter, " iterations."))
+   			
+   			return(as.SO3(S))
+   		}
+  	}
       
-    } else if (type == "intrinsic") {
+  } else if (type == "intrinsic") {
       
-      S <- exp.skew(delta) %*% S 
+  	while (d >= epsilon){
+  	
+     S <- exp.skew(delta) %*% S 
       
-      v <- apply(Rs, 1, tLogMat2, S = S)
-      vn <- sqrt(colSums(v^2))
-      vn <- pmax(epsilon, vn) # make sure we don't dividde by zero
- #     if (iter ==25) browser()
-      delta <- matrix(colSums(v/vn)/sum(1/vn), 3, 3)
-      d <- norm(delta, type = "F")
-#      print(d)
-#      print(delta)
+     v <- t(apply(Rs, 1, tLogMat2, S = S))
+     vn <- sqrt(rowSums(v^2))
+     vn <- pmax(epsilon, vn) # make sure we don't dividde by zero
+     delta <- matrix(colSums(v/vn)/sum(1/vn), 3, 3)
+     d <- norm(delta, type = "F")
+     iter <- iter + 1
+     
+     if (iter >= maxIter) {
+     	warning(paste("Unique solution wasn't found after ", iter, " iterations."))
+     	return(as.SO3(S))
+    	}
+  	}
       
-    }
-    
-    iter <- iter + 1
-    
-    if (iter >= maxIter) {
-      warning(paste("Unique solution wasn't found after ", iter, " iterations."))
-      
-      return(as.SO3(S))
-    }
   }
+    
+
   class(S)<-"SO3"
   return(S)
 }

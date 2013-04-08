@@ -134,9 +134,9 @@ For the remainder of this article we will present our work using the matrix repr
 
 \section{Data generation} 
 
-From \eqref{eqn:1}, one can simulate a matrix $\bm{E}_i\in SO(3)$ by picking an axis $\bm u$ uniformly on the sphere then drawing an angle $r$ from a distribution symmetric about $0$ and bounded between $-\pi$ and $\pi$ then applying \eqref{eqn:angleaxis}.  A matrix generated in this fashion is said to belong to the \dfn{uniform-axis random spin}, or UARS, class of distributions and has the density
+From \eqref{eqn:1}, one can simulate a matrix $\bm{R}_i\in SO(3)$ by picking an axis $\bm u$ uniformly on the sphere then drawing an angle $r$ from a distribution symmetric about $0$ and bounded between $-\pi$ and $\pi$ then applying \eqref{eqn:angleaxis}.  A matrix generated in this fashion is said to belong to the \dfn{uniform-axis random spin}, or UARS, class of distributions and has the density
 \begin{equation}\label{eq:uarsden}
-f(\bm E_i|\kappa)=\frac{4\pi}{3-\tr(E_i)}C\left(\cos^{-1}\left\{\frac{1}{2}[\tr(\bm E_i)-1]\right\}|\kappa\right)
+f(\bm E_i|\kappa)=\frac{4\pi}{3-\tr(\bm E_i)}C\left(\left.\cos^{-1}\left\{\frac{1}{2}[\tr(\bm E_i)-1]\right\}\right|\kappa\right)
 \end{equation}
 where $C(\cdot|\kappa)$ is distribution function connecting to the angle of rotation $r$ \citep{bingham09}.  Members of the UARS family of distributions are distinguished based on the angluar distribution.
 
@@ -229,7 +229,7 @@ The function \code{mean} with option \code{type="intrinsic"} implements an algor
 
 \section{Confidence Regions}
 
-
+For the projected mean ($\ProjMean$), confidence regions are available through the \code{region} function.  The \code{method} option specifies which method to be used to 
 
 % \section{Confidence Area Construction}
 % 

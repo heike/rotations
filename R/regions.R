@@ -1,10 +1,10 @@
 #' Confidence Region for Mean Rotation
 #'
-#' Find the radius of a \eqn{100(1-\alpha)%} confidence region for the projected mean
+#' Find the radius of a \eqn{100\alpha%} confidence region for the projected mean
 #'
-#' @param Qs A \eqn{n\times 4}{n-by-4} matrix where each row corresponds to a random rotation in matrix form
+#' @param Rs,Qs A \eqn{n\times p}{n-by-p} matrix where each row corresponds to a random rotation in matrix (p=9) or quaternion form (p=4)
 #' @param method Character string specifying which type of interval is required
-#' @param alpha The alpha level desired
+#' @param alpha The alpha level desired, e.g. 0.95 or 0.90
 #' @param ... Additional arguments
 #' @return radius of the confidence region centered at the projected mean
 #' @cite rancourt2000
@@ -88,13 +88,13 @@ region.SO3<-function(Rs,method,alpha,...){
 
 #' Rancourt CR Method
 #'
-#' Find the radius of a \eqn{100(1-\alpha)%} confidence region for the projected mean \cite{rancourt2000}
+#' Find the radius of a \eqn{100\alpha%} confidence region for the projected mean \cite{rancourt2000}
 #'
 #' This works in the same way as done in \cite{bingham09} which assumes rotational 
 #' symmetry and is therefore conservative.
 #'
-#' @param Qs A \eqn{n\times 4}{n-by-4} matrix where each row corresponds to a random rotation in matrix form
-#' @param a The alpha level desired
+#' @param Rs,Qs A \eqn{n\times p}{n-by-p} matrix where each row corresponds to a random rotation in matrix (p=9) or quaternion form (p=4)
+#' @param a The alpha level desired, e.g. 0.95 or 0.90
 #' @return radius of the confidence region centered at the projected mean
 #' @cite rancourt2000
 #' @export
@@ -149,10 +149,10 @@ rancourtCR.SO3<-function(Rs,a){
 
 #' Zhang CR Method
 #'
-#' Find the radius of a \eqn{100(1-\alpha)%} confidence region for the projected mean
+#' Find the radius of a \eqn{100\alpha%} confidence region for the projected mean
 #'
-#' @param Qs A \eqn{n\times p}{n-by-p} matrix where each row corresponds to a random rotation in matrix or quaternion form
-#' @param a The alpha level desired
+#' @param Rs,Qs A \eqn{n\times p}{n-by-p} matrix where each row corresponds to a random rotation in matrix (p=9) or quaternion form (p=4)
+#' @param a The alpha level desired, e.g. 0.95 or 0.90
 #' @param m Number of replicates to use to estiamte cut point
 #' @param pivot should the pivotal (T) or non-pivotal (F) method be used
 #' @param estimator Mean or median
@@ -213,7 +213,7 @@ zhangCR.SO3<-function(Rs,a,m=300,pivot=T,estimator='mean'){
 		
 		cdhat<-cdfuns(Rs,Shat)
 		
-		qhat<-as.numeric(quantile(tstarPivot,a))*cdhat$c/(2*n*cdhat$d)
+		qhat<-as.numeric(quantile(tstarPivot,a))*cdhat$c/(2*n*cdhat$d^2)
 		
 		return(acos(1-qhat/2))
 		
@@ -278,13 +278,13 @@ cdfuns<-function(Rs,Shat){
 
 #' Fisher Mean Polax Axis CR Method
 #'
-#' Find the radius of a \eqn{100(1-\alpha)%} confidence region for the projected mean \cite{fisher1996}
+#' Find the radius of a \eqn{100(\alpha)%} confidence region for the projected mean \cite{fisher1996}
 #'
 #' This works in the same way as done in \cite{bingham09} which assumes rotational 
 #' symmetry and is therefore conservative.
 #'
-#' @param Qs A \eqn{n\times 4}{n-by-4} matrix where each row corresponds to a random rotation in matrix form
-#' @param a The alpha level desired
+#' @param Rs,Qs A \eqn{n\times p}{n-by-p} matrix where each row corresponds to a random rotation in matrix (p=9) or quaternion form (p=4)
+#' @param a The alpha level desired, e.g. 0.95 or 0.90
 #' @param boot Should the bootstrap or normal theory critical value be used
 #' @param m number of bootstrap replicates to use to estimate critical value
 #' @return radius of the confidence region centered at the projected mean

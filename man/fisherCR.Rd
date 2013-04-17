@@ -11,10 +11,11 @@
   \method{fisherCR}{SO3} (Rs, a, boot = T, m = 300)
 }
 \arguments{
-  \item{Qs}{A \eqn{n\times 4}{n-by-4} matrix where each row
-  corresponds to a random rotation in matrix form}
+  \item{Rs,Qs}{A \eqn{n\times p}{n-by-p} matrix where each
+  row corresponds to a random rotation in matrix (p=9) or
+  quaternion form (p=4)}
 
-  \item{a}{The alpha level desired}
+  \item{a}{The alpha level desired, e.g. 0.95 or 0.90}
 
   \item{boot}{Should the bootstrap or normal theory
   critical value be used}
@@ -27,8 +28,8 @@
   mean
 }
 \description{
-  Find the radius of a \eqn{100(1-\alpha)%} confidence
-  region for the projected mean \cite{Fisher et al. (1996)}
+  Find the radius of a \eqn{100(\alpha)%} confidence region
+  for the projected mean \cite{Fisher et al. (1996)}
 }
 \details{
   This works in the same way as done in \cite{Bingham et

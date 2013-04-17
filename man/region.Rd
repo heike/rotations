@@ -11,13 +11,14 @@
   \method{region}{SO3} (Rs, method, alpha, ...)
 }
 \arguments{
-  \item{Qs}{A \eqn{n\times 4}{n-by-4} matrix where each row
-  corresponds to a random rotation in matrix form}
+  \item{Rs,Qs}{A \eqn{n\times p}{n-by-p} matrix where each
+  row corresponds to a random rotation in matrix (p=9) or
+  quaternion form (p=4)}
 
   \item{method}{Character string specifying which type of
   interval is required}
 
-  \item{alpha}{The alpha level desired}
+  \item{alpha}{The alpha level desired, e.g. 0.95 or 0.90}
 
   \item{...}{Additional arguments}
 }
@@ -26,8 +27,8 @@
   mean
 }
 \description{
-  Find the radius of a \eqn{100(1-\alpha)%} confidence
-  region for the projected mean
+  Find the radius of a \eqn{100\alpha%} confidence region
+  for the projected mean
 }
 \examples{
 Rs<-ruars(20,rcayley,kappa=100)

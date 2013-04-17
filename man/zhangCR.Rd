@@ -13,11 +13,11 @@
     estimator = "mean")
 }
 \arguments{
-  \item{Qs}{A \eqn{n\times p}{n-by-p} matrix where each row
-  corresponds to a random rotation in matrix or quaternion
-  form}
+  \item{Rs,Qs}{A \eqn{n\times p}{n-by-p} matrix where each
+  row corresponds to a random rotation in matrix (p=9) or
+  quaternion form (p=4)}
 
-  \item{a}{The alpha level desired}
+  \item{a}{The alpha level desired, e.g. 0.95 or 0.90}
 
   \item{m}{Number of replicates to use to estiamte cut
   point}
@@ -32,8 +32,8 @@
   mean
 }
 \description{
-  Find the radius of a \eqn{100(1-\alpha)%} confidence
-  region for the projected mean
+  Find the radius of a \eqn{100\alpha%} confidence region
+  for the projected mean
 }
 \examples{
 Rs<-ruars(20,rcayley,kappa=100)

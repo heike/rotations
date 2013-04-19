@@ -483,6 +483,18 @@ vecNorm <- function(x, S, ...) {
   return(norm(matrix(cenX, n, n), ...))
 }
 
+
+#' Centering function
+#' 
+#' This function will take the sample Rs and return teh sample Rs centered at
+#' S, i.e., the returned sample is S'Rs, so if S is the true center then
+#' the projected mean should be id.SO3
+#' 
+#' @param Rs the sample to be centered
+#' @param S the rotation to sample around
+#' @return The centered sample
+#' @export
+
 centeringSO3<-function(Rs,S){
 	#This takes a set of observations in SO3 and centers them around S
 	

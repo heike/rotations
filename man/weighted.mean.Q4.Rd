@@ -47,15 +47,15 @@ weighted.mean(Qs,wt)
   Gramkow C (2001). "On averaging rotations." _Journal of
   Mathematical Imaging and Vision_, *15*(1), pp. 7-16.
 
-  Moakher M (2002). "Means and averaging in the group of
-  rotations." _SIAM Journal on Matrix Analysis and
-  Applications_, *24*(1), pp. 1-16.
-
   Manton J (2004). "A globally convergent numerical
   algorithm for computing the centre of mass on compact Lie
   groups." In _8th Conference on Control, Automation,
   Robotics and Vision, (ICARCV) _, volume 3, pp. 2211-2216.
   IEEE.
+
+  Moakher M (2002). "Means and averaging in the group of
+  rotations." _SIAM Journal on Matrix Analysis and
+  Applications_, *24*(1), pp. 1-16.
 }
 \seealso{
   \code{\link{mean.SO3}}

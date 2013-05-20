@@ -41,15 +41,15 @@ Qs<-ruars(20,rcayley,kappa=100,space='Q4')
 region(Qs,method='fisher',alpha=0.9)
 }
 \references{
-  Fisher N, Hall P, Jing B and Wood A (1996). "Improved
-  pivotal methods for constructing confidence regions with
-  directional data." _Journal of the American Statistical
-  Association_, *91*(435), pp. 1062-1070.
-
   Bingham M, Nordman D and Vardeman S (2009). "Modeling and
   Inference for Measured Crystal Orientations and a
   Tractable Class of Symmetric Distributions for Rotations
   in three Dimensions." _Journal of the American
   Statistical Association_, *104*(488), pp. 1385-1397.
+
+  Fisher N, Hall P, Jing B and Wood A (1996). "Improved
+  pivotal methods for constructing confidence regions with
+  directional data." _Journal of the American Statistical
+  Association_, *91*(435), pp. 1062-1070.
 }
 

@@ -1,18 +1,18 @@
 #' Mean Rotation
 #'
-#' Compute the intrinsic or projected mean of a sample of rotations
+#' Compute the geometric or projected mean of a sample of rotations
 #'
 #' This function takes a sample of \eqn{3\times 3}{3-by-3} rotations (in the form of a \eqn{n\times 9}{n-by-9} matrix where \eqn{n>1} is the sample size) and returns the projected arithmetic mean denoted \eqn{\widehat{\bm S}_P}{S_P} or
-#' intrinsic mean \eqn{\widehat{\bm S}_G}{S_G} according to the \code{type} option.
+#' geometric mean \eqn{\widehat{\bm S}_G}{S_G} according to the \code{type} option.
 #' For a sample of \eqn{n} random rotations \eqn{\bm{R}_i\in SO(3), i=1,2,\dots,n}{Ri in SO(3), i=1,2,\dots,n}, the mean-type estimator is defined as \deqn{\widehat{\bm{S}}=\argmin_{\bm{S}\in SO(3)}\sum_{i=1}^nd_D^2(\bm{R}_i,\bm{S})}{argmin d^2(bar(R),S)} where \eqn{\bar{\bm{R}}=\frac{1}{n}\sum_{i=1}^n\bm{R}_i}{bar(R)=\sum Ri/n} and the distance metric \eqn{d_D}{d}
-#' is the Riemannian or Euclidean.  For more on the projected mean see \cite{moakher02} and for the intrinsic mean see \cite{manton04}.
+#' is the Riemannian or Euclidean.  For more on the projected mean see \cite{moakher02} and for the geometric mean see \cite{manton04}.
 #'
 #' @param Rs A \eqn{n\times 9}{n-by-9} matrix where each row corresponds to a random rotation in matrix form
-#' @param type String indicating 'projected' or 'intrinsic' type mean estimator
-#' @param epsilon Stopping rule for the intrinsic method
+#' @param type String indicating 'projected' or 'geometric' type mean estimator
+#' @param epsilon Stopping rule for the geometric method
 #' @param maxIter The maximum number of iterations allowed before returning most recent estimate
 #' @param ... additional arguments passed to mean
-#' @return Estimate of the projected or intrinsic mean of the sample
+#' @return Estimate of the projected or geometric mean of the sample
 #' @seealso \code{\link{median.SO3}}
 #' @cite moakher02, manton04
 #' @S3method mean SO3
@@ -28,12 +28,12 @@ mean.SO3 <- function(Rs, type = "projected", epsilon = 1e-05, maxIter = 2000, ..
 	if(nrow(Rs)==1)
 		return(Rs)
 	
-  if (!(type %in% c("projected", "intrinsic")))
-    stop("type needs to be one of 'projected' or 'intrinsic'.")
+  if (!(type %in% c("projected", "geometric")))
+    stop("type needs to be one of 'projected' or 'geometric'.")
   
   R <- project.SO3(matrix(colMeans(Rs), 3, 3))
   
-  if (type == "intrinsic") {
+  if (type == "geometric") {
     n <- nrow(Rs)
     d <- 1
     iter <- 0
@@ -62,20 +62,20 @@ mean.SO3 <- function(Rs, type = "projected", epsilon = 1e-05, maxIter = 2000, ..
 
 #' Mean Rotation
 #' 
-#' Compute the projected or intrinsic mean of a sample of rotations
+#' Compute the projected or geometric mean of a sample of rotations
 #'
 #' This function takes a sample of \eqn{n} unit quaternions and approximates the mean rotation.  If the projected mean
 #' is called for then the according to \cite{tyler1981} an estimate of the mean is the eigenvector corresponding to the largest
-#' eigen value of \eqn{\frac{1}{n}\sum_{i=1}^nq_i^\top q_i}{Q`Q/n}.  If the intrinsic
+#' eigen value of \eqn{\frac{1}{n}\sum_{i=1}^nq_i^\top q_i}{Q`Q/n}.  If the geometric
 #' mean is called then the quaternions are transformed into \eqn{3\times 3}{3-by-3} matrices and the \code{mean.SO3}
 #' function is called.
 #'
 #' 
 #' @param Qs A \eqn{n\times 4}{n-by-4} matrix where each row corresponds to a random rotation in unit quaternion
-#' @param type String indicating 'projeted' or 'intrinsic' type mean estimator
-#' @param epsilon Stopping rule for the intrinsic method
+#' @param type String indicating 'projeted' or 'geometric' type mean estimator
+#' @param epsilon Stopping rule for the geometric method
 #' @param maxIter The maximum number of iterations allowed before returning most recent estimate
-#' @return projected or intrinsic mean of the sample
+#' @return projected or geometric mean of the sample
 #' @seealso \code{\link{mean.SO3}}
 #' @cite moakher02, manton04
 #' @S3method mean Q4
@@ -83,7 +83,7 @@ mean.SO3 <- function(Rs, type = "projected", epsilon = 1e-05, maxIter = 2000, ..
 #' @export
 #' @examples
 #' Qs<-ruars(20,rcayley,space="Q4")
-#' mean(Qs,type='intrinsic')
+#' mean(Qs,type='geometric')
 
 mean.Q4 <- function(Qs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
 	
@@ -112,17 +112,17 @@ mean.Q4 <- function(Qs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
 
 #' Median Rotation
 #' 
-#' Compute the projected or intrinsic median of a sample of rotations
+#' Compute the projected or geometric median of a sample of rotations
 #'
-#' The median-type estimators are defined as \deqn{\widetilde{\bm{S}}=\argmin_{\bm{S}\in SO(3)}\sum_{i=1}^nd_D(\bm{R}_i,\bm{S})}{argmin\sum d(Ri,S)}.  If the choice of distance metrid, \eqn{d_D}{d}, is Riemannian then the estimator is called the intrinsic, and if the distance metric in Euclidean then it projected.
-#' The algorithm used in the intrinsic case is discussed in \cite{hartley11} and the projected case was written by the authors.
+#' The median-type estimators are defined as \deqn{\widetilde{\bm{S}}=\argmin_{\bm{S}\in SO(3)}\sum_{i=1}^nd_D(\bm{R}_i,\bm{S})}{argmin\sum d(Ri,S)}.  If the choice of distance metrid, \eqn{d_D}{d}, is Riemannian then the estimator is called the geometric, and if the distance metric in Euclidean then it projected.
+#' The algorithm used in the geometric case is discussed in \cite{hartley11} and the projected case was written by the authors.
 #'
 #' @param x A \eqn{n\times p}{n-by-p} matrix where each row corresponds to a random rotation in matrix form (\eqn{p=9}) or quaternion form (\eqn{p=4})
-#' @param type String indicating 'projeted' or 'intrinsic' type mean estimator
-#' @param epsilon Stopping rule for the intrinsic method
+#' @param type String indicating 'projeted' or 'geometric' type mean estimator
+#' @param epsilon Stopping rule for the geometric method
 #' @param maxIter The maximum number of iterations allowed before returning most recent estimate
 #' @param ... additional arguments
-#' @return an estimate of the projected or intrinsic mean
+#' @return an estimate of the projected or geometric mean
 #' @seealso \code{\link{mean.SO3}}
 #' @cite hartley11
 #' @export
@@ -143,7 +143,7 @@ median.SO3 <- function(Rs, type = "projected", epsilon = 1e-05, maxIter = 2000) 
 	if(nrow(Rs)==1)
 		return(Rs)
 	
-  stopifnot(type %in% c("projected", "intrinsic"))
+  stopifnot(type %in% c("projected", "geometric"))
   
   S <- mean.SO3(Rs)
   d <- 1
@@ -172,7 +172,7 @@ median.SO3 <- function(Rs, type = "projected", epsilon = 1e-05, maxIter = 2000) 
    		}
   	}
       
-  } else if (type == "intrinsic") {
+  } else if (type == "geometric") {
       
   	while (d >= epsilon){
   	
@@ -220,17 +220,17 @@ median.Q4 <- function(Qs, type = "projected", epsilon = 1e-05, maxIter = 2000) {
 
 #' Weighted Mean Rotation
 #'
-#' Compute the weighted intrinsic or projected mean of a sample of rotations
+#' Compute the weighted geometric or projected mean of a sample of rotations
 #'
 #' This function takes a sample of \eqn{3\times 3}{3-by-3} rotations (in the form of a \eqn{n\times 9}{n-by-9} matrix where \eqn{n>1} is the sample size) and returns the weighted projected arithmetic mean denoted \eqn{\widehat{\bm S}_P}{S_P} or
-#' intrinsic mean \eqn{\widehat{\bm S}_G}{S_G} according to the \code{type} option.
+#' geometric mean \eqn{\widehat{\bm S}_G}{S_G} according to the \code{type} option.
 #' For a sample of \eqn{n} random rotations \eqn{\bm{R}_i\in SO(3), i=1,2,\dots,n}{Ri in SO(3), i=1,2,\dots,n}, the mean-type estimator is defined as \deqn{\widehat{\bm{S}}=\argmin_{\bm{S}\in SO(3)}\sum_{i=1}^nd_D^2(\bm{R}_i,\bm{S})}{argmin d(bar(R),S)} where \eqn{\bar{\bm{R}}=\frac{1}{n}\sum_{i=1}^n\bm{R}_i}{bar(R)=\sum R_i/n} and the distance metric \eqn{d_D}{d}
-#' is the Riemannian or Euclidean.  For more on the projected mean see \cite{moakher02} and for the intrinsic mean see \cite{manton04}.
+#' is the Riemannian or Euclidean.  For more on the projected mean see \cite{moakher02} and for the geometric mean see \cite{manton04}.
 #'
 #' @param Rs A \eqn{n\times 9}{n-by-9} matrix where each row corresponds to a random rotation in matrix form
 #' @param w a numerical vector of weights the same length as the number of rows in Rs giving the weights to use for elements of Rs
-#' @param type String indicating 'projeted' or 'intrinsic' type mean estimator
-#' @param epsilon Stopping rule for the intrinsic method
+#' @param type String indicating 'projeted' or 'geometric' type mean estimator
+#' @param epsilon Stopping rule for the geometric method
 #' @param maxIter The maximum number of iterations allowed before returning most recent estimate
 #' @param ... only used for consistency with mean.default
 #' @return weighted projected mean of the sample
@@ -253,8 +253,8 @@ weighted.mean.SO3 <- function(Rs, w, type = "projected", epsilon = 1e-05, maxIte
 	if(length(w)!=nrow(Rs))
 		stop("'Rs' and 'w' must have same length")
 	
-	if (!(type %in% c("projected", "intrinsic")))
-		stop("type needs to be one of 'projected' or 'intrinsic'.")
+	if (!(type %in% c("projected", "geometric")))
+		stop("type needs to be one of 'projected' or 'geometric'.")
 	
 	if(any(w<0))
 		warning("Negative weights were given.  Their absolute value is used.")
@@ -265,7 +265,7 @@ weighted.mean.SO3 <- function(Rs, w, type = "projected", epsilon = 1e-05, maxIte
 	
 	R <- as.SO3(project.SO3(matrix(colSums(wRs), 3, 3)))
 	
-	if (type == "intrinsic") {
+	if (type == "geometric") {
 		n <- nrow(Rs)
 		d <- 1
 		iter <- 0
@@ -294,20 +294,20 @@ weighted.mean.SO3 <- function(Rs, w, type = "projected", epsilon = 1e-05, maxIte
 
 #' Weighted Rotation Median
 #' 
-#' Compute the weighted projected or intrinsic mean of a sample of rotations
+#' Compute the weighted projected or geometric mean of a sample of rotations
 #'
 #' This function takes a sample of n unit quaternions and approximates the mean rotation.  If the projected mean
-#' is called for then the quaternions are turned reparameterized to matrices and mean.SO3 is called.  If the intrinsic
+#' is called for then the quaternions are turned reparameterized to matrices and mean.SO3 is called.  If the geometric
 #' mean is called then according to \cite{gramkow01} a better approximation is achieved by taking average quaternion
 #' and normalizing.  Our simulations don't match this claim.
 #'
 #' 
 #' @param Qs A \eqn{n\times 4} matrix where each row corresponds to a random rotation in unit quaternion
 #' @param w a numerical vector of weights the same length as Rs giving the weights to use for elements of Rs
-#' @param type String indicating 'projeted' or 'intrinsic' type mean estimator
-#' @param epsilon Stopping rule for the intrinsic method
+#' @param type String indicating 'projeted' or 'geometric' type mean estimator
+#' @param epsilon Stopping rule for the geometric method
 #' @param maxIter The maximum number of iterations allowed before returning most recent estimate
-#' @return weighted projected or intrinsic mean of the sample
+#' @return weighted projected or geometric mean of the sample
 #' @seealso \code{\link{mean.SO3}}
 #' @cite moakher02, manton04
 #' @S3method weighted.mean Q4

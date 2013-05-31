@@ -26,7 +26,7 @@ region.Q4<-function(Qs,method,alpha,...){
 	
 	Qs<-formatQ4(Qs)
 	
-	if(method%in%c('Rancourt','rancourt')){
+	if(method%in%c('Prentice','prentice')){
 		
 		r<-rancourtCR.Q4(Qs=Qs,a=alpha)
 		
@@ -61,7 +61,7 @@ region.SO3<-function(Rs,method,alpha,...){
 	
 	Rs<-formatSO3(Rs)
 	
-	if(method%in%c('Rancourt','rancourt')){
+	if(method%in%c('Prentice','prentice')){
 		
 		r<-rancourtCR.SO3(Rs=Rs,a=alpha)
 		return(r)
@@ -94,13 +94,13 @@ region.SO3<-function(Rs,method,alpha,...){
 #' symmetry and is therefore conservative.
 #'
 #' @param Rs,Qs A \eqn{n\times p}{n-by-p} matrix where each row corresponds to a random rotation in matrix (p=9) or quaternion form (p=4)
-#' @param a The alpha level desired, e.g. 0.95 or 0.90
+#' @param a The alpha level desired, e.g. 0.05 or 0.10
 #' @return radius of the confidence region centered at the projected mean
 #' @cite rancourt2000
 #' @export
 #' @examples
 #' Qs<-ruars(20,rcayley,kappa=100,space='Q4')
-#' region(Qs,method='rancourt',alpha=0.9)
+#' region(Qs,method='prentice',alpha=0.9)
 
 rancourtCR<-function(Qs,a){
 	UseMethod("rancourtCR")
@@ -131,7 +131,7 @@ rancourtCR.Q4<-function(Qs,a){
 	
 	Tm<-min(diag(n*Ahat%*%solve(VarShat)%*%Ahat))
 	
-	r<-sqrt(qchisq(a,3)/Tm)
+	r<-sqrt(qchisq(1-a,3)/Tm)
 	return(r)
 }
 
@@ -152,7 +152,7 @@ rancourtCR.SO3<-function(Rs,a){
 #' Find the radius of a \eqn{100\alpha%} confidence region for the projected mean
 #'
 #' @param Rs,Qs A \eqn{n\times p}{n-by-p} matrix where each row corresponds to a random rotation in matrix (p=9) or quaternion form (p=4)
-#' @param a The alpha level desired, e.g. 0.95 or 0.90
+#' @param a The alpha level desired, e.g. 0.05 or 0.10
 #' @param m Number of replicates to use to estiamte cut point
 #' @param pivot should the pivotal (T) or non-pivotal (F) method be used
 #' @param estimator Mean or median
@@ -213,7 +213,7 @@ zhangCR.SO3<-function(Rs,a,m=300,pivot=T,estimator='mean'){
 		
 		cdhat<-cdfuns(Rs,Shat)
 		
-		qhat<-as.numeric(quantile(tstarPivot,a))*cdhat$c/(2*n*cdhat$d^2)
+		qhat<-as.numeric(quantile(tstarPivot,1-a))*cdhat$c/(2*n*cdhat$d^2)
 		
 		return(acos(1-qhat/2))
 		
@@ -233,7 +233,7 @@ zhangCR.SO3<-function(Rs,a,m=300,pivot=T,estimator='mean'){
 			
 		}
 		
-		qhat<-as.numeric(quantile(tstar,a))
+		qhat<-as.numeric(quantile(tstar,1-a))
 		
 		return(acos(1-qhat/2))
 	}
@@ -317,11 +317,11 @@ fisherCR.Q4<-function(Qs,a,boot=T,m=300){
 			Tstats[i]<-fisherAxis(Qsi,mhat)
 		}
 	
-		qhat<-as.numeric(quantile(Tstats,a))
+		qhat<-as.numeric(quantile(Tstats,1-a))
 		
 	}else{
 		
-		qhat<-qchisq(a,3)
+		qhat<-qchisq(1-a,3)
 		
 	}
 	

@@ -13,10 +13,10 @@
   the number of rows in Rs giving the weights to use for
   elements of Rs}
 
-  \item{type}{String indicating 'projeted' or 'intrinsic'
+  \item{type}{String indicating 'projeted' or 'geometric'
   type mean estimator}
 
-  \item{epsilon}{Stopping rule for the intrinsic method}
+  \item{epsilon}{Stopping rule for the geometric method}
 
   \item{maxIter}{The maximum number of iterations allowed
   before returning most recent estimate}
@@ -27,7 +27,7 @@
   weighted projected mean of the sample
 }
 \description{
-  Compute the weighted intrinsic or projected mean of a
+  Compute the weighted geometric or projected mean of a
   sample of rotations
 }
 \details{
@@ -35,7 +35,7 @@
   rotations (in the form of a \eqn{n\times 9}{n-by-9}
   matrix where \eqn{n>1} is the sample size) and returns
   the weighted projected arithmetic mean denoted
-  \eqn{\widehat{\bm S}_P}{S_P} or intrinsic mean
+  \eqn{\widehat{\bm S}_P}{S_P} or geometric mean
   \eqn{\widehat{\bm S}_G}{S_G} according to the \code{type}
   option. For a sample of \eqn{n} random rotations
   \eqn{\bm{R}_i\in SO(3), i=1,2,\dots,n}{Ri in SO(3),
@@ -46,7 +46,7 @@
   \eqn{\bar{\bm{R}}=\frac{1}{n}\sum_{i=1}^n\bm{R}_i}{bar(R)=\sum
   R_i/n} and the distance metric \eqn{d_D}{d} is the
   Riemannian or Euclidean.  For more on the projected mean
-  see \cite{Moakher (2002)} and for the intrinsic mean see
+  see \cite{Moakher (2002)} and for the geometric mean see
   \cite{Manton (2004)}.
 }
 \examples{

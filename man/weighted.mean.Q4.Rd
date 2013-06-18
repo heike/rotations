@@ -12,19 +12,19 @@
   \item{w}{a numerical vector of weights the same length as
   Rs giving the weights to use for elements of Rs}
 
-  \item{type}{String indicating 'projeted' or 'intrinsic'
+  \item{type}{String indicating 'projeted' or 'geometric'
   type mean estimator}
 
-  \item{epsilon}{Stopping rule for the intrinsic method}
+  \item{epsilon}{Stopping rule for the geometric method}
 
   \item{maxIter}{The maximum number of iterations allowed
   before returning most recent estimate}
 }
 \value{
-  weighted projected or intrinsic mean of the sample
+  weighted projected or geometric mean of the sample
 }
 \description{
-  Compute the weighted projected or intrinsic mean of a
+  Compute the weighted projected or geometric mean of a
   sample of rotations
 }
 \details{
@@ -32,7 +32,7 @@
   approximates the mean rotation.  If the projected mean is
   called for then the quaternions are turned
   reparameterized to matrices and mean.SO3 is called.  If
-  the intrinsic mean is called then according to
+  the geometric mean is called then according to
   \cite{Gramkow (2001)} a better approximation is achieved
   by taking average quaternion and normalizing.  Our
   simulations don't match this claim.

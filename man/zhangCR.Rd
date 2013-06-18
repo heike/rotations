@@ -17,7 +17,7 @@
   row corresponds to a random rotation in matrix (p=9) or
   quaternion form (p=4)}
 
-  \item{a}{The alpha level desired, e.g. 0.95 or 0.90}
+  \item{a}{The alpha level desired, e.g. 0.05 or 0.10}
 
   \item{m}{Number of replicates to use to estiamte cut
   point}

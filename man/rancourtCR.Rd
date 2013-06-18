@@ -15,7 +15,7 @@
   row corresponds to a random rotation in matrix (p=9) or
   quaternion form (p=4)}
 
-  \item{a}{The alpha level desired, e.g. 0.95 or 0.90}
+  \item{a}{The alpha level desired, e.g. 0.05 or 0.10}
 }
 \value{
   radius of the confidence region centered at the projected
@@ -32,7 +32,7 @@
 }
 \examples{
 Qs<-ruars(20,rcayley,kappa=100,space='Q4')
-region(Qs,method='rancourt',alpha=0.9)
+region(Qs,method='prentice',alpha=0.9)
 }
 \references{
   Bingham M, Nordman D and Vardeman S (2009). "Modeling and

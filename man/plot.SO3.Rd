@@ -3,7 +3,7 @@
 \title{Visualizing random rotations.}
 \usage{
   plot.SO3(x, center, col = 1, toRange = FALSE,
-    show_estimates = NULL, ...)
+    show_estimates = NULL, label_points = NULL, ...)
 }
 \arguments{
   \item{x}{n rotations in SO3 format}
@@ -21,6 +21,8 @@
   of the four estimates of the principal direction to show.
   Possibilities are "all", "proj.mean", "proj.median",
   "riem.mean", "riem.median"}
+
+  \item{label_points}{vector of labels}
 
   \item{...}{parameters passed onto the points layer}
 }
@@ -41,7 +43,7 @@ r<-rvmises(200,1.0)
 Rs<-genR(r)
 plot(Rs,center=mean(Rs),show_estimates=NULL,shape=4)
 # Z is computed internally and contains information on depth
-plot(Rs,center=mean(Rs),show_estimates=c("proj.mean", "riem.mean")) + aes(size=Z, alpha=Z) + scale_size(limits=c(-1,1), range=c(0.5,2.5))
+plot(Rs,center=mean(Rs),show_estimates=c("proj.mean", "riem.mean"), label_points=sample(LETTERS, 200, replace=TRUE)) + aes(size=Z, alpha=Z) + scale_size(limits=c(-1,1), range=c(0.5,2.5))
 }
 \references{
   Wickham H (2009). _ggplot2: elegant graphics for data

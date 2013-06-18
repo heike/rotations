@@ -17,10 +17,10 @@
   corresponds to a random rotation in matrix form
   (\eqn{p=9}) or quaternion form (\eqn{p=4})}
 
-  \item{type}{String indicating 'projeted' or 'intrinsic'
+  \item{type}{String indicating 'projeted' or 'geometric'
   type mean estimator}
 
-  \item{epsilon}{Stopping rule for the intrinsic method}
+  \item{epsilon}{Stopping rule for the geometric method}
 
   \item{maxIter}{The maximum number of iterations allowed
   before returning most recent estimate}
@@ -28,10 +28,10 @@
   \item{...}{additional arguments}
 }
 \value{
-  an estimate of the projected or intrinsic mean
+  an estimate of the projected or geometric mean
 }
 \description{
-  Compute the projected or intrinsic median of a sample of
+  Compute the projected or geometric median of a sample of
   rotations
 }
 \details{
@@ -40,8 +40,8 @@
   SO(3)}\sum_{i=1}^nd_D(\bm{R}_i,\bm{S})}{argmin\sum
   d(Ri,S)}.  If the choice of distance metrid,
   \eqn{d_D}{d}, is Riemannian then the estimator is called
-  the intrinsic, and if the distance metric in Euclidean
-  then it projected. The algorithm used in the intrinsic
+  the geometric, and if the distance metric in Euclidean
+  then it projected. The algorithm used in the geometric
   case is discussed in \cite{Hartley et al. (2011)} and the
   projected case was written by the authors.
 }

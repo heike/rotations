@@ -128,8 +128,8 @@ plot.SO3 <- function(x, center, col=1, toRange=FALSE, show_estimates=NULL, label
     if(show_estimates%in%c('all','All')) show_estimates<-c("proj.mean","proj.median","riem.mean","riem.median")
     if (length(grep("proj.mean", show_estimates)) > 0) ShatP<-mean(Rs, type="projected")
     if (length(grep("proj.median", show_estimates)) >0)    StildeP<-median(Rs, type="projected")
-    if (length(grep("riem.mean", show_estimates)) > 0)    ShatG<-mean(Rs, type="intrinsic")
-    if (length(grep("riem.median", show_estimates)) > 0)    StildeG<-median(Rs, type="intrinsic")
+    if (length(grep("riem.mean", show_estimates)) > 0)    ShatG<-mean(Rs, type="geometric")
+    if (length(grep("riem.median", show_estimates)) > 0)    StildeG<-median(Rs, type="geometric")
     
     Shats<-data.frame(rbind(as.vector(ShatP),as.vector(StildeP),as.vector(ShatG),as.vector(StildeG)),Est=1:4)
     Shats$Est <- factor(Shats$Est)

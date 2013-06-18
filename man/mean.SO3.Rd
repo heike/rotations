@@ -9,10 +9,10 @@
   \item{Rs}{A \eqn{n\times 9}{n-by-9} matrix where each row
   corresponds to a random rotation in matrix form}
 
-  \item{type}{String indicating 'projected' or 'intrinsic'
+  \item{type}{String indicating 'projected' or 'geometric'
   type mean estimator}
 
-  \item{epsilon}{Stopping rule for the intrinsic method}
+  \item{epsilon}{Stopping rule for the geometric method}
 
   \item{maxIter}{The maximum number of iterations allowed
   before returning most recent estimate}
@@ -20,10 +20,10 @@
   \item{...}{additional arguments passed to mean}
 }
 \value{
-  Estimate of the projected or intrinsic mean of the sample
+  Estimate of the projected or geometric mean of the sample
 }
 \description{
-  Compute the intrinsic or projected mean of a sample of
+  Compute the geometric or projected mean of a sample of
   rotations
 }
 \details{
@@ -31,7 +31,7 @@
   rotations (in the form of a \eqn{n\times 9}{n-by-9}
   matrix where \eqn{n>1} is the sample size) and returns
   the projected arithmetic mean denoted \eqn{\widehat{\bm
-  S}_P}{S_P} or intrinsic mean \eqn{\widehat{\bm S}_G}{S_G}
+  S}_P}{S_P} or geometric mean \eqn{\widehat{\bm S}_G}{S_G}
   according to the \code{type} option. For a sample of
   \eqn{n} random rotations \eqn{\bm{R}_i\in SO(3),
   i=1,2,\dots,n}{Ri in SO(3), i=1,2,\dots,n}, the mean-type
@@ -42,7 +42,7 @@
   \eqn{\bar{\bm{R}}=\frac{1}{n}\sum_{i=1}^n\bm{R}_i}{bar(R)=\sum
   Ri/n} and the distance metric \eqn{d_D}{d} is the
   Riemannian or Euclidean.  For more on the projected mean
-  see \cite{Moakher (2002)} and for the intrinsic mean see
+  see \cite{Moakher (2002)} and for the geometric mean see
   \cite{Manton (2004)}.
 }
 \examples{
